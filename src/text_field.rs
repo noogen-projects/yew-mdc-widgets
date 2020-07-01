@@ -1,4 +1,4 @@
-use yew::{html, Callback, Html, MouseEvent};
+use yew::{html, Html};
 
 pub fn text_field(id: impl AsRef<str>, label: impl AsRef<str>) -> Html {
     let id = id.as_ref();

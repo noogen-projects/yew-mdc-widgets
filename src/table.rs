@@ -1,5 +1,4 @@
 use std::{
-    borrow::Cow,
     ops::{Deref, DerefMut},
     slice::{Iter, IterMut},
     vec::IntoIter,
@@ -7,23 +6,23 @@ use std::{
 
 use yew::{html, Callback, Html, MouseEvent};
 
-type Content<'a> = Cow<'a, str>;
+use crate::Text;
 
 pub enum TableCell<'a> {
-    Numeric(Content<'a>),
-    Text(Content<'a>),
+    Numeric(Text<'a>),
+    Text(Text<'a>),
 }
 
 impl<'a> TableCell<'a> {
-    pub fn num(content: impl Into<Content<'a>>) -> Self {
+    pub fn num(content: impl Into<Text<'a>>) -> Self {
         TableCell::Numeric(content.into())
     }
 
-    pub fn text(content: impl Into<Content<'a>>) -> Self {
+    pub fn text(content: impl Into<Text<'a>>) -> Self {
         TableCell::Text(content.into())
     }
 
-    pub fn content(&self) -> &Content<'a> {
+    pub fn content(&self) -> &Text<'a> {
         match self {
             TableCell::Numeric(content) => content,
             TableCell::Text(content) => content,
