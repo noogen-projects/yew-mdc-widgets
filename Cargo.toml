@@ -1,0 +1,15 @@
+[package]
+name = "yew-mdc-widgets"
+version = "0.1.0"
+authors = ["Noogen Team <info.noogen@gmail.com>"]
+edition = "2018"
+license = "CC0-1.0"
+readme = "README.md"
+repository = "https://github.com/noogen-projects/yew-mdc-widgets"
+description = "A Rust library that implements a ..."
+keywords = ["noogen"]
+categories = []
+
+[dependencies]
+yew = { version = "0.17", features = ["web_sys"] }
+js-sys = "0.3"
