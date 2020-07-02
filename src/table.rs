@@ -6,7 +6,7 @@ use std::{
 
 use yew::{html, Callback, Html, MouseEvent};
 
-use crate::Text;
+use crate::{Text, Widget};
 
 pub enum TableCell<'a> {
     Numeric(Text<'a>),
@@ -53,8 +53,8 @@ impl DerefMut for TableRow<'_> {
 }
 
 impl<'a> IntoIterator for TableRow<'a> {
-    type IntoIter = IntoIter<TableCell<'a>>;
     type Item = TableCell<'a>;
+    type IntoIter = IntoIter<TableCell<'a>>;
 
     #[inline]
     fn into_iter(self) -> IntoIter<TableCell<'a>> {
@@ -63,8 +63,8 @@ impl<'a> IntoIterator for TableRow<'a> {
 }
 
 impl<'a, 'b> IntoIterator for &'a TableRow<'b> {
-    type IntoIter = Iter<'a, TableCell<'b>>;
     type Item = &'a TableCell<'b>;
+    type IntoIter = Iter<'a, TableCell<'b>>;
 
     fn into_iter(self) -> Iter<'a, TableCell<'b>> {
         self.0.iter()
@@ -72,74 +72,114 @@ impl<'a, 'b> IntoIterator for &'a TableRow<'b> {
 }
 
 impl<'a, 'b> IntoIterator for &'a mut TableRow<'b> {
-    type IntoIter = IterMut<'a, TableCell<'b>>;
     type Item = &'a mut TableCell<'b>;
+    type IntoIter = IterMut<'a, TableCell<'b>>;
 
     fn into_iter(self) -> IterMut<'a, TableCell<'b>> {
         self.0.iter_mut()
     }
 }
 
-pub type ClickOnRowFn = Option<fn(&TableRow) -> Callback<MouseEvent>>;
+pub type OnRowClickFn = fn(&TableRow) -> Callback<MouseEvent>;
 
-pub fn table(
-    id: impl AsRef<str>, caption: impl AsRef<str>, head: &[TableCell], body: &[TableRow],
-    click_on_row: Option<impl Fn(&TableRow) -> Callback<MouseEvent>>,
-) -> Html {
-    let id = id.as_ref();
-    let caption = caption.as_ref();
+pub struct Table<'a> {
+    id: Text<'a>,
+    caption: Text<'a>,
+    head: &'a [TableCell<'a>],
+    body: &'a [TableRow<'a>],
+    on_row_click: Option<OnRowClickFn>,
+}
 
-    html! {
-        <div class = "user-table mdc-data-table">
-            <table id = id class = "mdc-data-table__table" aria-label = caption>
-                <thead>
-                    <tr class = "mdc-data-table__header-row">
-                        { head.into_iter().map(|cell| view_head_cell(cell)).collect::<Html>() }
-                    </tr>
-                </thead>
-                <tbody class = "mdc-data-table__content">{
-                    body
-                        .into_iter()
-                        .map(|row| {
-                            let onclick = click_on_row.as_ref().map(|fun| fun(&row));
-                            let cells = row.into_iter().map(|cell| view_body_cell(cell)).collect::<Html>();
+impl<'a> Table<'a> {
+    pub fn new() -> Self {
+        Self {
+            id: "".into(),
+            caption: "".into(),
+            head: &[],
+            body: &[],
+            on_row_click: None,
+        }
+    }
 
-                            if let Some(onclick) = onclick {
-                                html! {
-                                    <tr class = "mdc-data-table__row" onclick = onclick>{ cells }</tr>
-                                }
-                            } else {
-                                html! {
-                                    <tr class = "mdc-data-table__row">{ cells }</tr>
-                                }
-                            }
-                        })
-                        .collect::<Html>()
-                }</tbody>
-            </table>
-        </div>
+    pub fn id(mut self, id: impl Into<Text<'a>>) -> Self {
+        self.id = id.into();
+        self
+    }
+
+    pub fn caption(mut self, caption: impl Into<Text<'a>>) -> Self {
+        self.caption = caption.into();
+        self
+    }
+
+    pub fn head(mut self, head: &'a [TableCell<'a>]) -> Self {
+        self.head = head;
+        self
+    }
+
+    pub fn body(mut self, body: &'a [TableRow<'a>]) -> Self {
+        self.body = body;
+        self
+    }
+
+    pub fn on_row_click(mut self, on_row_click: OnRowClickFn) -> Self {
+        self.on_row_click = Some(on_row_click);
+        self
+    }
+
+    fn view_head_cell(cell: &TableCell) -> Html {
+        let (class, content) = match cell {
+            TableCell::Numeric(content) => (
+                "mdc-data-table__header-cell mdc-data-table__header-cell--numeric",
+                content,
+            ),
+            TableCell::Text(content) => ("mdc-data-table__header-cell", content),
+        };
+        html! {
+            <th class = class role = "columnheader" scope = "col">{ content }</th>
+        }
+    }
+
+    fn view_body_cell(cell: &TableCell) -> Html {
+        let (class, content) = match cell {
+            TableCell::Numeric(content) => ("mdc-data-table__cell mdc-data-table__cell--numeric", content),
+            TableCell::Text(content) => ("mdc-data-table__cell", content),
+        };
+        html! {
+            <td class = class>{ content }</td>
+        }
     }
 }
 
-fn view_head_cell(cell: &TableCell) -> Html {
-    let (class, content) = match cell {
-        TableCell::Numeric(content) => (
-            "mdc-data-table__header-cell mdc-data-table__header-cell--numeric",
-            content,
-        ),
-        TableCell::Text(content) => ("mdc-data-table__header-cell", content),
-    };
-    html! {
-        <th class = class role = "columnheader" scope = "col">{ content }</th>
-    }
-}
+impl Widget for Table<'_> {
+    fn build(&self) -> Html {
+        html! {
+            <div class = "user-table mdc-data-table">
+                <table id = self.id class = "mdc-data-table__table" aria-label = self.caption>
+                    <thead>
+                        <tr class = "mdc-data-table__header-row">
+                            { self.head.into_iter().map(|cell| Self::view_head_cell(cell)).collect::<Html>() }
+                        </tr>
+                    </thead>
+                    <tbody class = "mdc-data-table__content">{
+                        self.body
+                            .into_iter()
+                            .map(|row| {
+                                let cells = row.into_iter().map(|cell| Self::view_body_cell(cell)).collect::<Html>();
 
-fn view_body_cell(cell: &TableCell) -> Html {
-    let (class, content) = match cell {
-        TableCell::Numeric(content) => ("mdc-data-table__cell mdc-data-table__cell--numeric", content),
-        TableCell::Text(content) => ("mdc-data-table__cell", content),
-    };
-    html! {
-        <td class = class>{ content }</td>
+                                if let Some(callback) = self.on_row_click.as_ref().map(|fun| fun(&row)) {
+                                    html! {
+                                        <tr class = "mdc-data-table__row" onclick = callback>{ cells }</tr>
+                                    }
+                                } else {
+                                    html! {
+                                        <tr class = "mdc-data-table__row">{ cells }</tr>
+                                    }
+                                }
+                            })
+                            .collect::<Html>()
+                    }</tbody>
+                </table>
+            </div>
+        }
     }
 }

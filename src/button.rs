@@ -24,7 +24,7 @@ pub struct Button<'a> {
     id: Text<'a>,
     text: Text<'a>,
     style: ButtonStyle,
-    onclick: Callback<MouseEvent>,
+    on_click: Callback<MouseEvent>,
 }
 
 impl<'a> Button<'a> {
@@ -33,7 +33,7 @@ impl<'a> Button<'a> {
             id: "".into(),
             text: "Ok".into(),
             style: ButtonStyle::Text,
-            onclick: Callback::default(),
+            on_click: Callback::default(),
         }
     }
 
@@ -52,8 +52,8 @@ impl<'a> Button<'a> {
         self
     }
 
-    pub fn onclick(mut self, callback: Callback<MouseEvent>) -> Self {
-        self.onclick = callback;
+    pub fn on_click(mut self, callback: Callback<MouseEvent>) -> Self {
+        self.on_click = callback;
         self
     }
 }
@@ -63,7 +63,7 @@ impl Widget for Button<'_> {
         let mdc_init = format!("mdc.ripple.MDCRipple.attachTo(document.getElementById('{}'))", self.id);
 
         html! {
-            <button id = self.id class = self.style.class() onclick = &self.onclick>
+            <button id = self.id class = self.style.class() onclick = &self.on_click>
                 <span class = "mdc-button__ripple"></span>
                 { &self.text }
                 <script>{ mdc_init }</script>
