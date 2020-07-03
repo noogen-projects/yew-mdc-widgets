@@ -1,22 +1,53 @@
 use yew::{html, Html};
+use crate::{Text, Widget};
 
-pub fn text_field(id: impl AsRef<str>, label: impl AsRef<str>) -> Html {
-    let id = id.as_ref();
-    let input_id = format!("{}-input", id);
-    let label = label.as_ref();
-    let mdc_init = format!("mdc.textField.MDCTextField.attachTo(document.getElementById('{}'))", id);
+pub struct TextField<'a> {
+    id: Text<'a>,
+    input_id: Text<'a>,
+    label: Text<'a>,
+}
 
-    html! {
-        <div id = id class = "mdc-text-field mdc-text-field--outlined">
-            <input id = input_id class = "mdc-text-field__input"/>
-            <div class = "mdc-notched-outline">
-                <div class = "mdc-notched-outline__leading"></div>
-                <div class = "mdc-notched-outline__notch">
-                    <label for = input_id class = "mdc-floating-label">{ label }</label>
+impl<'a> TextField<'a> {
+    pub fn new() -> Self {
+        TextField {
+            id: "".into(),
+            input_id: "".into(),
+            label: "".into(),
+        }
+    }
+
+    pub fn id(mut self, id: impl Into<Text<'a>>) -> Self {
+        self.id = id.into();
+        self
+    }
+
+    pub fn input_id(mut self, input_id: impl Into<Text<'a>>) -> Self {
+        self.input_id = input_id.into();
+        self
+    }
+
+    pub fn label(mut self, label: impl Into<Text<'a>>) -> Self {
+        self.label = label.into();
+        self
+    }
+}
+
+impl Widget for TextField<'_> {
+    fn build(&self) -> Html {
+        let mdc_init = format!("mdc.textField.MDCTextField.attachTo(document.getElementById('{}'))", self.id);
+
+        html! {
+            <div id = self.id class = "mdc-text-field mdc-text-field--outlined">
+                <input id = self.input_id class = "mdc-text-field__input"/>
+                <div class = "mdc-notched-outline">
+                    <div class = "mdc-notched-outline__leading"></div>
+                    <div class = "mdc-notched-outline__notch">
+                        <label for = self.input_id class = "mdc-floating-label">{ &self.label }</label>
+                    </div>
+                    <div class = "mdc-notched-outline__trailing"></div>
                 </div>
-                <div class = "mdc-notched-outline__trailing"></div>
+                <script>{ mdc_init }</script>
             </div>
-            <script>{ mdc_init }</script>
-        </div>
+        }
     }
 }
