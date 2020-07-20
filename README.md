@@ -2,6 +2,28 @@
 
 Description
 
+
+## Run example
+
+Setup dependencies:
+
+```shell script
+cargo install wasm-bindgen-cli
+```
+
+Build wasm client example:
+
+```shell script
+./examples/build.sh widgets
+```
+
+Run example server:
+
+```shell script
+cargo run --example server
+```
+
+
 ## Development notes
 
 To check the project, use the following command:

@@ -1,4 +1,6 @@
 /target/
+/examples/static/target/
+
 Cargo.lock
 **/*.rs.bk
 

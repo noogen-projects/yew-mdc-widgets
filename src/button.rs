@@ -21,6 +21,7 @@ impl ButtonStyle {
     }
 }
 
+#[derive(Debug, Clone)]
 pub struct Button<'a> {
     id: Text<'a>,
     text: Text<'a>,
@@ -58,13 +59,13 @@ impl<'a> Button<'a> {
         self
     }
 
-    pub fn build(&self) -> Html {
+    pub fn build(self) -> Html {
         let mdc_init = format!("mdc.ripple.MDCRipple.attachTo(document.getElementById('{}'))", self.id);
 
         html! {
-            <button id = self.id class = self.style.class() onclick = &self.on_click>
+            <button id = self.id class = self.style.class() onclick = self.on_click>
                 <span class = "mdc-button__ripple"></span>
-                { &self.text }
+                { self.text }
                 <script>{ mdc_init }</script>
             </button>
         }
