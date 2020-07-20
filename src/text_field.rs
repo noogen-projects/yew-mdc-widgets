@@ -1,8 +1,8 @@
-use yew::{html, Html};
-use yew::virtual_dom::vtag::VTag;
-use crate::{Text, Widget};
-use yew::virtual_dom::VNode;
 use std::ops::DerefMut;
+
+use yew::{html, Html};
+
+use crate::Text;
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum TextFieldStyle {
@@ -287,13 +287,8 @@ impl<'a> TextField<'a> {
         //     <div class="mdc-text-field-character-counter">0 / 10</div>
         //</div>
     }
-}
 
-impl Widget for TextField<'_> {
-    fn build(&self) -> Html {
+    pub fn build(&self) -> Html {
         self.outlined()
-
     }
-
-
 }

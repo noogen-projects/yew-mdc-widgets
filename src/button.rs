@@ -1,5 +1,6 @@
 use yew::{html, Callback, Html, MouseEvent};
-use crate::{Text, Widget};
+
+use crate::Text;
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum ButtonStyle {
@@ -56,10 +57,8 @@ impl<'a> Button<'a> {
         self.on_click = callback;
         self
     }
-}
 
-impl Widget for Button<'_> {
-    fn build(&self) -> Html {
+    pub fn build(&self) -> Html {
         let mdc_init = format!("mdc.ripple.MDCRipple.attachTo(document.getElementById('{}'))", self.id);
 
         html! {

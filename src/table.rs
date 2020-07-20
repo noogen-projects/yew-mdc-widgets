@@ -6,7 +6,7 @@ use std::{
 
 use yew::{html, Callback, Html, MouseEvent};
 
-use crate::{Text, Widget};
+use crate::Text;
 
 pub enum TableCell<'a> {
     Numeric(Text<'a>),
@@ -148,10 +148,8 @@ impl<'a> Table<'a> {
             <td class = class>{ content }</td>
         }
     }
-}
 
-impl Widget for Table<'_> {
-    fn build(&self) -> Html {
+    pub fn build(&self) -> Html {
         html! {
             <div class = "user-table mdc-data-table">
                 <table id = self.id class = "mdc-data-table__table" aria-label = self.caption>
