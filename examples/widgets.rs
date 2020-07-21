@@ -1,4 +1,4 @@
-#![recursion_limit = "512"]
+#![recursion_limit = "1024"]
 
 use yew::{initialize, App, run_loop, utils, html, Component, ComponentLink, Html};
 use yew_mdc_widgets::{Button, ButtonStyle, TextField, TextFieldStyle, AdditionTextFieldStyle};
@@ -25,7 +25,7 @@ impl Component for Root {
 
     fn view(&self) -> Html {
         html! {
-            <div>
+            <div class = "demo-content">
                 <ul class = "mdc-list">
                     <li class = "mdc-list-item" onclick = self.link.callback(|_| utils::window().location().set_href("#buttons").unwrap())>
                         <span class = "mdc-list-item__ripple"></span>
@@ -36,22 +36,83 @@ impl Component for Root {
                         <span class = "mdc-list-item__text">{ "Text fields" }</span>
                     </li>
 
-                    <h2 class="mdc-typography--headline2"><a name="buttons"></a>{ "Buttons" }</h2>
-                    <div class = "widget-list">
+                    <h2 class = "demo-title mdc-typography--headline6"><a name = "buttons"></a>{ "Buttons" }</h2>
+                    <div>
                         <div>
-                            { Button::new().style(ButtonStyle::Text).text("Text button").build() }
+                            <h3 class = "mdc-typography--subtitle1">{ "Text Button" }</h3>
+                            <span class = "demo-item">
+                                { Button::new("btn-text-default").text("Default").build() }
+                            </span>
+                            <span class = "demo-item">
+                                { Button::new("btn-text-not-ripple").ripple(false).text("Not ripple").build() }
+                            </span>
+                            <span class = "demo-item">
+                                { Button::new("btn-text-disabled").disabled(true).text("Disabled").build() }
+                            </span>
+                            <span class = "demo-item">
+                                { Button::new("btn-text-icon").icon("favorite").text("Icon").build() }
+                            </span>
+                            <span class = "demo-item">
+                                { Button::new("btn-text-trailing-icon").trailing_icon("favorite").text("Trailing icon").build() }
+                            </span>
                         </div>
                         <div>
-                            { Button::new().style(ButtonStyle::Outlined).text("Outlined button").build() }
+                            <h3 class = "mdc-typography--subtitle1">{ "Outlined Button" }</h3>
+                            <span class = "demo-item">
+                                { Button::new("btn-outlined-default").style(ButtonStyle::Outlined).text("Default").build() }
+                            </span>
+                            <span class = "demo-item">
+                                { Button::new("btn-outlined-not-ripple").style(ButtonStyle::Outlined).ripple(false).text("No ripple").build() }
+                            </span>
+                            <span class = "demo-item">
+                                { Button::new("btn-outlined-disabled").style(ButtonStyle::Outlined).disabled(true).text("Disabled").build() }
+                            </span>
+                            <span class = "demo-item">
+                                { Button::new("btn-outlined-icon").style(ButtonStyle::Outlined).icon("favorite").text("Icon").build() }
+                            </span>
+                            <span class = "demo-item">
+                                { Button::new("btn-outlined-trailing-icon").style(ButtonStyle::Outlined).trailing_icon("favorite").text("Trailing icon").build() }
+                            </span>
                         </div>
                         <div>
-                            { Button::new().style(ButtonStyle::Raised).text("Raised button").build() }
+                            <h3 class = "mdc-typography--subtitle1">{ "Raised Button" }</h3>
+                            <span class = "demo-item">
+                                { Button::new("btn-raised-default").style(ButtonStyle::Raised).text("Default").build() }
+                            </span>
+                            <span class = "demo-item">
+                                { Button::new("btn-raised-not-ripple").style(ButtonStyle::Raised).ripple(false).text("No ripple").build() }
+                            </span>
+                            <span class = "demo-item">
+                                { Button::new("btn-raised-disabled").style(ButtonStyle::Raised).disabled(true).text("Disabled").build() }
+                            </span>
+                            <span class = "demo-item">
+                                { Button::new("btn-raised-icon").style(ButtonStyle::Raised).icon("favorite").text("Icon").build() }
+                            </span>
+                            <span class = "demo-item">
+                                { Button::new("btn-raised-trailing-icon").style(ButtonStyle::Raised).trailing_icon("favorite").text("Trailing icon").build() }
+                            </span>
                         </div>
                         <div>
-                            { Button::new().style(ButtonStyle::Unelevated).text("Unelevated button").build() }
+                            <h3 class = "mdc-typography--subtitle1">{ "Unelevated Button" }</h3>
+                            <span class = "demo-item">
+                                { Button::new("btn-unelevated-default").style(ButtonStyle::Unelevated).text("Default").build() }
+                            </span>
+                            <span class = "demo-item">
+                                { Button::new("btn-unelevated-not-ripple").style(ButtonStyle::Unelevated).ripple(false).text("No ripple").build() }
+                            </span>
+                            <span class = "demo-item">
+                                { Button::new("btn-unelevated-disabled").style(ButtonStyle::Unelevated).disabled(true).text("Disabled").build() }
+                            </span>
+                            <span class = "demo-item">
+                                { Button::new("btn-unelevated-icon").style(ButtonStyle::Unelevated).icon("favorite").text("Icon").build() }
+                            </span>
+                            <span class = "demo-item">
+                                { Button::new("btn-unelevated-trailing-icon").style(ButtonStyle::Unelevated).trailing_icon("favorite").text("Trailing icon").build() }
+                            </span>
                         </div>
                     </div>
-                    <h2 class="mdc-typography--headline2"><a name="text_fields"></a>{ "Text fields" }</h2>
+
+                    <h2 class = "demo-title mdc-typography--headline6"><a name = "text_fields"></a>{ "Text fields" }</h2>
                     <div class = "widget-list">
                         <div>
                             { TextField::new("text-field-filled").style(TextFieldStyle::Filled).label("Filled text field").build() }
