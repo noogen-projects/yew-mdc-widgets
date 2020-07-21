@@ -1,4 +1,4 @@
-use yew::{html, Callback, Html, MouseEvent};
+use yew::{html, Callback, Html, MouseEvent, Classes};
 
 use crate::Text;
 
@@ -24,6 +24,7 @@ impl ButtonStyle {
 #[derive(Debug, Clone)]
 pub struct Button<'a> {
     id: Text<'a>,
+    classes: Classes,
     label: Text<'a>,
     style: ButtonStyle,
     ripple: bool,
@@ -37,6 +38,7 @@ impl<'a> Button<'a> {
     pub fn new(id: impl Into<Text<'a>>) -> Self {
         Self {
             id: id.into(),
+            classes: Classes::new(),
             label: "Ok".into(),
             style: ButtonStyle::Text,
             ripple: true,
@@ -45,6 +47,11 @@ impl<'a> Button<'a> {
             after_label: vec![],
             on_click: Callback::default(),
         }
+    }
+
+    pub fn classes(mut self, classes: impl Into<Classes>) -> Self {
+        self.classes = classes.into();
+        self
     }
 
     pub fn label(mut self, label: impl Into<Text<'a>>) -> Self {
@@ -97,6 +104,7 @@ impl<'a> Button<'a> {
     pub fn build(self) -> Html {
         let Self {
             id,
+            mut classes,
             label: text,
             style,
             ripple,
@@ -106,8 +114,9 @@ impl<'a> Button<'a> {
             on_click,
         } = self;
 
+        classes.push(style.class());
         let mut button = html! {
-            <button id = id class = style.class() onclick = on_click>
+            <button id = id class = classes onclick = on_click>
                 <span class = "mdc-button__label">{ text }</span>
             </button>
         };

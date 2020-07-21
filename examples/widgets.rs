@@ -110,6 +110,15 @@ impl Component for Root {
                                 { Button::new("btn-unelevated-trailing-icon").style(ButtonStyle::Unelevated).trailing_icon("favorite").label("Trailing icon").build() }
                             </span>
                         </div>
+                        <div>
+                            <h3 class = "mdc-typography--subtitle1">{ "Stylized Button" }</h3>
+                            <span class = "demo-item">
+                                { Button::new("btn-raised-rounded").style(ButtonStyle::Raised).classes("rounded-button").label("Default").build() }
+                            </span>
+                            <span class = "demo-item">
+                                { Button::new("btn-outlined-icon-rounded").style(ButtonStyle::Outlined).classes("rounded-button").icon("favorite").label("Icon").build() }
+                            </span>
+                        </div>
                     </div>
 
                     <h2 class = "demo-title mdc-typography--headline6"><a name = "text_fields"></a>{ "Text fields" }</h2>

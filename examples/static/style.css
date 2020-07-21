@@ -27,3 +27,7 @@ body {
 .demo-item {
     margin: 8px 16px;
 }
+
+.rounded-button, .rounded-button .mdc-button__ripple {
+    border-radius: 18px;
+}
