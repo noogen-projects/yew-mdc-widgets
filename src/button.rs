@@ -25,7 +25,7 @@ impl ButtonStyle {
 pub struct Button<'a> {
     id: Text<'a>,
     classes: Classes,
-    label: Text<'a>,
+    label: Option<Text<'a>>,
     style: ButtonStyle,
     ripple: bool,
     disabled: bool,
@@ -39,7 +39,7 @@ impl<'a> Button<'a> {
         Self {
             id: id.into(),
             classes: Classes::new(),
-            label: "Ok".into(),
+            label: None,
             style: ButtonStyle::Text,
             ripple: true,
             disabled: false,
@@ -55,7 +55,7 @@ impl<'a> Button<'a> {
     }
 
     pub fn label(mut self, label: impl Into<Text<'a>>) -> Self {
-        self.label = label.into();
+        self.label = Some(label.into());
         self
     }
 
@@ -105,7 +105,7 @@ impl<'a> Button<'a> {
         let Self {
             id,
             mut classes,
-            label: text,
+            label,
             style,
             ripple,
             disabled,
@@ -117,32 +117,35 @@ impl<'a> Button<'a> {
         classes.push(style.class());
         let mut button = html! {
             <button id = id class = classes onclick = on_click>
-                <span class = "mdc-button__label">{ text }</span>
             </button>
         };
 
         if let Html::VTag(button_tag) = &mut button {
+            if disabled {
+                button_tag.attributes.insert("disabled".to_string(), "".to_string());
+            }
+
             if !before_label.is_empty() {
-                let mut children = before_label;
-                children.extend(button_tag.children.drain(..));
-                button_tag.children.children = children;
+                button_tag.children.extend(before_label);
+            }
+
+            if let Some(label) = label {
+                button_tag.children.push(html! {
+                    <span class = "mdc-button__label">{ label }</span>
+                })
             }
 
             if !after_label.is_empty() {
                 button_tag.children.extend(after_label);
             }
 
-            if self.ripple {
+            if ripple {
                 button_tag.children.insert(0, html! {
                     <div class = "mdc-button__ripple"></div>
                 });
                 button_tag.children.push(html! {
                     <script>{ format!("mdc.ripple.MDCRipple.attachTo(document.getElementById('{}'))", id) }</script>
                 });
-            }
-
-            if self.disabled {
-                button_tag.attributes.insert("disabled".to_string(), "".to_string());
             }
         }
         button

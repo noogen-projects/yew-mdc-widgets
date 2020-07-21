@@ -113,10 +113,10 @@ impl Component for Root {
                         <div>
                             <h3 class = "mdc-typography--subtitle1">{ "Stylized Button" }</h3>
                             <span class = "demo-item">
-                                { Button::new("btn-raised-rounded").style(ButtonStyle::Raised).classes("rounded-button").label("Default").build() }
+                                { Button::new("btn-raised-rounded").style(ButtonStyle::Raised).classes("rounded-button").label("Rounded").build() }
                             </span>
                             <span class = "demo-item">
-                                { Button::new("btn-outlined-icon-rounded").style(ButtonStyle::Outlined).classes("rounded-button").icon("favorite").label("Icon").build() }
+                                { Button::new("btn-outlined-icon-rounded").style(ButtonStyle::Outlined).classes("rounded-button").label("Rounded").icon("favorite").build() }
                             </span>
                         </div>
                     </div>
