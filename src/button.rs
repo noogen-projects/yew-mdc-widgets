@@ -24,7 +24,7 @@ impl ButtonStyle {
 #[derive(Debug, Clone)]
 pub struct Button<'a> {
     id: Text<'a>,
-    text: Text<'a>,
+    label: Text<'a>,
     style: ButtonStyle,
     ripple: bool,
     disabled: bool,
@@ -37,7 +37,7 @@ impl<'a> Button<'a> {
     pub fn new(id: impl Into<Text<'a>>) -> Self {
         Self {
             id: id.into(),
-            text: "Ok".into(),
+            label: "Ok".into(),
             style: ButtonStyle::Text,
             ripple: true,
             disabled: false,
@@ -47,8 +47,8 @@ impl<'a> Button<'a> {
         }
     }
 
-    pub fn text(mut self, text: impl Into<Text<'a>>) -> Self {
-        self.text = text.into();
+    pub fn label(mut self, label: impl Into<Text<'a>>) -> Self {
+        self.label = label.into();
         self
     }
 
@@ -97,7 +97,7 @@ impl<'a> Button<'a> {
     pub fn build(self) -> Html {
         let Self {
             id,
-            text,
+            label: text,
             style,
             ripple,
             disabled,
