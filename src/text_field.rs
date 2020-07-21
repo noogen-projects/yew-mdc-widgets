@@ -48,18 +48,13 @@ pub struct TextField<'a> {
 }
 
 impl<'a> TextField<'a> {
-    pub fn new() -> Self {
+    pub fn new(id: impl Into<Text<'a>>) -> Self {
         Self {
-            id: "".into(),
+            id: id.into(),
             label: "".into(),
             style: TextFieldStyle::Filled,
             add_style: AdditionTextFieldStyle::default(),
         }
-    }
-
-    pub fn id(mut self, id: impl Into<Text<'a>>) -> Self {
-        self.id = id.into();
-        self
     }
 
     pub fn label(mut self, label: impl Into<Text<'a>>) -> Self {
@@ -77,22 +72,22 @@ impl<'a> TextField<'a> {
         self
     }
 
-    fn filled(&self) -> Html {
+    fn filled(self) -> Html {
         let mdc_init = format!("mdc.textField.MDCTextField.attachTo(document.getElementById('{}'))", self.id);
-        let input_id = format!("{}-input", self.id);
+        let label_id = format!("{}-label", self.id);
 
         html! {
-            <div id = self.id  class = self.style.class()>
-                <div class = "mdc-text-field__ripple"></div>
-                <input id = input_id class="mdc-text-field__input" type = "text"/>
-                <label for = input_id class = "mdc-floating-label">{ &self.label }</label>
-                <div class = "mdc-line-ripple"></div>
+            <label id = self.id class = self.style.class()>
+                <span class = "mdc-text-field__ripple"></span>
+                <input class = "mdc-text-field__input" type = "text" aria-labelledby = label_id />
+                <span class = "mdc-floating-label" id = label_id>{ &self.label }</span>
+                <span class = "mdc-line-ripple"></span>
                 <script>{ mdc_init }</script>
-            </div>
+            </label>
         }
     }
 
-    fn outlined(&self) -> Html {
+    fn outlined(self) -> Html {
         let mdc_init = format!("mdc.textField.MDCTextField.attachTo(document.getElementById('{}'))", self.id);
         let input_id = format!("{}-input", self.id);
 
@@ -111,7 +106,7 @@ impl<'a> TextField<'a> {
         }
     }
 
-    fn fullwidth(&self) -> Html {
+    fn fullwidth(self) -> Html {
         let mdc_init = format!("mdc.textField.MDCTextField.attachTo(document.getElementById('{}'))", self.id);
         let input_id = format!("{}-input", self.id);
 
@@ -142,29 +137,6 @@ impl<'a> TextField<'a> {
             }
         }
         html
-
-        //Disabled filled text field
-        // <div id = self.id  class = "mdc-text-field mdc-text-field--filled mdc-text-field--disabled">
-        //     <div class = "mdc-text-field__ripple"></div>
-        //     <input id = input_id class="mdc-text-field__input" type = "text" disabled>
-        //     <label for = input_id class = "mdc-floating-label">{ &self.label }</label>
-        //     <div class = "mdc-line-ripple"></div>
-        //     <script>{ mdc_init }</script>
-        // </div>
-        //
-        //Disabled outlined text field
-        // <div id = self.id class = "mdc-text-field mdc-text-field--outlined mdc-text-field--disabled">
-        //     <input id = input_id class = "mdc-text-field__input" disabled/>
-        //     <div class = "mdc-notched-outline">
-        //         <div class = "mdc-notched-outline__leading"></div>
-        //         <div class = "mdc-notched-outline__notch">
-        //            <label for = input_id class = "mdc-floating-label">{ &self.label }</label>
-        //         </div>
-        //         <div class = "mdc-notched-outline__trailing"></div>
-        //     </div>
-        //     <script>{ mdc_init }</script>
-        // </div>
-
     }
 
     fn nolabel(&self, mut html: Html) -> Html {
@@ -185,22 +157,6 @@ impl<'a> TextField<'a> {
             }
         }
         html
-
-        // Filled text field without label
-        // <div class="mdc-text-field mdc-text-field--filled mdc-text-field--no-label">
-        //   <div class="mdc-text-field__ripple"></div>
-        //   <input class="mdc-text-field__input" type="text" placeholder="Placeholder text" aria-label="Label">
-        //   <div class="mdc-line-ripple"></div>
-        // </div>
-        //
-        // Outlined text field without label
-        // <div class="mdc-text-field mdc-text-field--outlined mdc-text-field--no-label">
-        //     <input class="mdc-text-field__input" type="text" aria-label="Label">
-        //     <div class="mdc-notched-outline">
-        //     <div class="mdc-notched-outline__leading"></div>
-        //     <div class="mdc-notched-outline__trailing"></div>
-        //     </div>
-        //  </div>
     }
 
     fn helpertext(&self, mut html: Html, helper_text: &str) -> Html {
@@ -234,20 +190,6 @@ impl<'a> TextField<'a> {
             html.children.add_child(helper_node);
         }
         html
-
-        // Outlined text field with helper text
-        // <div class="mdc-text-field mdc-text-field--filled">
-        //     <div class="mdc-text-field__ripple"></div>
-        //     <input id=input_id class="mdc-text-field__input" type="text"
-        //         aria-labelledby="label-id"
-        //         aria-controls="helper-id"
-        //         aria-describedby="helper-id">
-        //     <label for = input_id class = "mdc-floating-label">{ &self.label }</label>
-        //     <div class="mdc-line-ripple"></div>
-        // </div>
-        // <div class="mdc-text-field-helper-line">
-        //  <div id = "helper-id" for = input_id class = "mdc-text-field-helper-text" aria-hidden="true">{ &helper_text }</div>
-        // </div>
     }
 
     fn charcounter(&self, mut html: Html, max_length: i32) -> Html {
@@ -275,20 +217,13 @@ impl<'a> TextField<'a> {
             html.children.add_child(div);
         }
         html
-
-        // Outlined text field with char counter
-        // <div class="mdc-text-field mdc-text-field--filled">
-        //     <div class="mdc-text-field__ripple"></div>
-        //     <input id=input_id class="mdc-text-field__input" type="text" maxlength="10">
-        //     <label for = input_id class = "mdc-floating-label">{ &self.label }</label>
-        //     <div class="mdc-line-ripple"></div>
-        //</div>
-        //<div class="mdc-text-field-helper-line">
-        //     <div class="mdc-text-field-character-counter">0 / 10</div>
-        //</div>
     }
 
-    pub fn build(&self) -> Html {
-        self.outlined()
+    pub fn build(self) -> Html {
+        match self.style {
+            TextFieldStyle::Filled => self.filled(),
+            TextFieldStyle::Outlined => self.outlined(),
+            TextFieldStyle::FullWidth => self.fullwidth(),
+        }
     }
 }
