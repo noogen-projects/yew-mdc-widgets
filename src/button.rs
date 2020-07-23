@@ -1,159 +1,175 @@
-use yew::{html, Callback, Html, MouseEvent, Classes};
+use std::{
+    rc::Rc, ops::{Deref, DerefMut},
+};
 
-use crate::Text;
+use yew::{html, html::onclick, Callback, Html, MouseEvent, virtual_dom::VTag};
+
+use crate::{
+    Text,
+    utils::VTagExt,
+};
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum ButtonStyle {
-    Text,
     Outlined,
     Raised,
     Unelevated,
 }
 
 impl ButtonStyle {
+    pub fn classes() -> [&'static str; 3] {
+        [
+            ButtonStyle::Outlined.class(),
+            ButtonStyle::Raised.class(),
+            ButtonStyle::Unelevated.class(),
+        ]
+    }
+
     pub fn class(&self) -> &'static str {
         match self {
-            ButtonStyle::Text => "mdc-button",
-            ButtonStyle::Outlined => "mdc-button mdc-button--outlined",
-            ButtonStyle::Raised => "mdc-button mdc-button--raised",
-            ButtonStyle::Unelevated => "mdc-button mdc-button--unelevated",
+            ButtonStyle::Outlined => "mdc-button--outlined",
+            ButtonStyle::Raised => "mdc-button--raised",
+            ButtonStyle::Unelevated => "mdc-button--unelevated",
         }
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct Button<'a> {
-    id: Text<'a>,
-    classes: Classes,
-    label: Option<Text<'a>>,
-    style: ButtonStyle,
-    ripple: bool,
-    disabled: bool,
-    before_label: Vec<Html>,
-    after_label: Vec<Html>,
-    on_click: Callback<MouseEvent>,
+pub struct Button {
+    html: Html,
 }
 
-impl<'a> Button<'a> {
-    pub fn new(id: impl Into<Text<'a>>) -> Self {
-        Self {
-            id: id.into(),
-            classes: Classes::new(),
-            label: None,
-            style: ButtonStyle::Text,
-            ripple: true,
-            disabled: false,
-            before_label: vec![],
-            after_label: vec![],
-            on_click: Callback::default(),
-        }
+impl Button {
+    pub fn new<'a>(id: impl Into<Text<'a>>) -> Self {
+        let button = Self {
+            html: html! { <button id = id.into() class = "mdc-button"></button> },
+        };
+        button.ripple(true)
     }
 
-    pub fn classes(mut self, classes: impl Into<Classes>) -> Self {
-        self.classes = classes.into();
+    pub fn class(mut self, class: impl AsRef<str>) -> Self {
+        self.root_tag_mut().add_class(class);
         self
     }
 
-    pub fn label(mut self, label: impl Into<Text<'a>>) -> Self {
-        self.label = Some(label.into());
+    pub fn label<'a>(mut self, label: impl Into<Text<'a>>) -> Self {
+        self.root_tag_mut().children.push(html! {
+            <span class = "mdc-button__label">{ label.into() }</span>
+        });
         self
     }
 
     pub fn style(mut self, style: ButtonStyle) -> Self {
-        self.style = style;
-        self
+        if self.root_tag().is_contains_any_class(&ButtonStyle::classes()) {
+            self.root_tag_mut().remove_any_class(&ButtonStyle::classes());
+        }
+        self.class(style.class())
     }
 
     pub fn ripple(mut self, ripple: bool) -> Self {
-        self.ripple = ripple;
+        let ripple_class = "mdc-button__ripple";
+        if ripple {
+            if !self.root_tag().is_first_child_contains_class(ripple_class) {
+                self.root_tag_mut().children.insert(0, html! {
+                    <div class = "mdc-button__ripple"></div>
+                });
+            }
+            if !self.root_tag().is_last_child("script") {
+                let button_tag = self.root_tag_mut();
+                if let Some(id) = button_tag.attributes.get("id") {
+                    button_tag.children.push(html! {
+                        <script>{ format!("mdc.ripple.MDCRipple.attachTo(document.getElementById('{}'))", id) }</script>
+                    });
+                }
+            }
+        } else {
+            if self.root_tag().is_first_child_contains_class(ripple_class) {
+                self.root_tag_mut().children.remove(0);
+            }
+            if self.root_tag().is_last_child("script") {
+                let idx = self.root_tag_mut().children.len() - 1;
+                self.root_tag_mut().children.remove(idx);
+            }
+        }
         self
     }
 
     pub fn disabled(mut self, disabled: bool) -> Self {
-        self.disabled = disabled;
+        if disabled {
+            self.root_tag_mut().attributes.insert("disabled".to_string(), "".to_string());
+        } else {
+            self.root_tag_mut().attributes.remove("disabled");
+        }
         self
     }
 
     pub fn add_before_label(mut self, item: impl Into<Html>) -> Self {
-        self.before_label.push(item.into());
+        let idx = self.root_tag().first_child_contains_class("mdc-button__label")
+            .unwrap_or_else(|| if self.root_tag().is_last_child("script") {
+                self.root_tag().children.len() - 1
+            } else {
+                self.root_tag().children.len()
+            });
+        self.root_tag_mut().children.insert(idx, item.into());
         self
     }
 
     pub fn add_after_label(mut self, item: impl Into<Html>) -> Self {
-        self.after_label.push(item.into());
+        let idx = self.root_tag().first_child_contains_class("mdc-button__label")
+            .map(|idx| idx + 1)
+            .unwrap_or_else(|| if self.root_tag().is_last_child("script") {
+                self.root_tag().children.len() - 1
+            } else {
+                self.root_tag().children.len()
+            });
+        self.root_tag_mut().children.insert(idx, item.into());
         self
     }
 
-    pub fn icon<'b>(mut self, icon: impl Into<Text<'b>>) -> Self {
-        self.add_before_label(html! {
+    pub fn icon<'a>(self, icon: impl Into<Text<'a>>) -> Self {
+        self.add_after_label(html! {
             <i class = "material-icons mdc-button__icon" aria-hidden = "true">{ icon.into() }</i>
         })
     }
 
-    pub fn trailing_icon<'b>(mut self, trailing_icon: impl Into<Text<'b>>) -> Self {
-        self.add_after_label(html! {
-            <i class = "material-icons mdc-button__icon" aria-hidden = "true">{ trailing_icon.into() }</i>
-        })
-    }
-
     pub fn on_click(mut self, callback: Callback<MouseEvent>) -> Self {
-        self.on_click = callback;
+        self.root_tag_mut().add_listener(Rc::new(onclick::Wrapper::new(callback)));
         self
     }
 
-    pub fn build(self) -> Html {
-        let Self {
-            id,
-            mut classes,
-            label,
-            style,
-            ripple,
-            disabled,
-            before_label,
-            after_label,
-            on_click,
-        } = self;
-
-        classes.push(style.class());
-        let mut button = html! {
-            <button id = id class = classes onclick = on_click>
-            </button>
-        };
-
-        if let Html::VTag(button_tag) = &mut button {
-            if disabled {
-                button_tag.attributes.insert("disabled".to_string(), "".to_string());
-            }
-
-            if !before_label.is_empty() {
-                button_tag.children.extend(before_label);
-            }
-
-            if let Some(label) = label {
-                button_tag.children.push(html! {
-                    <span class = "mdc-button__label">{ label }</span>
-                })
-            }
-
-            if !after_label.is_empty() {
-                button_tag.children.extend(after_label);
-            }
-
-            if ripple {
-                button_tag.children.insert(0, html! {
-                    <div class = "mdc-button__ripple"></div>
-                });
-                button_tag.children.push(html! {
-                    <script>{ format!("mdc.ripple.MDCRipple.attachTo(document.getElementById('{}'))", id) }</script>
-                });
-            }
+    fn root_tag(&self) -> &VTag {
+        if let Html::VTag(tag) = &self.html {
+            tag
+        } else {
+            panic!("The root button element must be a tag!");
         }
-        button
+    }
+
+    fn root_tag_mut(&mut self) -> &mut VTag {
+        if let Html::VTag(tag) = &mut self.html {
+            tag
+        } else {
+            panic!("The root button element must be a tag!");
+        }
     }
 }
 
-impl From<Button<'_>> for Html {
-    fn from(button: Button<'_>) -> Self {
-        button.build()
+impl Deref for Button {
+    type Target = Html;
+
+    fn deref(&self) -> &Self::Target {
+        &self.html
+    }
+}
+
+impl DerefMut for Button {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.html
+    }
+}
+
+impl From<Button> for Html {
+    fn from(button: Button) -> Self {
+        button.html
     }
 }
