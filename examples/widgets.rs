@@ -1,7 +1,7 @@
-#![recursion_limit = "1024"]
+#![recursion_limit = "2048"]
 
 use yew::{initialize, App, run_loop, utils, html, Component, ComponentLink, Html};
-use yew_mdc_widgets::{Button, ButtonStyle, TextField, TextFieldStyle, AdditionTextFieldStyle};
+use yew_mdc_widgets::{Button, ButtonStyle, TextField, TextFieldStyle, DataTable, TableCell};
 
 struct Root {
     link: ComponentLink<Self>,
@@ -34,6 +34,10 @@ impl Component for Root {
                     <li class = "mdc-list-item" onclick = self.link.callback(|_| utils::window().location().set_href("#text_fields").unwrap())>
                         <span class = "mdc-list-item__ripple"></span>
                         <span class = "mdc-list-item__text">{ "Text fields" }</span>
+                    </li>
+                    <li class = "mdc-list-item" onclick = self.link.callback(|_| utils::window().location().set_href("#data_tables").unwrap())>
+                        <span class = "mdc-list-item__ripple"></span>
+                        <span class = "mdc-list-item__text">{ "Data tables" }</span>
                     </li>
 
                     <h2 class = "demo-title mdc-typography--headline6"><a name = "buttons"></a>{ "Buttons" }</h2>
@@ -126,6 +130,38 @@ impl Component for Root {
                         <div>
                             { TextField::new("text-field-filled").style(TextFieldStyle::Filled).label("Filled text field").build() }
                         </div>
+                    </div>
+
+                    <h2 class = "demo-title mdc-typography--headline6"><a name = "data_tables"></a>{ "Data tables" }</h2>
+                    <div class = "widget-list">
+                        <h3 class = "mdc-typography--subtitle1">{ "Data Table Standard" }</h3>
+                        <div>{
+                            DataTable::new("data-table-standard")
+                                .head(&[
+                                    TableCell::Text("Dessert".into()),
+                                    TableCell::Numeric("Carbs (g)".into()),
+                                    TableCell::Numeric("Protein (g)".into()),
+                                    TableCell::Text("Comments".into()),
+                                ])
+                                .row(&[
+                                    TableCell::Text("Frozen yogurt".into()),
+                                    TableCell::Numeric("24".into()),
+                                    TableCell::Numeric("4.0".into()),
+                                    TableCell::Text("Super tasty".into()),
+                                ])
+                                .row(&[
+                                    TableCell::Text("Ice cream sandwich".into()),
+                                    TableCell::Numeric("37".into()),
+                                    TableCell::Numeric("4.33333333333".into()),
+                                    TableCell::Text("I like ice cream more".into()),
+                                ])
+                                .row(&[
+                                    TableCell::Text("Eclair".into()),
+                                    TableCell::Numeric("24".into()),
+                                    TableCell::Numeric("6.0".into()),
+                                    TableCell::Text("New filing flavor".into()),
+                                ])
+                        }</div>
                     </div>
                 </ul>
             </div>

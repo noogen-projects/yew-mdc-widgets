@@ -2,10 +2,10 @@
 
 use std::borrow::Cow;
 
-pub use self::{button::*, table::*, text_field::*};
+pub use self::{button::*, data_table::*, text_field::*};
 
 pub mod button;
-pub mod table;
+pub mod data_table;
 pub mod text_field;
 pub mod utils;
 
