@@ -104,7 +104,7 @@ impl Button {
     }
 
     pub fn add_before_label(mut self, item: impl Into<Html>) -> Self {
-        let idx = self.root_tag().first_child_contains_class("mdc-button__label")
+        let idx = self.root_tag().find_child_contains_class("mdc-button__label")
             .unwrap_or_else(|| if self.root_tag().is_last_child("script") {
                 self.root_tag().children.len() - 1
             } else {
@@ -115,7 +115,7 @@ impl Button {
     }
 
     pub fn add_after_label(mut self, item: impl Into<Html>) -> Self {
-        let idx = self.root_tag().first_child_contains_class("mdc-button__label")
+        let idx = self.root_tag().find_child_contains_class("mdc-button__label")
             .map(|idx| idx + 1)
             .unwrap_or_else(|| if self.root_tag().is_last_child("script") {
                 self.root_tag().children.len() - 1
