@@ -7,28 +7,28 @@ use yew::{html, html::onclick, Callback, Html, MouseEvent, virtual_dom::VTag};
 
 use crate::{Text, Checkbox, utils::VTagExt};
 
-pub enum TableCell<'a> {
-    Numeric(Text<'a>),
-    Text(Text<'a>),
+pub enum TableCell {
+    Numeric(Html),
+    Text(Html),
 }
 
-impl<'a> TableCell<'a> {
-    pub fn num(content: impl Into<Text<'a>>) -> Self {
+impl TableCell {
+    pub fn num(content: impl Into<Html>) -> Self {
         TableCell::Numeric(content.into())
     }
 
-    pub fn text(content: impl Into<Text<'a>>) -> Self {
+    pub fn text(content: impl Into<Html>) -> Self {
         TableCell::Text(content.into())
     }
 
-    pub fn content(&self) -> &Text<'a> {
+    pub fn content(&self) -> &Html {
         match self {
             TableCell::Numeric(content) => content,
             TableCell::Text(content) => content,
         }
     }
 
-    fn build_head_cell(&self) -> Html {
+    fn build_head_cell(self) -> Html {
         let (class, content) = match self {
             TableCell::Numeric(content) => (
                 "mdc-data-table__header-cell mdc-data-table__header-cell--numeric",
@@ -41,7 +41,7 @@ impl<'a> TableCell<'a> {
         }
     }
 
-    fn build_body_cell(&self) -> Html {
+    fn build_body_cell(self) -> Html {
         let (class, content) = match self {
             TableCell::Numeric(content) => ("mdc-data-table__cell mdc-data-table__cell--numeric", content),
             TableCell::Text(content) => ("mdc-data-table__cell", content),
@@ -85,7 +85,7 @@ impl DataTable {
         }
     }
 
-    pub fn head<'a>(mut self, head: &'a [TableCell<'a>]) -> Self {
+    pub fn head(mut self, head: impl IntoIterator<Item = TableCell>) -> Self {
         let head_cells: Vec<Html> = head
             .into_iter()
             .map(|cell| cell.build_head_cell())
@@ -104,7 +104,7 @@ impl DataTable {
         self
     }
 
-    pub fn row<'a>(mut self, row: &'a [TableCell<'a>]) -> Self {
+    pub fn row<'a>(mut self, row: impl IntoIterator<Item = TableCell>) -> Self {
         let mut row: Vec<_> = row
             .into_iter()
             .map(|cell| cell.build_body_cell())

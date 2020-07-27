@@ -201,29 +201,29 @@ impl Component for Root {
                         <h3 class = "mdc-typography--subtitle1">{ "Data Table Standard" }</h3>
                         <div>{
                             DataTable::new("data-table-standard")
-                                .head(&[
-                                    TableCell::Text("Dessert".into()),
-                                    TableCell::Numeric("Carbs (g)".into()),
-                                    TableCell::Numeric("Protein (g)".into()),
-                                    TableCell::Text("Comments".into()),
+                                .head(vec![
+                                    TableCell::text("Dessert"),
+                                    TableCell::num("Carbs (g)"),
+                                    TableCell::num("Protein (g)"),
+                                    TableCell::text("Comments"),
                                 ])
-                                .row(&[
-                                    TableCell::Text("Frozen yogurt".into()),
-                                    TableCell::Numeric("24".into()),
-                                    TableCell::Numeric("4.0".into()),
-                                    TableCell::Text("Super tasty".into()),
+                                .row(vec![
+                                    TableCell::text("Frozen yogurt"),
+                                    TableCell::num("24"),
+                                    TableCell::num("4.0"),
+                                    TableCell::text("Super tasty"),
                                 ])
-                                .row(&[
-                                    TableCell::Text("Ice cream sandwich".into()),
-                                    TableCell::Numeric("37".into()),
-                                    TableCell::Numeric("4.33333333333".into()),
-                                    TableCell::Text("I like ice cream more".into()),
+                                .row(vec![
+                                    TableCell::text("Ice cream sandwich"),
+                                    TableCell::num("37"),
+                                    TableCell::num("4.33333333333"),
+                                    TableCell::text("I like ice cream more"),
                                 ])
-                                .row(&[
-                                    TableCell::Text("Eclair".into()),
-                                    TableCell::Numeric("24".into()),
-                                    TableCell::Numeric("6.0".into()),
-                                    TableCell::Text("New filing flavor".into()),
+                                .row(vec![
+                                    TableCell::text("Eclair"),
+                                    TableCell::num("24"),
+                                    TableCell::num("6.0"),
+                                    TableCell::text("New filing flavor"),
                                 ])
                         }</div>
                     </div>
@@ -232,29 +232,29 @@ impl Component for Root {
                         <div>{
                             DataTable::new("data-table-selection")
                                 .row_selection(true)
-                                .head(&[
-                                    TableCell::Text("Dessert".into()),
-                                    TableCell::Numeric("Carbs (g)".into()),
-                                    TableCell::Numeric("Protein (g)".into()),
-                                    TableCell::Text("Comments".into()),
+                                .head(vec![
+                                    TableCell::text("Dessert"),
+                                    TableCell::num("Carbs (g)"),
+                                    TableCell::num("Protein (g)"),
+                                    TableCell::text("Comments"),
                                 ])
-                                .row(&[
-                                    TableCell::Text("Frozen yogurt".into()),
-                                    TableCell::Numeric("24".into()),
-                                    TableCell::Numeric("4.0".into()),
-                                    TableCell::Text("Super tasty".into()),
+                                .row(vec![
+                                    TableCell::text("Frozen yogurt"),
+                                    TableCell::num("24"),
+                                    TableCell::num("4.0"),
+                                    TableCell::text("Super tasty"),
                                 ])
-                                .row(&[
-                                    TableCell::Text("Ice cream sandwich".into()),
-                                    TableCell::Numeric("37".into()),
-                                    TableCell::Numeric("4.33333333333".into()),
-                                    TableCell::Text("I like ice cream more".into()),
+                                .row(vec![
+                                    TableCell::text("Ice cream sandwich"),
+                                    TableCell::num("37"),
+                                    TableCell::num("4.33333333333"),
+                                    TableCell::text("I like ice cream more"),
                                 ])
-                                .row(&[
-                                    TableCell::Text("Eclair".into()),
-                                    TableCell::Numeric("24".into()),
-                                    TableCell::Numeric("6.0".into()),
-                                    TableCell::Text("New filing flavor".into()),
+                                .row(vec![
+                                    TableCell::text("Eclair"),
+                                    TableCell::num("24"),
+                                    TableCell::num("6.0"),
+                                    TableCell::text("New filing flavor"),
                                 ])
                         }</div>
                     </div>
