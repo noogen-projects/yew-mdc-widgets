@@ -1,7 +1,7 @@
-#![recursion_limit = "2048"]
+#![recursion_limit = "4096"]
 
 use yew::{initialize, App, run_loop, utils, html, Component, ComponentLink, Html};
-use yew_mdc_widgets::{Button, ButtonStyle, Checkbox, TextField, TextFieldStyle, DataTable, TableCell};
+use yew_mdc_widgets::{Button, ButtonStyle, Checkbox, Radio, TextField, TextFieldStyle, DataTable, TableCell};
 
 struct Root {
     link: ComponentLink<Self>,
@@ -34,6 +34,10 @@ impl Component for Root {
                     <li class = "mdc-list-item" onclick = self.link.callback(|_| utils::window().location().set_href("#checkboxes").unwrap())>
                         <span class = "mdc-list-item__ripple"></span>
                         <span class = "mdc-list-item__text">{ "Checkboxes" }</span>
+                    </li>
+                    <li class = "mdc-list-item" onclick = self.link.callback(|_| utils::window().location().set_href("#radio_buttons").unwrap())>
+                        <span class = "mdc-list-item__ripple"></span>
+                        <span class = "mdc-list-item__text">{ "Radio buttons" }</span>
                     </li>
                     <li class = "mdc-list-item" onclick = self.link.callback(|_| utils::window().location().set_href("#text_fields").unwrap())>
                         <span class = "mdc-list-item__ripple"></span>
@@ -183,6 +187,64 @@ impl Component for Root {
                         <span class = "demo-item">
                             <div class = "mdc-form-field">
                                 { Checkbox::new("checkbox-label-disabled").disabled(true).label("checkbox") }
+                            </div>
+                        </span>
+                    </div>
+                </div>
+
+                <h2 class = "demo-title mdc-typography--headline6"><a name = "radio_buttons"></a>{ "Radio buttons" }</h2>
+                <div>
+                    <div>
+                        <h3 class = "mdc-typography--subtitle1">{ "Default" }</h3>
+                        <span class = "demo-item">
+                            { Radio::new("radio-default-1").name_of_set("default-set") }
+                        </span>
+                        <span class = "demo-item">
+                            { Radio::new("radio-default-2").name_of_set("default-set").checked(true) }
+                        </span>
+                        <span class = "demo-item">
+                            { Radio::new("radio-no-ripple-1").name_of_set("no-ripple-set").ripple(false) }
+                        </span>
+                        <span class = "demo-item">
+                            { Radio::new("radio-no-ripple-2").name_of_set("no-ripple-set").ripple(false).checked(true) }
+                        </span>
+                        <span class = "demo-item">
+                            { Radio::new("radio-disabled-1").name_of_set("disabled-set").disabled(true) }
+                        </span>
+                        <span class = "demo-item">
+                            { Radio::new("radio-disabled-2").name_of_set("disabled-set").disabled(true).checked(true) }
+                        </span>
+                    </div>
+                    <div>
+                        <h3 class = "mdc-typography--subtitle1">{ "Labeled" }</h3>
+                        <span class = "demo-item">
+                            <div class = "mdc-form-field">
+                                { Radio::new("label-radio-1").name_of_set("label-set").label("Radio 1") }
+                            </div>
+                        </span>
+                        <span class = "demo-item">
+                            <div class = "mdc-form-field">
+                                { Radio::new("label-radio-2").name_of_set("label-set").checked(true).label("Radio 2") }
+                            </div>
+                        </span>
+                        <span class = "demo-item">
+                            <div class = "mdc-form-field">
+                                { Radio::new("radio-label-no-ripple-1").name_of_set("label-no-ripple-set").ripple(false).label("No ripple 1") }
+                            </div>
+                        </span>
+                        <span class = "demo-item">
+                            <div class = "mdc-form-field">
+                                { Radio::new("radio-label-no-ripple-2").name_of_set("label-no-ripple-set").ripple(false).checked(true).label("No ripple 2") }
+                            </div>
+                        </span>
+                        <span class = "demo-item">
+                            <div class = "mdc-form-field">
+                                { Radio::new("radio-label-disabled-1").name_of_set("dlabel-isabled-set").disabled(true).label("Disabled 1") }
+                            </div>
+                        </span>
+                        <span class = "demo-item">
+                            <div class = "mdc-form-field">
+                                { Radio::new("radio-label-disabled-2").name_of_set("label-disabled-set").disabled(true).checked(true).label("Disabled 2") }
                             </div>
                         </span>
                     </div>

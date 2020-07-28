@@ -6,7 +6,7 @@ use yew::{html, html::onclick, Callback, Html, MouseEvent, virtual_dom::VTag};
 
 use crate::{
     Text,
-    utils::VTagExt,
+    utils::{VTagExt, MdcWidget, ripple, root_and_input_child_disabled},
 };
 
 #[derive(Debug, Clone)]
@@ -37,56 +37,32 @@ impl Checkbox {
         }
     }
 
-    pub fn label<'a>(mut self, label: impl Into<Text<'a>>) -> Self {
+    pub fn label(mut self, label: impl Into<Html>) -> Self {
         if let Html::VTag(_) = &self.html {
             self.html = html! { <>{ self.html }</> }
         }
         if let Html::VList(list) = &mut self.html {
             list.children.insert(1, html! {
-                <label for = self.input_id>{ label.into() }</label>
+                <label for = self.input_id>{ label }</label>
             });
         }
         self
     }
 
-    pub fn labeled_by<'a>(mut self, labeled_by: impl Into<String>) -> Self {
+    pub fn labeled_by(mut self, labeled_by: impl Into<String>) -> Self {
         if let Some(input) = self.root_tag_mut().find_child_tag_mut("input") {
             input.attributes.insert("aria-labelledby".into(), labeled_by.into());
         }
         self
     }
 
-    pub fn ripple(mut self, ripple: bool) -> Self {
-        let ripple_class = "mdc-checkbox__ripple";
-        if ripple {
-            if !self.root_tag().is_some_child_contains_class(ripple_class) {
-                let idx = self.root_tag().children.len() - 1;
-                self.root_tag_mut().children.insert(idx, html! {
-                    <div class = ripple_class></div>
-                });
-            }
-        } else {
-            if let Some(idx) = self.root_tag().find_child_contains_class(ripple_class) {
-                self.root_tag_mut().children.remove(idx);
-            }
-        }
+    pub fn ripple(mut self, enabled: bool) -> Self {
+        ripple(&mut self, "mdc-checkbox__ripple", enabled);
         self
     }
 
     pub fn disabled(mut self, disabled: bool) -> Self {
-        if disabled {
-            self.root_tag_mut().add_class("mdc-checkbox--disabled");
-        } else {
-            self.root_tag_mut().remove_any_class(&["mdc-checkbox--disabled"]);
-        }
-
-        if let Some(input) = self.root_tag_mut().find_child_tag_mut("input") {
-            if disabled {
-                input.attributes.insert("disabled".into(), "disabled".into());
-            } else {
-                input.attributes.remove("disabled");
-            }
-        }
+        root_and_input_child_disabled(&mut self, "mdc-checkbox--disabled", disabled);
         self
     }
 
@@ -112,27 +88,17 @@ impl Checkbox {
         self.root_tag_mut().add_class(class);
         self
     }
+}
 
-    fn root_tag(&self) -> &VTag {
-        match &self.html {
-            Html::VTag(tag) => return tag,
-            Html::VList(list) => if let Some(Html::VTag(tag)) = list.children.first() {
-                return tag;
-            },
-            _ => (),
-        }
-        panic!("The root checkbox element must be a tag!");
+impl MdcWidget for Checkbox {
+    const NAME: &'static str = "Checkbox";
+
+    fn html(&self) -> &Html {
+        &self.html
     }
 
-    fn root_tag_mut(&mut self) -> &mut VTag {
-        match &mut self.html {
-            Html::VTag(tag) => return tag,
-            Html::VList(list) => if let Some(Html::VTag(tag)) = list.children.first_mut() {
-                return tag;
-            },
-            _ => (),
-        }
-        panic!("The root checkbox element must be a tag!");
+    fn html_mut(&mut self) -> &mut Html {
+        &mut self.html
     }
 }
 

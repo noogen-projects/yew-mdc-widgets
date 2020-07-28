@@ -104,7 +104,7 @@ impl DataTable {
         self
     }
 
-    pub fn row<'a>(mut self, row: impl IntoIterator<Item = TableCell>) -> Self {
+    pub fn row(mut self, row: impl IntoIterator<Item = TableCell>) -> Self {
         let mut row: Vec<_> = row
             .into_iter()
             .map(|cell| cell.build_body_cell())

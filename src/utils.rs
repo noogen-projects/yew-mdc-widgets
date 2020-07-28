@@ -1,4 +1,4 @@
-use yew::{Html, virtual_dom::VTag};
+use yew::{html, Html, virtual_dom::VTag};
 
 pub trait VTagExt {
     fn is_contains_class(&self, class: &str) -> bool;
@@ -12,6 +12,7 @@ pub trait VTagExt {
     fn is_last_child(&self, child_tag_name: &str) -> bool;
     fn first_child_tag(&self, child_tag_name: &str) -> Option<&VTag>;
     fn first_child_tag_mut(&mut self, child_tag_name: &str) -> Option<&mut VTag>;
+    fn find_child_tag(&self, child_tag_name: &str) -> Option<&VTag>;
     fn find_child_tag_mut(&mut self, child_tag_name: &str) -> Option<&mut VTag>;
 }
 
@@ -104,6 +105,17 @@ impl VTagExt for VTag {
             Some(Html::VTag(child)) if child.tag() == child_tag_name => Some(child),
             _ => None,
         }
+    }
+
+    fn find_child_tag(&self, child_tag_name: &str) -> Option<&VTag> {
+        for child in self.children.iter() {
+            if let Html::VTag(child) = child {
+                if child.tag() == child_tag_name {
+                    return Some(child);
+                }
+            }
+        }
+        None
     }
 
     fn find_child_tag_mut(&mut self, child_tag_name: &str) -> Option<&mut VTag> {
@@ -203,11 +215,82 @@ impl VTagExt for Html {
         }
     }
 
+    fn find_child_tag(&self, child_tag_name: &str) -> Option<&VTag> {
+        if let Html::VTag(tag) = self {
+            tag.find_child_tag(child_tag_name)
+        } else {
+            None
+        }
+    }
+
     fn find_child_tag_mut(&mut self, child_tag_name: &str) -> Option<&mut VTag> {
         if let Html::VTag(tag) = self {
             tag.find_child_tag_mut(child_tag_name)
         } else {
             None
+        }
+    }
+}
+
+pub trait MdcWidget {
+    const NAME: &'static str;
+
+    fn html(&self) -> &Html;
+
+    fn html_mut(&mut self) -> &mut Html;
+
+    fn root_tag(&self) -> &VTag {
+        match self.html() {
+            Html::VTag(tag) => return tag,
+            Html::VList(list) => if let Some(Html::VTag(tag)) = list.children.first() {
+                return tag;
+            },
+            _ => (),
+        }
+        panic!("The root element of the {} must be a tag!", Self::NAME);
+    }
+
+    fn root_tag_mut(&mut self) -> &mut VTag {
+        match self.html_mut() {
+            Html::VTag(tag) => return tag,
+            Html::VList(list) => if let Some(Html::VTag(tag)) = list.children.first_mut() {
+                return tag;
+            },
+            _ => (),
+        }
+        panic!("The root element of the {} must be a tag!", Self::NAME);
+    }
+}
+
+pub fn ripple(widget: &mut impl MdcWidget, ripple_class: impl AsRef<str>, enabled: bool) {
+    let ripple_class = ripple_class.as_ref();
+    if enabled {
+        if !widget.root_tag().is_some_child_contains_class(ripple_class) {
+            let idx = widget.root_tag().children.len().checked_sub(1).unwrap_or(0);
+            widget.root_tag_mut().children.insert(idx, html! {
+                <div class = ripple_class></div>
+            });
+        }
+    } else {
+        if let Some(idx) = widget.root_tag().find_child_contains_class(ripple_class) {
+            widget.root_tag_mut().children.remove(idx);
+        }
+    }
+}
+
+pub fn root_and_input_child_disabled(widget: &mut impl MdcWidget, disabled_class: impl AsRef<str>, disabled: bool) {
+    let disabled_class = disabled_class.as_ref();
+    if disabled {
+        widget.root_tag_mut().add_class(disabled_class);
+    } else {
+        widget.root_tag_mut().remove_any_class(&[disabled_class]);
+    }
+
+    if let Some(input) = widget.root_tag_mut().find_child_tag_mut("input") {
+        if disabled {
+            input.attributes.insert("disabled".into(), "disabled".into());
+        } else {
+            input.attributes.remove("disabled");
         }
     }
 }

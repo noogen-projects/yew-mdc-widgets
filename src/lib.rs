@@ -2,11 +2,12 @@
 
 use std::borrow::Cow;
 
-pub use self::{button::*, checkbox::*, data_table::*, text_field::*};
+pub use self::{button::*, checkbox::*, data_table::*, text_field::*, radio::*};
 
 pub mod button;
 pub mod checkbox;
 pub mod data_table;
+pub mod radio;
 pub mod text_field;
 pub mod utils;
 

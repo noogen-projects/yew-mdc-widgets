@@ -6,7 +6,7 @@ use yew::{html, html::onclick, Callback, Html, MouseEvent, virtual_dom::VTag};
 
 use crate::{
     Text,
-    utils::VTagExt,
+    utils::{VTagExt, MdcWidget, ripple},
 };
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -52,9 +52,9 @@ impl Button {
         self
     }
 
-    pub fn label<'a>(mut self, label: impl Into<Text<'a>>) -> Self {
+    pub fn label(mut self, label: impl Into<Html>) -> Self {
         self.root_tag_mut().children.push(html! {
-            <span class = "mdc-button__label">{ label.into() }</span>
+            <span class = "mdc-button__label">{ label }</span>
         });
         self
     }
@@ -66,14 +66,9 @@ impl Button {
         self.class(style.class())
     }
 
-    pub fn ripple(mut self, ripple: bool) -> Self {
-        let ripple_class = "mdc-button__ripple";
-        if ripple {
-            if !self.root_tag().is_first_child_contains_class(ripple_class) {
-                self.root_tag_mut().children.insert(0, html! {
-                    <div class = "mdc-button__ripple"></div>
-                });
-            }
+    pub fn ripple(mut self, enabled: bool) -> Self {
+        ripple(&mut self, "mdc-button__ripple", enabled);
+        if enabled {
             if !self.root_tag().is_last_child("script") {
                 let button_tag = self.root_tag_mut();
                 if let Some(id) = button_tag.attributes.get("id") {
@@ -83,9 +78,6 @@ impl Button {
                 }
             }
         } else {
-            if self.root_tag().is_first_child_contains_class(ripple_class) {
-                self.root_tag_mut().children.remove(0);
-            }
             if self.root_tag().is_last_child("script") {
                 let idx = self.root_tag_mut().children.len() - 1;
                 self.root_tag_mut().children.remove(idx);
@@ -136,21 +128,17 @@ impl Button {
         self.root_tag_mut().add_listener(Rc::new(onclick::Wrapper::new(callback)));
         self
     }
+}
 
-    fn root_tag(&self) -> &VTag {
-        if let Html::VTag(tag) = &self.html {
-            tag
-        } else {
-            panic!("The root button element must be a tag!");
-        }
+impl MdcWidget for Button {
+    const NAME: &'static str = "Button";
+
+    fn html(&self) -> &Html {
+        &self.html
     }
 
-    fn root_tag_mut(&mut self) -> &mut VTag {
-        if let Html::VTag(tag) = &mut self.html {
-            tag
-        } else {
-            panic!("The root button element must be a tag!");
-        }
+    fn html_mut(&mut self) -> &mut Html {
+        &mut self.html
     }
 }
 
