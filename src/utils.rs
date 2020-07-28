@@ -62,71 +62,35 @@ impl VTagExt for VTag {
     }
 
     fn is_some_child_contains_class(&self, class: &str) -> bool {
-        for child in self.children.iter() {
-            if child.is_contains_class(class) {
-                return true;
-            }
-        }
-        false
+        is_some_child_contains_class(self.children.iter(), class)
     }
 
     fn find_child_contains_class(&self, class: &str) -> Option<usize> {
-        self.children.iter().enumerate().find_map(|(idx, child)| match child {
-            Html::VTag(child) if child.is_contains_class(class) => Some(idx),
-            _ => None,
-        })
+        find_child_contains_class(self.children.iter(), class)
     }
 
     fn is_first_child(&self, child_tag_name: &str) -> bool {
-        if let Some(Html::VTag(child)) = self.children.first() {
-            child.tag() == child_tag_name
-        } else {
-            false
-        }
+        get_tag(self.children.first(), child_tag_name).is_some()
     }
 
     fn is_last_child(&self, child_tag_name: &str) -> bool {
-        if let Some(Html::VTag(child)) = self.children.last() {
-            child.tag() == child_tag_name
-        } else {
-            false
-        }
+        get_tag(self.children.last(), child_tag_name).is_some()
     }
 
     fn first_child_tag(&self, child_tag_name: &str) -> Option<&VTag> {
-        match self.children.first() {
-            Some(Html::VTag(child)) if child.tag() == child_tag_name => Some(child),
-            _ => None,
-        }
+        get_tag(self.children.first(), child_tag_name)
     }
 
     fn first_child_tag_mut(&mut self, child_tag_name: &str) -> Option<&mut VTag> {
-        match self.children.first_mut() {
-            Some(Html::VTag(child)) if child.tag() == child_tag_name => Some(child),
-            _ => None,
-        }
+        get_tag_mut(self.children.first_mut(), child_tag_name)
     }
 
     fn find_child_tag(&self, child_tag_name: &str) -> Option<&VTag> {
-        for child in self.children.iter() {
-            if let Html::VTag(child) = child {
-                if child.tag() == child_tag_name {
-                    return Some(child);
-                }
-            }
-        }
-        None
+        find_child_tag(self.children.iter(), child_tag_name)
     }
 
     fn find_child_tag_mut(&mut self, child_tag_name: &str) -> Option<&mut VTag> {
-        for child in self.children.iter_mut() {
-            if let Html::VTag(child) = child {
-                if child.tag() == child_tag_name {
-                    return Some(child);
-                }
-            }
-        }
-        None
+        find_child_tag_mut(self.children.iter_mut(), child_tag_name)
     }
 }
 
@@ -160,76 +124,134 @@ impl VTagExt for Html {
     }
 
     fn is_first_child_contains_class(&self, class: &str) -> bool {
-        if let Html::VTag(tag) = self {
-            tag.is_first_child_contains_class(class)
-        } else {
-            false
+        match self {
+            Html::VTag(tag) => tag.is_first_child_contains_class(class),
+            Html::VList(list) => {
+                if let Some(Html::VTag(child)) = list.first() {
+                    child.is_contains_class(class)
+                } else {
+                    false
+                }
+            },
+            _ => false,
         }
     }
 
     fn is_some_child_contains_class(&self, class: &str) -> bool {
-        if let Html::VTag(tag) = self {
-            tag.is_some_child_contains_class(class)
-        } else {
-            false
+        match self {
+            Html::VTag(tag) => tag.is_some_child_contains_class(class),
+            Html::VList(list) => is_some_child_contains_class(list.iter(), class),
+            _ => false,
         }
     }
 
     fn find_child_contains_class(&self, class: &str) -> Option<usize> {
-        if let Html::VTag(tag) = self {
-            tag.find_child_contains_class(class)
-        } else {
-            None
+        match self {
+            Html::VTag(tag) => tag.find_child_contains_class(class),
+            Html::VList(list) => find_child_contains_class(list.iter(), class),
+            _ => None,
         }
     }
 
     fn is_first_child(&self, child_tag_name: &str) -> bool {
-        if let Html::VTag(tag) = self {
-            tag.is_first_child(child_tag_name)
-        } else {
-            false
+        match self {
+            Html::VTag(tag) => tag.is_first_child(child_tag_name),
+            Html::VList(list) => get_tag(list.children.first(), child_tag_name).is_some(),
+            _ => false,
         }
     }
 
     fn is_last_child(&self, child_tag_name: &str) -> bool {
-        if let Html::VTag(tag) = self {
-            tag.is_last_child(child_tag_name)
-        } else {
-            false
+        match self {
+            Html::VTag(tag) => tag.is_last_child(child_tag_name),
+            Html::VList(list) => get_tag(list.children.last(), child_tag_name).is_some(),
+            _ => false,
         }
     }
 
     fn first_child_tag(&self, child_tag_name: &str) -> Option<&VTag> {
-        if let Html::VTag(tag) = self {
-            tag.first_child_tag(child_tag_name)
-        } else {
-            None
+        match self {
+            Html::VTag(tag) => tag.first_child_tag(child_tag_name),
+            Html::VList(list) => get_tag(list.children.first(), child_tag_name),
+            _ => None,
         }
     }
 
     fn first_child_tag_mut(&mut self, child_tag_name: &str) -> Option<&mut VTag> {
-        if let Html::VTag(tag) = self {
-            tag.first_child_tag_mut(child_tag_name)
-        } else {
-            None
+        match self {
+            Html::VTag(tag) => tag.first_child_tag_mut(child_tag_name),
+            Html::VList(list) => get_tag_mut(list.children.first_mut(), child_tag_name),
+            _ => None,
         }
     }
 
     fn find_child_tag(&self, child_tag_name: &str) -> Option<&VTag> {
-        if let Html::VTag(tag) = self {
-            tag.find_child_tag(child_tag_name)
-        } else {
-            None
+        match self {
+            Html::VTag(tag) => tag.find_child_tag(child_tag_name),
+            Html::VList(list) => find_child_tag(list.children.iter(), child_tag_name),
+            _ => None,
         }
     }
 
     fn find_child_tag_mut(&mut self, child_tag_name: &str) -> Option<&mut VTag> {
-        if let Html::VTag(tag) = self {
-            tag.find_child_tag_mut(child_tag_name)
-        } else {
-            None
+        match self {
+            Html::VTag(tag) => tag.find_child_tag_mut(child_tag_name),
+            Html::VList(list) => find_child_tag_mut(list.children.iter_mut(), child_tag_name),
+            _ => None,
         }
     }
+}
+
+fn is_some_child_contains_class<'a>(children: impl IntoIterator<Item = &'a Html>, class: &str) -> bool {
+    for child in children {
+        if child.is_contains_class(class) {
+            return true;
+        }
+    }
+    false
+}
+
+fn find_child_contains_class<'a>(children: impl IntoIterator<Item = &'a Html>, class: &str) -> Option<usize> {
+    children.into_iter().enumerate().find_map(|(idx, child)| match child {
+        Html::VTag(child) if child.is_contains_class(class) => Some(idx),
+        _ => None,
+    })
+}
+
+fn get_tag<'a>(html: Option<&'a Html>, tag_name: &str) -> Option<&'a VTag> {
+    match html {
+        Some(Html::VTag(tag)) if tag.tag() == tag_name => Some(tag),
+        _ => None,
+    }
+}
+
+fn get_tag_mut<'a>(html: Option<&'a mut Html>, tag_name: &str) -> Option<&'a mut VTag> {
+    match html {
+        Some(Html::VTag(tag)) if tag.tag() == tag_name => Some(tag),
+        _ => None,
+    }
+}
+
+fn find_child_tag<'a>(children: impl IntoIterator<Item = &'a Html>, child_tag_name: &str) -> Option<&'a VTag> {
+    for child in children {
+        if let Html::VTag(child) = child {
+            if child.tag() == child_tag_name {
+                return Some(child);
+            }
+        }
+    }
+    None
+}
+
+fn find_child_tag_mut<'a>(children: impl IntoIterator<Item = &'a mut Html>, child_tag_name: &str) -> Option<&'a mut VTag> {
+    for child in children {
+        if let Html::VTag(child) = child {
+            if child.tag() == child_tag_name {
+                return Some(child);
+            }
+        }
+    }
+    None
 }
 
 pub trait MdcWidget {

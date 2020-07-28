@@ -88,6 +88,15 @@ impl Checkbox {
         self.root_tag_mut().add_class(class);
         self
     }
+
+    pub fn on_click(mut self, callback: Callback<MouseEvent>) -> Self {
+        let listener = Rc::new(onclick::Wrapper::new(callback));
+        if let Some(label) = self.html_mut().find_child_tag_mut("label") {
+            label.add_listener(listener.clone());
+        }
+        self.root_tag_mut().add_listener(listener);
+        self
+    }
 }
 
 impl MdcWidget for Checkbox {

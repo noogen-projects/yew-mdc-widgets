@@ -2,7 +2,7 @@ use std::{
     rc::Rc, ops::{Deref, DerefMut},
 };
 
-use yew::{html, html::onclick, Callback, Html, MouseEvent, virtual_dom::VTag};
+use yew::{html, html::onclick, Callback, Html, MouseEvent};
 
 use crate::{
     Text,
