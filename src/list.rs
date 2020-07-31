@@ -162,13 +162,23 @@ impl List {
         }
     }
 
+    pub fn two_line<'a>(id: impl Into<Text<'a>>) -> Self {
+        Self::new(id).class("mdc-list--two-line")
+    }
+
     pub fn class(mut self, class: impl AsRef<str>) -> Self {
         self.root_tag_mut().add_class(class);
         self
     }
 
     pub fn item(mut self, item: impl Into<Html>) -> Self {
-        self.root_tag_mut().children.push(item.into());
+        let mut item = item.into();
+        let root_tag = self.root_tag_mut();
+
+        if root_tag.children.len() == 0 {
+            item.set_attr("tabindex", "0");
+        }
+        root_tag.children.push(item.into());
         self
     }
 
