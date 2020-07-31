@@ -68,19 +68,18 @@ impl Button {
 
     pub fn ripple(mut self, enabled: bool) -> Self {
         ripple(&mut self, "mdc-button__ripple", enabled);
+        let root_tag = self.root_tag_mut();
         if enabled {
-            if !self.root_tag().is_last_child("script") {
-                let button_tag = self.root_tag_mut();
-                if let Some(id) = button_tag.attributes.get("id") {
-                    button_tag.children.push(html! {
+            if !root_tag.is_last_child("script") {
+                if let Some(id) = root_tag.attributes.get("id") {
+                    root_tag.children.push(html! {
                         <script>{ format!("mdc.ripple.MDCRipple.attachTo(document.getElementById('{}'))", id) }</script>
                     });
                 }
             }
         } else {
-            if self.root_tag().is_last_child("script") {
-                let idx = self.root_tag_mut().children.len() - 1;
-                self.root_tag_mut().children.remove(idx);
+            if let Some(idx) = root_tag.find_child_tag_idx("script") {
+                root_tag.children.remove(idx);
             }
         }
         self

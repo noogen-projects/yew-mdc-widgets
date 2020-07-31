@@ -1,7 +1,7 @@
 #![recursion_limit = "4096"]
 
 use yew::{initialize, App, run_loop, utils, html, Component, ComponentLink, Html};
-use yew_mdc_widgets::{Button, ButtonStyle, Checkbox, Radio, TextField, DataTable, TableCell};
+use yew_mdc_widgets::{Button, ButtonStyle, Checkbox, Radio, TextField, DataTable, TableCell, List, ListItem};
 
 struct Root {
     link: ComponentLink<Self>,
@@ -26,28 +26,21 @@ impl Component for Root {
     fn view(&self) -> Html {
         html! {
             <div class = "demo-content">
-                <ul class = "mdc-list">
-                    <li class = "mdc-list-item" onclick = self.link.callback(|_| utils::window().location().set_href("#buttons").unwrap())>
-                        <span class = "mdc-list-item__ripple"></span>
-                        <span class = "mdc-list-item__text">{ "Buttons" }</span>
-                    </li>
-                    <li class = "mdc-list-item" onclick = self.link.callback(|_| utils::window().location().set_href("#checkboxes").unwrap())>
-                        <span class = "mdc-list-item__ripple"></span>
-                        <span class = "mdc-list-item__text">{ "Checkboxes" }</span>
-                    </li>
-                    <li class = "mdc-list-item" onclick = self.link.callback(|_| utils::window().location().set_href("#radio_buttons").unwrap())>
-                        <span class = "mdc-list-item__ripple"></span>
-                        <span class = "mdc-list-item__text">{ "Radio buttons" }</span>
-                    </li>
-                    <li class = "mdc-list-item" onclick = self.link.callback(|_| utils::window().location().set_href("#text_fields").unwrap())>
-                        <span class = "mdc-list-item__ripple"></span>
-                        <span class = "mdc-list-item__text">{ "Text fields" }</span>
-                    </li>
-                    <li class = "mdc-list-item" onclick = self.link.callback(|_| utils::window().location().set_href("#data_tables").unwrap())>
-                        <span class = "mdc-list-item__ripple"></span>
-                        <span class = "mdc-list-item__text">{ "Data tables" }</span>
-                    </li>
-                </ul>
+                <h1 class = "demo-title mdc-typography--headline5">{ "Material design components" }</h1>
+                {
+                    List::new("contents").items(vec![
+                        ListItem::new("contents-buttons", "Buttons")
+                            .on_click(self.link.callback(|_| utils::window().location().set_href("#buttons").unwrap())),
+                        ListItem::new("contents-checkboxes", "Checkboxes")
+                            .on_click(self.link.callback(|_| utils::window().location().set_href("#checkboxes").unwrap())),
+                        ListItem::new("contents-radio_buttons", "Radio buttons")
+                            .on_click(self.link.callback(|_| utils::window().location().set_href("#radio_buttons").unwrap())),
+                        ListItem::new("contents-text_fields", "Text fields")
+                            .on_click(self.link.callback(|_| utils::window().location().set_href("#text_fields").unwrap())),
+                        ListItem::new("contents-data_tables", "Data tables")
+                            .on_click(self.link.callback(|_| utils::window().location().set_href("#data_tables").unwrap())),
+                    ])
+                }
 
                 <h2 class = "demo-title mdc-typography--headline6"><a name = "buttons"></a>{ "Buttons" }</h2>
                 <div>
