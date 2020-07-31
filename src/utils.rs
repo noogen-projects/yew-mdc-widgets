@@ -1,4 +1,5 @@
 use yew::{html, Html, virtual_dom::VTag};
+use std::ops::DerefMut;
 
 pub trait VTagExt {
     fn is_contains_class(&self, class: &str) -> bool;
@@ -7,13 +8,15 @@ pub trait VTagExt {
     fn remove_any_class(&mut self, classes: &[&str]);
     fn is_first_child_contains_class(&self, class: &str) -> bool;
     fn is_some_child_contains_class(&self, class: &str) -> bool;
-    fn find_child_contains_class(&self, class: &str) -> Option<usize>;
+    fn find_child_contains_class_idx(&self, class: &str) -> Option<usize>;
+    fn find_child_contains_class_mut(&mut self, class: &str) -> Option<&mut VTag>;
     fn is_first_child(&self, child_tag_name: &str) -> bool;
     fn is_last_child(&self, child_tag_name: &str) -> bool;
     fn first_child_tag(&self, child_tag_name: &str) -> Option<&VTag>;
     fn first_child_tag_mut(&mut self, child_tag_name: &str) -> Option<&mut VTag>;
     fn find_child_tag(&self, child_tag_name: &str) -> Option<&VTag>;
     fn find_child_tag_mut(&mut self, child_tag_name: &str) -> Option<&mut VTag>;
+    fn find_child_tag_idx(&self, child_tag_name: &str) -> Option<usize>;
 }
 
 impl VTagExt for VTag {
@@ -65,8 +68,12 @@ impl VTagExt for VTag {
         is_some_child_contains_class(self.children.iter(), class)
     }
 
-    fn find_child_contains_class(&self, class: &str) -> Option<usize> {
-        find_child_contains_class(self.children.iter(), class)
+    fn find_child_contains_class_idx(&self, class: &str) -> Option<usize> {
+        find_child_contains_class_idx(self.children.iter(), class)
+    }
+
+    fn find_child_contains_class_mut(&mut self, class: &str) -> Option<&mut VTag> {
+        find_child_contains_class_mut(self.children.iter_mut(), class)
     }
 
     fn is_first_child(&self, child_tag_name: &str) -> bool {
@@ -91,6 +98,10 @@ impl VTagExt for VTag {
 
     fn find_child_tag_mut(&mut self, child_tag_name: &str) -> Option<&mut VTag> {
         find_child_tag_mut(self.children.iter_mut(), child_tag_name)
+    }
+
+    fn find_child_tag_idx(&self, child_tag_name: &str) -> Option<usize> {
+        find_child_tag_idx(self.children.iter(), child_tag_name)
     }
 }
 
@@ -145,10 +156,18 @@ impl VTagExt for Html {
         }
     }
 
-    fn find_child_contains_class(&self, class: &str) -> Option<usize> {
+    fn find_child_contains_class_idx(&self, class: &str) -> Option<usize> {
         match self {
-            Html::VTag(tag) => tag.find_child_contains_class(class),
-            Html::VList(list) => find_child_contains_class(list.iter(), class),
+            Html::VTag(tag) => tag.find_child_contains_class_idx(class),
+            Html::VList(list) => find_child_contains_class_idx(list.iter(), class),
+            _ => None,
+        }
+    }
+
+    fn find_child_contains_class_mut(&mut self, class: &str) -> Option<&mut VTag> {
+        match self {
+            Html::VTag(tag) => tag.find_child_contains_class_mut(class),
+            Html::VList(list) => find_child_contains_class_mut(list.iter_mut(), class),
             _ => None,
         }
     }
@@ -200,6 +219,14 @@ impl VTagExt for Html {
             _ => None,
         }
     }
+
+    fn find_child_tag_idx(&self, child_tag_name: &str) -> Option<usize> {
+        match self {
+            Html::VTag(tag) => tag.find_child_tag_idx(child_tag_name),
+            Html::VList(list) => find_child_tag_idx(list.children.iter(), child_tag_name),
+            _ => None,
+        }
+    }
 }
 
 fn is_some_child_contains_class<'a>(children: impl IntoIterator<Item = &'a Html>, class: &str) -> bool {
@@ -211,9 +238,16 @@ fn is_some_child_contains_class<'a>(children: impl IntoIterator<Item = &'a Html>
     false
 }
 
-fn find_child_contains_class<'a>(children: impl IntoIterator<Item = &'a Html>, class: &str) -> Option<usize> {
+fn find_child_contains_class_idx<'a>(children: impl IntoIterator<Item = &'a Html>, class: &str) -> Option<usize> {
     children.into_iter().enumerate().find_map(|(idx, child)| match child {
         Html::VTag(child) if child.is_contains_class(class) => Some(idx),
+        _ => None,
+    })
+}
+
+fn find_child_contains_class_mut<'a>(children: impl IntoIterator<Item = &'a mut Html>, class: &str) -> Option<&'a mut VTag> {
+    children.into_iter().enumerate().find_map(|(idx, child)| match child {
+        Html::VTag(child) if child.is_contains_class(class) => Some(child.deref_mut()),
         _ => None,
     })
 }
@@ -248,6 +282,17 @@ fn find_child_tag_mut<'a>(children: impl IntoIterator<Item = &'a mut Html>, chil
         if let Html::VTag(child) = child {
             if child.tag() == child_tag_name {
                 return Some(child);
+            }
+        }
+    }
+    None
+}
+
+fn find_child_tag_idx<'a>(children: impl IntoIterator<Item = &'a Html>, child_tag_name: &str) -> Option<usize> {
+    for (idx, child) in children.into_iter().enumerate() {
+        if let Html::VTag(child) = child {
+            if child.tag() == child_tag_name {
+                return Some(idx);
             }
         }
     }
@@ -294,7 +339,7 @@ pub fn ripple(widget: &mut impl MdcWidget, ripple_class: impl AsRef<str>, enable
             });
         }
     } else {
-        if let Some(idx) = widget.root_tag().find_child_contains_class(ripple_class) {
+        if let Some(idx) = widget.root_tag().find_child_contains_class_idx(ripple_class) {
             widget.root_tag_mut().children.remove(idx);
         }
     }

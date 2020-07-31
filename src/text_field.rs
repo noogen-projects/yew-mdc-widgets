@@ -1,229 +1,183 @@
-use std::ops::DerefMut;
+use std::ops::{Deref, DerefMut};
 
-use yew::{html, Html};
+use yew::{html, Html, virtual_dom::VTag};
 
-use crate::Text;
+use crate::{
+    Text,
+    utils::{VTagExt, MdcWidget},
+};
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum TextFieldStyle {
     Filled,
     Outlined,
-    FullWidth,
+    FilledFullWidth,
 }
 
 impl TextFieldStyle {
     pub fn class(&self) -> &'static str {
         match self {
-            TextFieldStyle::Filled => "mdc-text-field mdc-text-field--filled",
-            TextFieldStyle::Outlined => "mdc-text-field mdc-text-field--outlined",
-            TextFieldStyle::FullWidth => "mdc-text-field mdc-text-field--filled mdc-text-field--fullwidth",
+            TextFieldStyle::Filled => "mdc-text-field--filled",
+            TextFieldStyle::Outlined => "mdc-text-field--outlined",
+            TextFieldStyle::FilledFullWidth => "mdc-text-field--filled mdc-text-field--fullwidth",
         }
+    }
+
+    pub fn classes() -> [&'static str; 3] {
+        [
+            TextFieldStyle::Filled.class(),
+            TextFieldStyle::Outlined.class(),
+            TextFieldStyle::FilledFullWidth.class(),
+        ]
     }
 }
 
-#[derive(Default, Debug, Copy, Clone, PartialEq, Eq)]
-pub struct AdditionTextFieldStyle {
-    no_label: bool,
-    disabled: bool,
-    helper_text: bool,
-    char_counter: bool,
-}
-
-impl AdditionTextFieldStyle {
-    pub fn new(no_label: bool, disabled: bool, helper_text: bool, char_counter: bool) -> Self {
-        Self {
-            no_label,
-            disabled,
-            helper_text,
-            char_counter,
-        }
-    }
-}
-
-pub struct TextField<'a> {
-    id: Text<'a>,
-    label: Text<'a>,
+#[derive(Debug, Clone)]
+pub struct TextField {
+    html: Html,
     style: TextFieldStyle,
-    add_style: AdditionTextFieldStyle,
 }
 
-impl<'a> TextField<'a> {
-    pub fn new(id: impl Into<Text<'a>>) -> Self {
-        Self {
-            id: id.into(),
-            label: "".into(),
+impl TextField {
+    fn base_html<'a>(id: impl Into<Text<'a>>) -> Html {
+        let id = id.into();
+        let mdc_init = format!("mdc.textField.MDCTextField.attachTo(document.getElementById('{}'))", id);
+        html! {
+                <>
+                    <label id = id class = "mdc-text-field">
+                        <input class = "mdc-text-field__input" type = "text"/>
+                    </label>
+                    <script>{ mdc_init }</script>
+                </>
+            }
+    }
+    pub fn filled<'a>(id: impl Into<Text<'a>>) -> Self {
+        let mut text_field = Self {
+            html: Self::base_html(id),
             style: TextFieldStyle::Filled,
-            add_style: AdditionTextFieldStyle::default(),
-        }
+        };
+        text_field.ripple(true).class(TextFieldStyle::Filled.class())
     }
 
-    pub fn label(mut self, label: impl Into<Text<'a>>) -> Self {
-        self.label = label.into();
-        self
+    pub fn outlined<'a>(id: impl Into<Text<'a>>) -> Self {
+        let mut text_field = Self {
+            html: Self::base_html(id),
+            style: TextFieldStyle::Outlined,
+        };
+        text_field.root_tag_mut().children.insert(1, html! {
+            <span class="mdc-notched-outline">
+                <span class="mdc-notched-outline__leading"></span>
+                <span class="mdc-notched-outline__notch"></span>
+                <span class="mdc-notched-outline__trailing"></span>
+            </span>
+        });
+        text_field.class(TextFieldStyle::Outlined.class())
     }
 
-    pub fn style(mut self, style: TextFieldStyle) -> Self {
-        self.style = style;
-        self
+    pub fn fullwidth<'a>(id: impl Into<Text<'a>>) -> Self {
+        let mut text_field = Self {
+            html: Self::base_html(id),
+            style: TextFieldStyle::FilledFullWidth,
+        };
+        text_field.ripple(true).class(TextFieldStyle::FilledFullWidth.class())
     }
 
-    pub fn addition_style(mut self, add_style: AdditionTextFieldStyle) -> Self {
-        self.add_style = add_style;
-        self
-    }
-
-    fn filled(self) -> Html {
-        let mdc_init = format!("mdc.textField.MDCTextField.attachTo(document.getElementById('{}'))", self.id);
-        let label_id = format!("{}-label", self.id);
-
-        html! {
-            <label id = self.id class = self.style.class()>
-                <span class = "mdc-text-field__ripple"></span>
-                <input class = "mdc-text-field__input" type = "text" aria-labelledby = label_id />
-                <span class = "mdc-floating-label" id = label_id>{ &self.label }</span>
-                <span class = "mdc-line-ripple"></span>
-                <script>{ mdc_init }</script>
-            </label>
-        }
-    }
-
-    fn outlined(self) -> Html {
-        let mdc_init = format!("mdc.textField.MDCTextField.attachTo(document.getElementById('{}'))", self.id);
-        let input_id = format!("{}-input", self.id);
-
-        html! {
-            <div id = self.id class = self.style.class()>
-                <input id = input_id class = "mdc-text-field__input" type="text"/>
-                <div class = "mdc-notched-outline">
-                    <div class = "mdc-notched-outline__leading"></div>
-                    <div class = "mdc-notched-outline__notch">
-                        <label for = input_id class = "mdc-floating-label">{ &self.label }</label>
-                    </div>
-                    <div class = "mdc-notched-outline__trailing"></div>
-                </div>
-                <script>{ mdc_init }</script>
-            </div>
-        }
-    }
-
-    fn fullwidth(self) -> Html {
-        let mdc_init = format!("mdc.textField.MDCTextField.attachTo(document.getElementById('{}'))", self.id);
-        let input_id = format!("{}-input", self.id);
-
-        html! {
-            <div id = self.id class = self.style.class()>
-                <div class = "mdc-text-field__ripple"></div>
-                <input class = "mdc-text-field__input"
-                       type = "text"
-                       placeholder = &self.label
-                       aria-label = &self.label/>
-                <div class = "mdc-line-ripple"></div>
-                <script>{ mdc_init }</script>
-            </div>
-        }
-    }
-
-    fn disabled(&self, mut html: Html) -> Html {
-        if let Html::VTag(html) = &mut html {
-            if let Some(class) = html.attributes.get_mut("class") {
-                class.push_str("mdc-text-field--disabled");
-            }
-            for child in html.children.deref_mut() {
-                if let Html::VTag(child) = child {
-                    if child.tag() == "input" {
-                        child.attributes. insert("disabled".to_string(), Default::default());
-                    }
+    pub fn ripple(mut self, enabled: bool) -> Self {
+        if self.style!= TextFieldStyle::Outlined {
+            if enabled {
+                if !self.root_tag().is_some_child_contains_class("mdc-text-field__ripple") {
+                    self.root_tag_mut().children.insert(0, html! {
+                        <span class = "mdc-text-field__ripple"></span>
+                    });
+                }
+                if !self.root_tag().is_some_child_contains_class("mdc-line-ripple") {
+                    self.root_tag_mut().children.push(html! {
+                        <span class = "mdc-line-ripple"></span>
+                    });
+                }
+            } else {
+                if let Some(idx) = self.root_tag().find_child_contains_class_idx("mdc-text-field__ripple") {
+                    self.root_tag_mut().children.remove(idx);
+                }
+                if let Some(idx) = self.root_tag().find_child_contains_class_idx("mdc-line-ripple") {
+                    self.root_tag_mut().children.remove(idx);
                 }
             }
         }
-        html
+        self
+    }
+    pub fn class(mut self, class: impl AsRef<str>) -> Self {
+        self.root_tag_mut().add_class(class);
+        self
     }
 
-    fn nolabel(&self, mut html: Html) -> Html {
-        if let Html::VTag(html) = &mut html {
-            if let Some(class) = html.attributes.get_mut("class") {
-                class.push_str("mdc-text-field--no-label");
-            }
-            let maybe_label_idx = html
-                .children
-                .iter()
-                .enumerate()
-                .find_map(|(idx, child)| match child {
-                    Html::VTag(child) if child.tag() == "label" => Some(idx),
-                    _ => None,
-                });
-            if let Some(idx) = maybe_label_idx {
-                html.children.remove(idx);
-            }
-        }
-        html
-    }
+    pub fn label<'a>(mut self, label: impl Into<Text<'a>>) -> Self {
+        let label = label.into();
+        let id = self.root_tag().attributes.get("id").expect("");
+        let label_id = format!("{}-label", id.clone());
 
-    fn helpertext(&self, mut html: Html, helper_text: &str) -> Html {
-        if let Html::VTag(html) = &mut html {
-            let html_id = html.attributes.get("id").cloned().expect("Html id expected");
-            let input_id = html
-                .children
-                .iter()
-                .find_map(|child| match child {
-                    Html::VTag(child) if child.tag() == "input" =>
-                        child.attributes.get("id").cloned(),
-                    _ => None,
-                })
-                .expect("Input id expected");
-
-            let helper_id = format!("{}-helper", html_id);
-            for child in html.children.deref_mut() {
-                if let Html::VTag(child) = child {
-                    if child.tag() == "input" {
-                        child.attributes. insert("aria-controls".to_string(), helper_id.clone());
-                        child.attributes. insert("aria-describedby".to_string(), helper_id.clone());
-                    }
-                }
-            }
-
-            let helper_node = html!{
-                <div class="mdc-text-field-helper-line">
-                    <div id = helper_id for = input_id class = "mdc-text-field-helper-text" aria-hidden="true">{ &helper_text }</div>
-                </div>
-            };
-            html.children.add_child(helper_node);
-        }
-        html
-    }
-
-    fn charcounter(&self, mut html: Html, max_length: i32) -> Html {
-        if let Html::VTag(html) = &mut html {
-            let mut is_helper_line_not_exists = true;
-            for child in html.children.deref_mut() {
-                if let Html::VTag(child) = child {
-                    if child.tag() == "input" {
-                        child.attributes.insert("maxlength".to_string(), format!{"{}", max_length});
-                    }
-                    if child.tag() == "div" {
-                        if let Some(class) = child.attributes.get("class") {
-                            if class == "mdc-text-field-helper-line" {
-                                is_helper_line_not_exists = false;
-                            }
-                        }
-                    }
-                }
-            }
-            if is_helper_line_not_exists {
-                let div = html! { <div class="mdc-text-field-helper-line"></div> };
-                html.children.add_child(div);
-            }
-            let div = html! { <div class="mdc-text-field-character-counter">{ "0 / " } { max_length }</div> };
-            html.children.add_child(div);
-        }
-        html
-    }
-
-    pub fn build(self) -> Html {
         match self.style {
-            TextFieldStyle::Filled => self.filled(),
-            TextFieldStyle::Outlined => self.outlined(),
-            TextFieldStyle::FullWidth => self.fullwidth(),
+            TextFieldStyle::Filled => {
+                let idx = self.root_tag().find_child_tag_idx("input").map(|idx| idx + 1).unwrap_or(0);
+                self.root_tag_mut().children.insert( idx, html! {
+                    <span class = "mdc-floating-label" id = label_id>{ label }</span>
+                });
+                if let Some(input_tag) = self.root_tag_mut().find_child_tag_mut("input") {
+                    input_tag.attributes.insert("aria-labelledby".to_string(), label_id);
+                }
+            },
+            TextFieldStyle::Outlined => {
+                if let Some(tag) = self.root_tag_mut().find_child_contains_class_mut("mdc-notched-outline") {
+                    if let Some(notch) = tag.find_child_contains_class_mut("mdc-notched-outline__notch") {
+                        notch.children.push(html! {
+                            <span class = "mdc-floating-label" id = label_id>{ label }</span>
+                        });
+                    }
+                }
+
+                if let Some(input_tag) = self.root_tag_mut().find_child_tag_mut("input") {
+                    input_tag.attributes.insert("aria-labelledby".to_string(), label_id);
+                }
+            },
+            TextFieldStyle::FilledFullWidth => {
+                if let Some(input_tag) = self.root_tag_mut().find_child_tag_mut("input") {
+                    input_tag.attributes.insert("placeholder".to_string(), label.clone().to_string());
+                    input_tag.attributes.insert("aria-label".to_string(), label.to_string());
+                }
+            },
         }
+        self
+    }
+}
+
+impl MdcWidget for TextField {
+    const NAME: &'static str = "TextField";
+
+    fn html(&self) -> &Html {
+        &self.html
+    }
+
+    fn html_mut(&mut self) -> &mut Html {
+        &mut self.html
+    }
+}
+
+impl Deref for TextField {
+    type Target = Html;
+
+    fn deref(&self) -> &Self::Target {
+        &self.html
+    }
+}
+
+impl DerefMut for TextField {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.html
+    }
+}
+
+impl From<TextField> for Html {
+    fn from(text_field: TextField) -> Self {
+        text_field.html
     }
 }

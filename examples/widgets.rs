@@ -253,7 +253,25 @@ impl Component for Root {
                 <h2 class = "demo-title mdc-typography--headline6"><a name = "text_fields"></a>{ "Text fields" }</h2>
                 <div class = "widget-list">
                     <div>
-                        { TextField::new("text-field-filled").style(TextFieldStyle::Filled).label("Filled text field").build() }
+                        <span class = "demo-item">
+                            { TextField::filled("text-field-filled") }
+                        </span>
+                        <span class = "demo-item">
+                            { TextField::filled("text-field-filled-labeled").label("Filled text field") }
+                        </span>
+                    </div>
+                    <div>
+                        <span class = "demo-item">
+                            { TextField::outlined("text-field-outlined") }
+                        </span>
+                        <span class = "demo-item">
+                            { TextField::outlined("text-field-outlined-labeled").label("Outlined text field") }
+                        </span>
+                    </div>
+                    <div>
+                        <span class = "demo-item">
+                                { TextField::fullwidth("text-field-filled").label("Filled text field") }
+                        </span>
                     </div>
                 </div>
 
