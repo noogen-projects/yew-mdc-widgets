@@ -1,7 +1,7 @@
 #![recursion_limit = "4096"]
 
 use yew::{initialize, App, run_loop, utils, html, Component, ComponentLink, Html};
-use yew_mdc_widgets::{Button, ButtonStyle, Checkbox, Radio, TextField, TextFieldStyle, DataTable, TableCell};
+use yew_mdc_widgets::{Button, ButtonStyle, Checkbox, Radio, TextField, DataTable, TableCell};
 
 struct Root {
     link: ComponentLink<Self>,

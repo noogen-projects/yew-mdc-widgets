@@ -1,6 +1,6 @@
 use std::ops::{Deref, DerefMut};
 
-use yew::{html, Html, virtual_dom::VTag};
+use yew::{html, Html};
 
 use crate::{
     Text,
@@ -43,16 +43,17 @@ impl TextField {
         let id = id.into();
         let mdc_init = format!("mdc.textField.MDCTextField.attachTo(document.getElementById('{}'))", id);
         html! {
-                <>
-                    <label id = id class = "mdc-text-field">
-                        <input class = "mdc-text-field__input" type = "text"/>
-                    </label>
-                    <script>{ mdc_init }</script>
-                </>
-            }
+            <>
+                <label id = id class = "mdc-text-field">
+                    <input class = "mdc-text-field__input" type = "text"/>
+                </label>
+                <script>{ mdc_init }</script>
+            </>
+        }
     }
+
     pub fn filled<'a>(id: impl Into<Text<'a>>) -> Self {
-        let mut text_field = Self {
+        let text_field = Self {
             html: Self::base_html(id),
             style: TextFieldStyle::Filled,
         };
@@ -75,7 +76,7 @@ impl TextField {
     }
 
     pub fn fullwidth<'a>(id: impl Into<Text<'a>>) -> Self {
-        let mut text_field = Self {
+        let text_field = Self {
             html: Self::base_html(id),
             style: TextFieldStyle::FilledFullWidth,
         };
@@ -106,24 +107,24 @@ impl TextField {
         }
         self
     }
+
     pub fn class(mut self, class: impl AsRef<str>) -> Self {
         self.root_tag_mut().add_class(class);
         self
     }
 
-    pub fn label<'a>(mut self, label: impl Into<Text<'a>>) -> Self {
-        let label = label.into();
-        let id = self.root_tag().attributes.get("id").expect("");
-        let label_id = format!("{}-label", id.clone());
+    pub fn label(mut self, label: impl Into<Html>) -> Self {
+        let id = self.root_id();
+        let label_id = format!("{}-label", id);
 
         match self.style {
             TextFieldStyle::Filled => {
                 let idx = self.root_tag().find_child_tag_idx("input").map(|idx| idx + 1).unwrap_or(0);
-                self.root_tag_mut().children.insert( idx, html! {
+                self.root_tag_mut().children.insert(idx, html! {
                     <span class = "mdc-floating-label" id = label_id>{ label }</span>
                 });
                 if let Some(input_tag) = self.root_tag_mut().find_child_tag_mut("input") {
-                    input_tag.attributes.insert("aria-labelledby".to_string(), label_id);
+                    input_tag.set_attr("aria-labelledby", label_id);
                 }
             },
             TextFieldStyle::Outlined => {
@@ -136,17 +137,24 @@ impl TextField {
                 }
 
                 if let Some(input_tag) = self.root_tag_mut().find_child_tag_mut("input") {
-                    input_tag.attributes.insert("aria-labelledby".to_string(), label_id);
+                    input_tag.set_attr("aria-labelledby", label_id);
                 }
             },
             TextFieldStyle::FilledFullWidth => {
                 if let Some(input_tag) = self.root_tag_mut().find_child_tag_mut("input") {
-                    input_tag.attributes.insert("placeholder".to_string(), label.clone().to_string());
-                    input_tag.attributes.insert("aria-label".to_string(), label.to_string());
+                    if let Html::VText(label) = label.into() {
+                        input_tag.set_attr("placeholder", &label.text);
+                        input_tag.set_attr("aria-label", label.text);
+                    }
                 }
             },
         }
         self
+    }
+
+    pub fn root_id(&self) -> &str {
+        self.root_tag().attributes.get("id")
+            .expect("The TextField widget must have ID")
     }
 }
 

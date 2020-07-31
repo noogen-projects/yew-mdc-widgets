@@ -1,11 +1,13 @@
 use yew::{html, Html, virtual_dom::VTag};
-use std::ops::DerefMut;
+use std::ops::{DerefMut, Deref};
 
 pub trait VTagExt {
-    fn is_contains_class(&self, class: &str) -> bool;
-    fn is_contains_any_class(&self, classes: &[&str]) -> bool;
     fn add_class(&mut self, class: impl AsRef<str>);
     fn remove_any_class(&mut self, classes: &[&str]);
+    fn set_attr(&mut self, attr: impl Into<String>, value: impl Into<String>);
+    fn remove_attr(&mut self, attr: impl AsRef<str>) -> Option<String>;
+    fn is_contains_class(&self, class: &str) -> bool;
+    fn is_contains_any_class(&self, classes: &[&str]) -> bool;
     fn is_first_child_contains_class(&self, class: &str) -> bool;
     fn is_some_child_contains_class(&self, class: &str) -> bool;
     fn find_child_contains_class_idx(&self, class: &str) -> Option<usize>;
@@ -17,25 +19,10 @@ pub trait VTagExt {
     fn find_child_tag(&self, child_tag_name: &str) -> Option<&VTag>;
     fn find_child_tag_mut(&mut self, child_tag_name: &str) -> Option<&mut VTag>;
     fn find_child_tag_idx(&self, child_tag_name: &str) -> Option<usize>;
+    fn find_child_tag_recursively(&self, child_tag_name: &str) -> Option<&VTag>;
 }
 
 impl VTagExt for VTag {
-    fn is_contains_class(&self, class: &str) -> bool {
-        if let Some(classes) = self.attributes.get("class") {
-            classes.split_whitespace().find(|&item| item == class).is_some()
-        } else {
-            false
-        }
-    }
-
-    fn is_contains_any_class(&self, classes: &[&str]) -> bool {
-        if let Some(class) = self.attributes.get("class") {
-            class.split_whitespace().find(|item| classes.contains(item)).is_some()
-        } else {
-            false
-        }
-    }
-
     fn add_class(&mut self, class: impl AsRef<str>) {
         let class = class.as_ref().trim();
         if let Some(classes) = self.attributes.get_mut("class") {
@@ -53,6 +40,30 @@ impl VTagExt for VTag {
                 .filter(|item| !classes.contains(item))
                 .collect::<Vec<_>>()
                 .join(" ");
+        }
+    }
+
+    fn set_attr(&mut self, attr: impl Into<String>, value: impl Into<String>) {
+        self.attributes.insert(attr.into(), value.into());
+    }
+
+    fn remove_attr(&mut self, attr: impl AsRef<str>) -> Option<String> {
+        self.attributes.remove(attr.as_ref())
+    }
+
+    fn is_contains_class(&self, class: &str) -> bool {
+        if let Some(classes) = self.attributes.get("class") {
+            classes.split_whitespace().find(|&item| item == class).is_some()
+        } else {
+            false
+        }
+    }
+
+    fn is_contains_any_class(&self, classes: &[&str]) -> bool {
+        if let Some(class) = self.attributes.get("class") {
+            class.split_whitespace().find(|item| classes.contains(item)).is_some()
+        } else {
+            false
         }
     }
 
@@ -103,9 +114,39 @@ impl VTagExt for VTag {
     fn find_child_tag_idx(&self, child_tag_name: &str) -> Option<usize> {
         find_child_tag_idx(self.children.iter(), child_tag_name)
     }
+
+    fn find_child_tag_recursively(&self, child_tag_name: &str) -> Option<&VTag> {
+        find_child_tag_recursively(self.children.iter(), child_tag_name)
+    }
 }
 
 impl VTagExt for Html {
+    fn add_class(&mut self, class: impl AsRef<str>) {
+        if let Html::VTag(tag) = self {
+            tag.add_class(class);
+        }
+    }
+
+    fn remove_any_class(&mut self, classes: &[&str]) {
+        if let Html::VTag(tag) = self {
+            tag.remove_any_class(classes);
+        }
+    }
+
+    fn set_attr(&mut self, attr: impl Into<String>, value: impl Into<String>) {
+        if let Html::VTag(tag) = self {
+            tag.set_attr(attr, value);
+        }
+    }
+
+    fn remove_attr(&mut self, attr: impl AsRef<str>) -> Option<String> {
+        if let Html::VTag(tag) = self {
+            tag.remove_attr(attr)
+        } else {
+            None
+        }
+    }
+
     fn is_contains_class(&self, class: &str) -> bool {
         if let Html::VTag(tag) = self {
             tag.is_contains_class(class)
@@ -119,18 +160,6 @@ impl VTagExt for Html {
             tag.is_contains_any_class(classes)
         } else {
             false
-        }
-    }
-
-    fn add_class(&mut self, class: impl AsRef<str>) {
-        if let Html::VTag(tag) = self {
-            tag.add_class(class);
-        }
-    }
-
-    fn remove_any_class(&mut self, classes: &[&str]) {
-        if let Html::VTag(tag) = self {
-            tag.remove_any_class(classes);
         }
     }
 
@@ -227,6 +256,14 @@ impl VTagExt for Html {
             _ => None,
         }
     }
+
+    fn find_child_tag_recursively(&self, child_tag_name: &str) -> Option<&VTag> {
+        match self {
+            Html::VTag(tag) => tag.find_child_tag_recursively(child_tag_name),
+            Html::VList(list) => find_child_tag_recursively(list.children.iter(), child_tag_name),
+            _ => None,
+        }
+    }
 }
 
 fn is_some_child_contains_class<'a>(children: impl IntoIterator<Item = &'a Html>, class: &str) -> bool {
@@ -246,7 +283,7 @@ fn find_child_contains_class_idx<'a>(children: impl IntoIterator<Item = &'a Html
 }
 
 fn find_child_contains_class_mut<'a>(children: impl IntoIterator<Item = &'a mut Html>, class: &str) -> Option<&'a mut VTag> {
-    children.into_iter().enumerate().find_map(|(idx, child)| match child {
+    children.into_iter().find_map(|child| match child {
         Html::VTag(child) if child.is_contains_class(class) => Some(child.deref_mut()),
         _ => None,
     })
@@ -283,6 +320,21 @@ fn find_child_tag_mut<'a>(children: impl IntoIterator<Item = &'a mut Html>, chil
             if child.tag() == child_tag_name {
                 return Some(child);
             }
+        }
+    }
+    None
+}
+
+fn find_child_tag_recursively<'a>(children: impl IntoIterator<Item = &'a Html>, child_tag_name: &str) -> Option<&'a VTag> {
+    for child in children {
+        let tag = match child {
+            Html::VTag(child) if child.tag() == child_tag_name => Some(child.deref()),
+            Html::VTag(child) => find_child_tag_recursively(child.children.iter(), child_tag_name),
+            Html::VList(list) => find_child_tag_recursively(list.children.iter(), child_tag_name),
+            _ => None,
+        };
+        if tag.is_some() {
+            return tag;
         }
     }
     None

@@ -2,7 +2,7 @@ use std::{
     rc::Rc, ops::{Deref, DerefMut},
 };
 
-use yew::{html, html::onclick, Callback, Html, MouseEvent, virtual_dom::VTag};
+use yew::{html, html::onclick, Callback, Html, MouseEvent};
 
 use crate::{
     Text,
@@ -36,7 +36,7 @@ impl Radio {
 
     pub fn name_of_set<'a>(mut self, name: impl Into<String>) -> Self {
         if let Some(input) = self.root_tag_mut().find_child_tag_mut("input") {
-            input.attributes.insert("name".into(), name.into());
+            input.set_attr("name", name);
         }
         self
     }

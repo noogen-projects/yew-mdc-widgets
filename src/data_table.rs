@@ -156,7 +156,7 @@ impl DataTable {
 
             let mut head_checkbox = Self::head_checkbox(self.root_id());
             if let Some(input) = head_checkbox.find_child_tag_mut("input") {
-                input.attributes.insert("aria-label".into(), "Toggle all rows".into());
+                input.set_attr("aria-label", "Toggle all rows");
             }
 
             let head_row = self.table_header_row_tag_mut();

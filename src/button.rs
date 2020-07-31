@@ -88,9 +88,9 @@ impl Button {
 
     pub fn disabled(mut self, disabled: bool) -> Self {
         if disabled {
-            self.root_tag_mut().attributes.insert("disabled".to_string(), "".to_string());
+            self.root_tag_mut().set_attr("disabled", "");
         } else {
-            self.root_tag_mut().attributes.remove("disabled");
+            self.root_tag_mut().remove_attr("disabled");
         }
         self
     }

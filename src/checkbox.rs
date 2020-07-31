@@ -2,7 +2,7 @@ use std::{
     rc::Rc, ops::{Deref, DerefMut},
 };
 
-use yew::{html, html::onclick, Callback, Html, MouseEvent, virtual_dom::VTag};
+use yew::{html, html::onclick, Callback, Html, MouseEvent};
 
 use crate::{
     Text,
@@ -51,7 +51,7 @@ impl Checkbox {
 
     pub fn labeled_by(mut self, labeled_by: impl Into<String>) -> Self {
         if let Some(input) = self.root_tag_mut().find_child_tag_mut("input") {
-            input.attributes.insert("aria-labelledby".into(), labeled_by.into());
+            input.set_attr("aria-labelledby", labeled_by);
         }
         self
     }
@@ -69,9 +69,9 @@ impl Checkbox {
     pub fn indeterminate(mut self, indeterminate: bool) -> Self {
         if let Some(input) = self.root_tag_mut().find_child_tag_mut("input") {
             if indeterminate {
-                input.attributes.insert("data-indeterminate".into(), "true".into());
+                input.set_attr("data-indeterminate", "true");
             } else {
-                input.attributes.remove("data-indeterminate");
+                input.remove_attr("data-indeterminate");
             }
         }
         self
