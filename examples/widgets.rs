@@ -291,15 +291,6 @@ impl Component for Root {
                         </span>
                         <span class = "demo-item demo-list">
                             {
-                                List::new("single-line-no-ripple-list").items(vec![
-                                    ListItem::new("single-line-no-ripple-list-item-1").text("No ripple").ripple(false),
-                                    ListItem::new("single-line-no-ripple-list-item-2").text("No ripple").ripple(false),
-                                    ListItem::new("single-line-no-ripple-list-item-3").text("No ripple").ripple(false),
-                                ])
-                            }
-                        </span>
-                        <span class = "demo-item demo-list">
-                            {
                                 List::new("single-line-list-icon").items(vec![
                                     ListItem::new("single-line-list-icon-item-1").icon("wifi").text("Leading Icon"),
                                     ListItem::new("single-line-list-icon-item-2").icon("bluetooth").text("Leading Icon"),
@@ -346,12 +337,21 @@ impl Component for Root {
                                 ])
                             }
                         </span>
+                        <span class = "demo-item demo-list">
+                            {
+                                List::new("single-line-no-ripple-list").items(vec![
+                                    ListItem::new("single-line-no-ripple-list-item-1").text("No ripple").ripple(false),
+                                    ListItem::new("single-line-no-ripple-list-item-2").text("No ripple").ripple(false),
+                                    ListItem::new("single-line-no-ripple-list-item-3").text("No ripple").ripple(false),
+                                ])
+                            }
+                        </span>
                     </div>
                     <div>
                         <h3 class = "mdc-typography--subtitle1">{ "Two-Line" }</h3>
                         <span class = "demo-item demo-list">
                             {
-                                List::two_line("two-line-list").items(vec![
+                                List::new("two-line-list").two_line().items(vec![
                                     ListItem::new("two-line-list-item-1").text("List Item").text("Secondary text"),
                                     ListItem::new("two-line-list-item-2").text("List Item").text("Secondary text"),
                                     ListItem::new("two-line-list-item-3").text("List Item").text("Secondary text"),
@@ -360,16 +360,7 @@ impl Component for Root {
                         </span>
                         <span class = "demo-item demo-list">
                             {
-                                List::two_line("two-line-no-ripple-list").items(vec![
-                                    ListItem::new("two-line-no-ripple-list-item-1").ripple(false).text("No ripple").text("Secondary text"),
-                                    ListItem::new("two-line-no-ripple-list-item-2").ripple(false).text("No ripple").text("Secondary text"),
-                                    ListItem::new("two-line-no-ripple-list-item-3").ripple(false).text("No ripple").text("Secondary text"),
-                                ])
-                            }
-                        </span>
-                        <span class = "demo-item demo-list">
-                            {
-                                List::two_line("two-line-list-icon").items(vec![
+                                List::new("two-line-list-icon").two_line().items(vec![
                                     ListItem::new("two-line-list-icon-item-1").icon("wifi").text("Leading Icon").text("Secondary text"),
                                     ListItem::new("two-line-list-icon-item-2").icon("bluetooth").text("Leading Icon").text("Secondary text"),
                                     ListItem::new("two-line-list-icon-item-3").icon("data_usage").text("Leading Icon").text("Secondary text"),
@@ -378,7 +369,7 @@ impl Component for Root {
                         </span>
                         <span class = "demo-item demo-list">
                             {
-                                List::two_line("two-line-list-trailing-icon").items(vec![
+                                List::new("two-line-list-trailing-icon").two_line().items(vec![
                                     ListItem::new("two-line-list-trailing-icon-item-1").text("Trailing Icon").text("Secondary text").icon("info"),
                                     ListItem::new("two-line-list-trailing-icon-item-2").text("Trailing Icon").text("Secondary text").icon("info"),
                                     ListItem::new("two-line-list-trailing-icon-item-3").text("Trailing Icon").text("Secondary text").icon("info"),
@@ -387,7 +378,7 @@ impl Component for Root {
                         </span>
                         <span class = "demo-item demo-list">
                             {
-                                List::two_line("two-line-list-checkbox").items(vec![
+                                List::new("two-line-list-checkbox").two_line().items(vec![
                                     ListItem::new("two-line-list-checkbox-item-1")
                                         .tile(Checkbox::new("two-line-list-checkbox-item-1-checkbox").markup_only())
                                         .text("Checkbox Item")
@@ -405,7 +396,7 @@ impl Component for Root {
                         </span>
                         <span class = "demo-item demo-list">
                             {
-                                List::two_line("two-line-list-radio").items(vec![
+                                List::new("two-line-list-radio").two_line().items(vec![
                                     ListItem::new("two-line-list-radio-item-1")
                                         .text("Radio Item")
                                         .text("Secondary text")
@@ -419,6 +410,53 @@ impl Component for Root {
                                         .text("Secondary text")
                                         .tile(Radio::new("two-line-list-radio-item-3-radio").name_of_set("two-line-list-radio").markup_only()),
                                 ])
+                            }
+                        </span>
+                        <span class = "demo-item demo-list">
+                            {
+                                List::new("two-line-no-ripple-list").two_line().items(vec![
+                                    ListItem::new("two-line-no-ripple-list-item-1").ripple(false).text("No ripple").text("Secondary text"),
+                                    ListItem::new("two-line-no-ripple-list-item-2").ripple(false).text("No ripple").text("Secondary text"),
+                                    ListItem::new("two-line-no-ripple-list-item-3").ripple(false).text("No ripple").text("Secondary text"),
+                                ])
+                            }
+                        </span>
+                    </div>
+                </div>
+                <div>
+                    <h3 class = "mdc-typography--subtitle1">{ "List Groups" }</h3>
+                    <div class = "demo-item mdc-list-group demo-group-list demo-panel">
+                        <h3 class = "mdc-list-group__subheader">{ "List 1" }</h3>
+                        {
+                            List::new("list-group-1").items(vec![
+                                ListItem::new("list-group-1-item-1").text("List Item"),
+                                ListItem::new("list-group-1-item-2").text("List Item"),
+                            ])
+                        }
+                        <h3 class = "mdc-list-group__subheader">{ "List 2" }</h3>
+                        {
+                            List::new("list-group-2").items(vec![
+                                ListItem::new("list-group-2-item-1").text("List Item"),
+                                ListItem::new("list-group-2-item-2").text("List Item"),
+                            ])
+                        }
+                    </div>
+                    <div>
+                        <h3 class = "mdc-typography--subtitle1">{ "Two-Line with Leading and Trailing Icon and Divider" }</h3>
+                        <span class = "demo-item bordered-list demo-panel">
+                            {
+                                List::new("complex-list")
+                                    .two_line()
+                                    .avatar()
+                                    .items(vec![
+                                        ListItem::new("complex-list-item-1").icon("folder").text("Dog Photos").text("9 Jan 2018").icon("info"),
+                                        ListItem::new("complex-list-item-2").icon("folder").text("Cat Photos").text("22 Dec 2017").icon("info"),
+                                    ])
+                                    .divider()
+                                    .items(vec![
+                                        ListItem::new("complex-list-item-3").icon("folder").text("Potatoes").text("30 Noc 2017").icon("info"),
+                                        ListItem::new("complex-list-item-4").icon("folder").text("Carrots").text("17 Oct 2017").icon("info"),
+                                    ])
                             }
                         </span>
                     </div>

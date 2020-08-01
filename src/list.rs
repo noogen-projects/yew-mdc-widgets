@@ -122,8 +122,8 @@ impl ListItem {
 
         let root_tag = self.root_tag_mut();
         let tile_idx = root_tag
-            .find_child_contains_class_idx(Self::FIRST_TILE_CLASS)
-            .or_else(|| root_tag.find_child_contains_class_idx(Self::LAST_TILE_CLASS))
+            .find_child_contains_class_idx(Self::LAST_TILE_CLASS)
+            .or_else(|| root_tag.find_child_contains_class_idx(Self::FIRST_TILE_CLASS))
             .expect("The widget must have tile!");
 
         root_tag.children[tile_idx].add_class("material-icons");
@@ -200,8 +200,12 @@ impl List {
         }
     }
 
-    pub fn two_line<'a>(id: impl Into<Text<'a>>) -> Self {
-        Self::new(id).class("mdc-list--two-line")
+    pub fn two_line(self) -> Self {
+        self.class("mdc-list--two-line")
+    }
+
+    pub fn avatar(self) -> Self {
+        self.class("mdc-list--avatar-list")
     }
 
     pub fn class(mut self, class: impl AsRef<str>) -> Self {

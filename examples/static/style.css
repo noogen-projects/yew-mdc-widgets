@@ -28,16 +28,25 @@ body {
     margin: 8px 16px;
 }
 
-.demo-list {
+.demo-list, .bordered-list {
     display: inline-block;
 }
 
-.demo-list > ul {
-    border: 1px solid rgba(0,0,0,.1);
+.demo-list > ul, .bordered-list > ul, .demo-group-list {
+    border: 1px solid rgba(0, 0, 0, .1);
+}
+
+.demo-panel {
+    width: 600px;
 }
 
 .demo-list .mdc-list-item__meta {
     margin-left: 16px;
+}
+
+.mdc-list--avatar-list .mdc-list-item__graphic {
+    background-color: rgba(0, 0, 0, .3);
+    color: #fff;
 }
 
 .rounded-button, .rounded-button .mdc-button__ripple {
