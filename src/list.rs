@@ -200,12 +200,45 @@ impl List {
         }
     }
 
+    /// Modifier to style list with two lines (primary and secondary lines).
     pub fn two_line(self) -> Self {
         self.class("mdc-list--two-line")
     }
 
+    /// Styles the density of the list, making it appear more compact.
+    pub fn dense(self) -> Self {
+        self.class("mdc-list--dense")
+    }
+
+    /// configures the leading tile of each row to display avatars.
     pub fn avatar(self) -> Self {
         self.class("mdc-list--avatar-list")
+    }
+
+    /// Configures lists that start with text (e.g., do not have a leading tile).
+    pub fn textual(self) -> Self {
+        self.class("mdc-list--textual-list")
+    }
+
+    /// Configures the leading tile of each row to display icons.
+    pub fn icon(self) -> Self {
+        self.class("mdc-list--icon-list")
+    }
+
+    /// Configures the leading tile of each row to display images.
+    pub fn image(self) -> Self {
+        self.class("mdc-list--image-list")
+    }
+
+    /// Configures the leading tile of each row to display smaller images (this is analogous to
+    /// an avatar list but the image will not be rounded).
+    pub fn thumbnail(self) -> Self {
+        self.class("mdc-list--thumbnail-list")
+    }
+
+    /// Configures the leading tile of each row to display videos.
+    pub fn video(self) -> Self {
+        self.class("mdc-list--video-list")
     }
 
     pub fn class(mut self, class: impl AsRef<str>) -> Self {
