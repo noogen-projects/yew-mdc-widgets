@@ -347,6 +347,81 @@ impl Component for Root {
                             }
                         </span>
                     </div>
+                    <div>
+                        <h3 class = "mdc-typography--subtitle1">{ "Two-Line" }</h3>
+                        <span class = "demo-item demo-list">
+                            {
+                                List::two_line("two-line-list").items(vec![
+                                    ListItem::new("two-line-list-item-1").text("List Item").text("Secondary text"),
+                                    ListItem::new("two-line-list-item-2").text("List Item").text("Secondary text"),
+                                    ListItem::new("two-line-list-item-3").text("List Item").text("Secondary text"),
+                                ])
+                            }
+                        </span>
+                        <span class = "demo-item demo-list">
+                            {
+                                List::two_line("two-line-no-ripple-list").items(vec![
+                                    ListItem::new("two-line-no-ripple-list-item-1").ripple(false).text("No ripple").text("Secondary text"),
+                                    ListItem::new("two-line-no-ripple-list-item-2").ripple(false).text("No ripple").text("Secondary text"),
+                                    ListItem::new("two-line-no-ripple-list-item-3").ripple(false).text("No ripple").text("Secondary text"),
+                                ])
+                            }
+                        </span>
+                        <span class = "demo-item demo-list">
+                            {
+                                List::two_line("two-line-list-icon").items(vec![
+                                    ListItem::new("two-line-list-icon-item-1").icon("wifi").text("Leading Icon").text("Secondary text"),
+                                    ListItem::new("two-line-list-icon-item-2").icon("bluetooth").text("Leading Icon").text("Secondary text"),
+                                    ListItem::new("two-line-list-icon-item-3").icon("data_usage").text("Leading Icon").text("Secondary text"),
+                                ])
+                            }
+                        </span>
+                        <span class = "demo-item demo-list">
+                            {
+                                List::two_line("two-line-list-trailing-icon").items(vec![
+                                    ListItem::new("two-line-list-trailing-icon-item-1").text("Trailing Icon").text("Secondary text").icon("info"),
+                                    ListItem::new("two-line-list-trailing-icon-item-2").text("Trailing Icon").text("Secondary text").icon("info"),
+                                    ListItem::new("two-line-list-trailing-icon-item-3").text("Trailing Icon").text("Secondary text").icon("info"),
+                                ])
+                            }
+                        </span>
+                        <span class = "demo-item demo-list">
+                            {
+                                List::two_line("two-line-list-checkbox").items(vec![
+                                    ListItem::new("two-line-list-checkbox-item-1")
+                                        .tile(Checkbox::new("two-line-list-checkbox-item-1-checkbox").markup_only())
+                                        .text("Checkbox Item")
+                                        .text("Secondary text"),
+                                    ListItem::new("two-line-list-checkbox-item-2")
+                                        .tile(Checkbox::new("two-line-list-checkbox-item-2-checkbox").markup_only())
+                                        .text("Checkbox Item")
+                                        .text("Secondary text"),
+                                    ListItem::new("two-line-list-checkbox-item-3")
+                                        .tile(Checkbox::new("two-line-list-checkbox-item-3-checkbox").markup_only())
+                                        .text("Checkbox Item")
+                                        .text("Secondary text"),
+                                ])
+                            }
+                        </span>
+                        <span class = "demo-item demo-list">
+                            {
+                                List::two_line("two-line-list-radio").items(vec![
+                                    ListItem::new("two-line-list-radio-item-1")
+                                        .text("Radio Item")
+                                        .text("Secondary text")
+                                        .tile(Radio::new("two-line-list-radio-item-1-radio").name_of_set("two-line-list-radio").markup_only()),
+                                    ListItem::new("two-line-list-radio-item-2")
+                                        .text("Radio Item")
+                                        .text("Secondary text")
+                                        .tile(Radio::new("two-line-list-radio-item-2-radio").name_of_set("two-line-list-radio").markup_only()),
+                                    ListItem::new("two-line-list-radio-item-3")
+                                        .text("Radio Item")
+                                        .text("Secondary text")
+                                        .tile(Radio::new("two-line-list-radio-item-3-radio").name_of_set("two-line-list-radio").markup_only()),
+                                ])
+                            }
+                        </span>
+                    </div>
                 </div>
 
                 <h2 class = "demo-title mdc-typography--headline6"><a name = "data_tables"></a>{ "Data tables" }</h2>

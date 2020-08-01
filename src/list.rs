@@ -19,6 +19,8 @@ impl ListItem {
     const FIRST_TILE_CLASS: &'static str = "mdc-list-item__graphic";
     const LAST_TILE_CLASS: &'static str = "mdc-list-item__meta";
     const TEXT_ITEM_CLASS: &'static str = "mdc-list-item__text";
+    const PRIMARY_TEXT_ITEM_CLASS: &'static str = "mdc-list-item__primary-text";
+    const SECONDARY_TEXT_ITEM_CLASS: &'static str = "mdc-list-item__secondary-text";
 
     pub fn new<'a>(id: impl Into<Text<'a>>) -> Self {
         let item = Self {
@@ -30,21 +32,31 @@ impl ListItem {
         item.ripple(true)
     }
 
-    // pub fn two_line<'a>(id: impl Into<Text<'a>>, primary: impl Into<Html>, secondary: impl Into<Html>) -> Self {
-    //     Self::new(id, html! {
-    //         <>
-    //             <span class = "mdc-list-item__primary-text">{ primary }</span>
-    //             <span class = "mdc-list-item__secondary-text">{ secondary }</span>
-    //         </>
-    //     })
-    // }
-
     pub fn text(mut self, text: impl Into<Html>) -> Self {
         let root = self.root_tag_mut();
-        let idx = root.find_child_tag_idx("script").unwrap_or_else(|| root.children.len());
-        root.children.insert(idx, html! {
-            <span class = Self::TEXT_ITEM_CLASS>{ text }</span>
-        });
+
+        if let Some(idx) = root.find_child_contains_class_idx(Self::TEXT_ITEM_CLASS) {
+            let mut primary = root.children.remove(idx);
+            primary.remove_any_class(&[Self::TEXT_ITEM_CLASS]);
+            primary.add_class(Self::PRIMARY_TEXT_ITEM_CLASS);
+
+            root.children.insert(idx, html! {
+                <span class = Self::TEXT_ITEM_CLASS>
+                    { primary }
+                    <span class = Self::SECONDARY_TEXT_ITEM_CLASS>
+                        { text }
+                    </span>
+                </span>
+            });
+        } else {
+            let idx = root
+                .find_child_contains_class_idx(Self::LAST_TILE_CLASS)
+                .or_else(|| root.find_child_tag_idx("script"))
+                .unwrap_or_else(|| root.children.len());
+            root.children.insert(idx, html! {
+                <span class = Self::TEXT_ITEM_CLASS>{ text }</span>
+            });
+        }
         self
     }
 
