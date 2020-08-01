@@ -68,19 +68,17 @@ impl Button {
 
     pub fn ripple(mut self, enabled: bool) -> Self {
         ripple(&mut self, "mdc-button__ripple", enabled);
-        let root_tag = self.root_tag_mut();
+        let root = self.root_tag_mut();
         if enabled {
-            if !root_tag.is_last_child("script") {
-                if let Some(id) = root_tag.attributes.get("id") {
-                    root_tag.children.push(html! {
+            if !root.is_last_child("script") {
+                if let Some(id) = root.attributes.get("id") {
+                    root.children.push(html! {
                         <script>{ format!("mdc.ripple.MDCRipple.attachTo(document.getElementById('{}'))", id) }</script>
                     });
                 }
             }
         } else {
-            if let Some(idx) = root_tag.find_child_tag_idx("script") {
-                root_tag.children.remove(idx);
-            }
+            root.remove_child_tag("script");
         }
         self
     }
@@ -95,31 +93,33 @@ impl Button {
     }
 
     pub fn add_before_label(mut self, item: impl Into<Html>) -> Self {
-        let idx = self.root_tag().find_child_contains_class_idx("mdc-button__label")
-            .unwrap_or_else(|| if self.root_tag().is_last_child("script") {
-                self.root_tag().children.len() - 1
+        let root = self.root_tag_mut();
+        let idx = root.find_child_contains_class_idx("mdc-button__label")
+            .unwrap_or_else(|| if root.is_last_child("script") {
+                root.children.len() - 1
             } else {
-                self.root_tag().children.len()
+                root.children.len()
             });
-        self.root_tag_mut().children.insert(idx, item.into());
+        root.children.insert(idx, item.into());
         self
     }
 
     pub fn add_after_label(mut self, item: impl Into<Html>) -> Self {
-        let idx = self.root_tag().find_child_contains_class_idx("mdc-button__label")
+        let root = self.root_tag_mut();
+        let idx = root.find_child_contains_class_idx("mdc-button__label")
             .map(|idx| idx + 1)
-            .unwrap_or_else(|| if self.root_tag().is_last_child("script") {
-                self.root_tag().children.len() - 1
+            .unwrap_or_else(|| if root.is_last_child("script") {
+                root.children.len() - 1
             } else {
-                self.root_tag().children.len()
+                root.children.len()
             });
-        self.root_tag_mut().children.insert(idx, item.into());
+        root.children.insert(idx, item.into());
         self
     }
 
-    pub fn icon<'a>(self, icon: impl Into<Text<'a>>) -> Self {
+    pub fn icon<'a>(self, name: impl Into<Text<'a>>) -> Self {
         self.add_after_label(html! {
-            <i class = "material-icons mdc-button__icon" aria-hidden = "true">{ icon.into() }</i>
+            <i class = "material-icons mdc-button__icon" aria-hidden = "true">{ name.into() }</i>
         })
     }
 

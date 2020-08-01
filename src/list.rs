@@ -18,25 +18,34 @@ impl ListItem {
     const SELECTION_CLASS: &'static str = "mdc-list-item--selected";
     const FIRST_TILE_CLASS: &'static str = "mdc-list-item__graphic";
     const LAST_TILE_CLASS: &'static str = "mdc-list-item__meta";
+    const TEXT_ITEM_CLASS: &'static str = "mdc-list-item__text";
 
-    pub fn new<'a>(id: impl Into<Text<'a>>, text: impl Into<Html>) -> Self {
+    pub fn new<'a>(id: impl Into<Text<'a>>) -> Self {
         let item = Self {
             html: html! {
                 <li id = id.into() class = "mdc-list-item">
-                    <span class = "mdc-list-item__text">{ text }</span>
                 </li>
             },
         };
         item.ripple(true)
     }
 
-    pub fn two_line<'a>(id: impl Into<Text<'a>>, primary: impl Into<Html>, secondary: impl Into<Html>) -> Self {
-        Self::new(id, html! {
-            <>
-                <span class = "mdc-list-item__primary-text">{ primary }</span>
-                <span class = "mdc-list-item__secondary-text">{ secondary }</span>
-            </>
-        })
+    // pub fn two_line<'a>(id: impl Into<Text<'a>>, primary: impl Into<Html>, secondary: impl Into<Html>) -> Self {
+    //     Self::new(id, html! {
+    //         <>
+    //             <span class = "mdc-list-item__primary-text">{ primary }</span>
+    //             <span class = "mdc-list-item__secondary-text">{ secondary }</span>
+    //         </>
+    //     })
+    // }
+
+    pub fn text(mut self, text: impl Into<Html>) -> Self {
+        let root = self.root_tag_mut();
+        let idx = root.find_child_tag_idx("script").unwrap_or_else(|| root.children.len());
+        root.children.insert(idx, html! {
+            <span class = Self::TEXT_ITEM_CLASS>{ text }</span>
+        });
+        self
     }
 
     pub fn selected(mut self, selected: bool) -> Self {
@@ -51,46 +60,62 @@ impl ListItem {
     }
 
     pub fn ripple(mut self, enabled: bool) -> Self {
-        let root_tag = self.root_tag_mut();
+        let root = self.root_tag_mut();
         if enabled {
-            if !root_tag.is_some_child_contains_class(Self::RIPPLE_CLASS) {
-                root_tag.children.insert(0, html! {
+            if !root.is_some_child_contains_class(Self::RIPPLE_CLASS) {
+                root.children.insert(0, html! {
                     <span class = Self::RIPPLE_CLASS></span>
                 });
             }
-            if !root_tag.is_last_child("script") {
-                if let Some(id) = root_tag.attributes.get("id") {
-                    root_tag.children.push(html! {
+            if !root.is_last_child("script") {
+                if let Some(id) = root.attributes.get("id") {
+                    root.children.push(html! {
                         <script>{ format!("mdc.ripple.MDCRipple.attachTo(document.getElementById('{}'))", id) }</script>
                     });
                 }
             }
         } else if !enabled {
-            if let Some(idx) = root_tag.find_child_contains_class_idx(Self::RIPPLE_CLASS) {
-                root_tag.children.remove(idx);
+            if let Some(idx) = root.find_child_contains_class_idx(Self::RIPPLE_CLASS) {
+                root.children.remove(idx);
             }
-            if let Some(idx) = root_tag.find_child_tag_idx("script") {
-                root_tag.children.remove(idx);
+            if let Some(idx) = root.find_child_tag_idx("script") {
+                root.children.remove(idx);
             }
         }
         self
     }
 
     pub fn tile(mut self, tile: impl Into<Html>) -> Self {
-        let root_tag = self.root_tag_mut();
-        let (idx, class) = if root_tag.is_some_child_contains_class(Self::FIRST_TILE_CLASS) {
-            let idx = root_tag.find_child_tag_idx("script").unwrap_or_else(|| root_tag.children.len());
+        let root = self.root_tag_mut();
+        let (idx, class) = if root.is_some_child_contains_class(Self::FIRST_TILE_CLASS)
+            || root.is_some_child_contains_class(Self::TEXT_ITEM_CLASS)
+        {
+            let idx = root.find_child_tag_idx("script").unwrap_or_else(|| root.children.len());
             (idx, Self::LAST_TILE_CLASS)
         } else {
-            let idx = root_tag
+            let idx = root
                 .find_child_contains_class_idx(Self::RIPPLE_CLASS)
                 .map(|idx| idx + 1)
                 .unwrap_or(0);
             (idx, Self::FIRST_TILE_CLASS)
         };
-        root_tag.children.insert(idx, html! {
+        root.children.insert(idx, html! {
             <span class = class>{ tile }</span>
         });
+        self
+    }
+
+    pub fn icon<'a>(mut self, name: impl Into<Text<'a>>) -> Self {
+        self = self.tile(name.into());
+
+        let root_tag = self.root_tag_mut();
+        let tile_idx = root_tag
+            .find_child_contains_class_idx(Self::FIRST_TILE_CLASS)
+            .or_else(|| root_tag.find_child_contains_class_idx(Self::LAST_TILE_CLASS))
+            .expect("The widget must have tile!");
+
+        root_tag.children[tile_idx].add_class("material-icons");
+        root_tag.children[tile_idx].set_attr("aria-hidden", "true");
         self
     }
 
@@ -98,20 +123,21 @@ impl ListItem {
         let mut label = html! {
             <label class = "mdc-list-item__text">{ label }</label>
         };
-        let root_tag = self.root_tag_mut();
+        let root = self.root_tag_mut();
 
-        if let Some(id) = root_tag
+        if let Some(id) = root
             .find_child_tag_recursively("input")
             .and_then(|input| input.attributes.get("id"))
         {
             label.set_attr("for", id);
         }
 
-        let idx = root_tag
+        let idx = root
             .find_child_contains_class_idx(Self::LAST_TILE_CLASS)
-            .unwrap_or_else(|| root_tag.children.len());
+            .or_else(|| root.find_child_tag_idx("script"))
+            .unwrap_or_else(|| root.children.len());
 
-        root_tag.children.insert(idx, label);
+        root.children.insert(idx, label);
         self
     }
 
@@ -173,12 +199,12 @@ impl List {
 
     pub fn item(mut self, item: impl Into<Html>) -> Self {
         let mut item = item.into();
-        let root_tag = self.root_tag_mut();
+        let root = self.root_tag_mut();
 
-        if root_tag.children.len() == 0 {
+        if root.children.len() == 0 {
             item.set_attr("tabindex", "0");
         }
-        root_tag.children.push(item.into());
+        root.children.push(item.into());
         self
     }
 

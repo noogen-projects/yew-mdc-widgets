@@ -12,6 +12,7 @@ pub trait VTagExt {
     fn is_some_child_contains_class(&self, class: &str) -> bool;
     fn find_child_contains_class_idx(&self, class: &str) -> Option<usize>;
     fn find_child_contains_class_mut(&mut self, class: &str) -> Option<&mut VTag>;
+    fn remove_child_contains_class(&mut self, class: &str) -> Option<Html>;
     fn is_first_child(&self, child_tag_name: &str) -> bool;
     fn is_last_child(&self, child_tag_name: &str) -> bool;
     fn first_child_tag(&self, child_tag_name: &str) -> Option<&VTag>;
@@ -20,6 +21,7 @@ pub trait VTagExt {
     fn find_child_tag_mut(&mut self, child_tag_name: &str) -> Option<&mut VTag>;
     fn find_child_tag_idx(&self, child_tag_name: &str) -> Option<usize>;
     fn find_child_tag_recursively(&self, child_tag_name: &str) -> Option<&VTag>;
+    fn remove_child_tag(&mut self, child_tag_name: &str) -> Option<Html>;
 }
 
 impl VTagExt for VTag {
@@ -87,6 +89,11 @@ impl VTagExt for VTag {
         find_child_contains_class_mut(self.children.iter_mut(), class)
     }
 
+    fn remove_child_contains_class(&mut self, class: &str) -> Option<Html> {
+        self.find_child_contains_class_idx(class)
+            .map(|idx| self.children.remove(idx))
+    }
+
     fn is_first_child(&self, child_tag_name: &str) -> bool {
         get_tag(self.children.first(), child_tag_name).is_some()
     }
@@ -117,6 +124,11 @@ impl VTagExt for VTag {
 
     fn find_child_tag_recursively(&self, child_tag_name: &str) -> Option<&VTag> {
         find_child_tag_recursively(self.children.iter(), child_tag_name)
+    }
+
+    fn remove_child_tag(&mut self, child_tag_name: &str) -> Option<Html> {
+        self.find_child_tag_idx(child_tag_name)
+            .map(|idx| self.children.remove(idx))
     }
 }
 
@@ -201,6 +213,17 @@ impl VTagExt for Html {
         }
     }
 
+    fn remove_child_contains_class(&mut self, class: &str) -> Option<Html> {
+        match self {
+            Html::VTag(tag) => tag.remove_child_contains_class(class),
+            Html::VList(list) => {
+                find_child_contains_class_idx(list.iter(), class)
+                    .map(|idx| list.children.remove(idx))
+            },
+            _ => None,
+        }
+    }
+
     fn is_first_child(&self, child_tag_name: &str) -> bool {
         match self {
             Html::VTag(tag) => tag.is_first_child(child_tag_name),
@@ -261,6 +284,17 @@ impl VTagExt for Html {
         match self {
             Html::VTag(tag) => tag.find_child_tag_recursively(child_tag_name),
             Html::VList(list) => find_child_tag_recursively(list.children.iter(), child_tag_name),
+            _ => None,
+        }
+    }
+
+    fn remove_child_tag(&mut self, child_tag_name: &str) -> Option<Html> {
+        match self {
+            Html::VTag(tag) => tag.remove_child_tag(child_tag_name),
+            Html::VList(list) => {
+                find_child_tag_idx(list.iter(), child_tag_name)
+                    .map(|idx| list.children.remove(idx))
+            },
             _ => None,
         }
     }
@@ -383,17 +417,16 @@ pub trait MdcWidget {
 
 pub fn ripple(widget: &mut impl MdcWidget, ripple_class: impl AsRef<str>, enabled: bool) {
     let ripple_class = ripple_class.as_ref();
+    let root = widget.root_tag_mut();
     if enabled {
-        if !widget.root_tag().is_some_child_contains_class(ripple_class) {
-            let idx = widget.root_tag().children.len().checked_sub(1).unwrap_or(0);
-            widget.root_tag_mut().children.insert(idx, html! {
+        if !root.is_some_child_contains_class(ripple_class) {
+            let idx = root.children.len().checked_sub(1).unwrap_or(0);
+            root.children.insert(idx, html! {
                 <div class = ripple_class></div>
             });
         }
     } else {
-        if let Some(idx) = widget.root_tag().find_child_contains_class_idx(ripple_class) {
-            widget.root_tag_mut().children.remove(idx);
-        }
+        root.remove_child_contains_class(ripple_class);
     }
 }
 

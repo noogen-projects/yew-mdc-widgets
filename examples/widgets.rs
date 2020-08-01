@@ -29,15 +29,23 @@ impl Component for Root {
                 <h1 class = "demo-title mdc-typography--headline5">{ "Material design components" }</h1>
                 {
                     List::new("contents").items(vec![
-                        ListItem::new("contents-buttons", "Buttons")
+                        ListItem::new("contents-buttons")
+                            .text("Buttons")
                             .on_click(self.link.callback(|_| utils::window().location().set_href("#buttons").unwrap())),
-                        ListItem::new("contents-checkboxes", "Checkboxes")
+                        ListItem::new("contents-checkboxes")
+                            .text("Checkboxes")
                             .on_click(self.link.callback(|_| utils::window().location().set_href("#checkboxes").unwrap())),
-                        ListItem::new("contents-radio_buttons", "Radio buttons")
+                        ListItem::new("contents-radio_buttons")
+                            .text("Radio buttons")
                             .on_click(self.link.callback(|_| utils::window().location().set_href("#radio_buttons").unwrap())),
-                        ListItem::new("contents-text_fields", "Text fields")
+                        ListItem::new("contents-text_fields")
+                            .text("Text fields")
                             .on_click(self.link.callback(|_| utils::window().location().set_href("#text_fields").unwrap())),
-                        ListItem::new("contents-data_tables", "Data tables")
+                        ListItem::new("contents-lists")
+                            .text("Lists")
+                            .on_click(self.link.callback(|_| utils::window().location().set_href("#lists").unwrap())),
+                        ListItem::new("contents-data_tables")
+                            .text("Data tables")
                             .on_click(self.link.callback(|_| utils::window().location().set_href("#data_tables").unwrap())),
                     ])
                 }
@@ -263,7 +271,80 @@ impl Component for Root {
                     </div>
                     <div>
                         <span class = "demo-item">
-                                { TextField::fullwidth("text-field-filled").label("Filled text field") }
+                            { TextField::fullwidth("text-field-filled").label("Filled text field") }
+                        </span>
+                    </div>
+                </div>
+
+                <h2 class = "demo-title mdc-typography--headline6"><a name = "lists"></a>{ "Lists" }</h2>
+                <div>
+                    <div>
+                        <h3 class = "mdc-typography--subtitle1">{ "Single-Line" }</h3>
+                        <span class = "demo-item demo-list">
+                            {
+                                List::new("single-line-list").items(vec![
+                                    ListItem::new("single-line-list-item-1").text("List Item"),
+                                    ListItem::new("single-line-list-item-2").text("List Item"),
+                                    ListItem::new("single-line-list-item-3").text("List Item"),
+                                ])
+                            }
+                        </span>
+                        <span class = "demo-item demo-list">
+                            {
+                                List::new("single-line-no-ripple-list").items(vec![
+                                    ListItem::new("single-line-no-ripple-list-item-1").text("No ripple").ripple(false),
+                                    ListItem::new("single-line-no-ripple-list-item-2").text("No ripple").ripple(false),
+                                    ListItem::new("single-line-no-ripple-list-item-3").text("No ripple").ripple(false),
+                                ])
+                            }
+                        </span>
+                        <span class = "demo-item demo-list">
+                            {
+                                List::new("single-line-list-icon").items(vec![
+                                    ListItem::new("single-line-list-icon-item-1").icon("wifi").text("Leading Icon"),
+                                    ListItem::new("single-line-list-icon-item-2").icon("bluetooth").text("Leading Icon"),
+                                    ListItem::new("single-line-list-icon-item-3").icon("data_usage").text("Leading Icon"),
+                                ])
+                            }
+                        </span>
+                        <span class = "demo-item demo-list">
+                            {
+                                List::new("single-line-list-trailing-icon").items(vec![
+                                    ListItem::new("single-line-list-trailing-icon-item-1").text("Trailing Icon").icon("info"),
+                                    ListItem::new("single-line-list-trailing-icon-item-2").text("Trailing Icon").icon("info"),
+                                    ListItem::new("single-line-list-trailing-icon-item-3").text("Trailing Icon").icon("info"),
+                                ])
+                            }
+                        </span>
+                        <span class = "demo-item demo-list">
+                            {
+                                List::new("single-line-list-checkbox").items(vec![
+                                    ListItem::new("single-line-list-checkbox-item-1")
+                                        .tile(Checkbox::new("single-line-list-checkbox-item-1-checkbox").markup_only())
+                                        .label("Checkbox Item"),
+                                    ListItem::new("single-line-list-checkbox-item-2")
+                                        .tile(Checkbox::new("single-line-list-checkbox-item-2-checkbox").markup_only())
+                                        .label("Checkbox Item"),
+                                    ListItem::new("single-line-list-checkbox-item-3")
+                                        .tile(Checkbox::new("single-line-list-checkbox-item-3-checkbox").markup_only())
+                                        .label("Checkbox Item"),
+                                ])
+                            }
+                        </span>
+                        <span class = "demo-item demo-list">
+                            {
+                                List::new("single-line-list-radio").items(vec![
+                                    ListItem::new("single-line-list-radio-item-1")
+                                        .label("Radio Item")
+                                        .tile(Radio::new("single-line-list-radio-item-1-radio").name_of_set("single-line-list-radio").markup_only()),
+                                    ListItem::new("single-line-list-radio-item-2")
+                                        .label("Radio Item")
+                                        .tile(Radio::new("single-line-list-radio-item-2-radio").name_of_set("single-line-list-radio").markup_only()),
+                                    ListItem::new("single-line-list-radio-item-3")
+                                        .label("Radio Item")
+                                        .tile(Radio::new("single-line-list-radio-item-3-radio").name_of_set("single-line-list-radio").markup_only()),
+                                ])
+                            }
                         </span>
                     </div>
                 </div>

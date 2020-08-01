@@ -16,6 +16,8 @@ pub struct Checkbox {
 }
 
 impl Checkbox {
+    const RIPPLE_CLASS: &'static str = "mdc-checkbox__ripple";
+
     pub fn new<'a>(id: impl Into<Text<'a>>) -> Self {
         let id = id.into();
         let input_id = format!("{}-input", id);
@@ -29,7 +31,7 @@ impl Checkbox {
                         </svg>
                         <div class = "mdc-checkbox__mixedmark"></div>
                     </div>
-                    <div class = "mdc-checkbox__ripple"></div>
+                    <div class = Self::RIPPLE_CLASS></div>
                     <script>{ format!("mdc.checkbox.MDCCheckbox.attachTo(document.getElementById('{}'));", id) }</script>
                 </div>
             },
@@ -57,7 +59,7 @@ impl Checkbox {
     }
 
     pub fn ripple(mut self, enabled: bool) -> Self {
-        ripple(&mut self, "mdc-checkbox__ripple", enabled);
+        ripple(&mut self, Self::RIPPLE_CLASS, enabled);
         self
     }
 
@@ -91,10 +93,18 @@ impl Checkbox {
 
     pub fn on_click(mut self, callback: Callback<MouseEvent>) -> Self {
         let listener = Rc::new(onclick::Wrapper::new(callback));
-        if let Some(label) = self.html_mut().find_child_tag_mut("label") {
+        let root = self.root_tag_mut();
+        if let Some(label) = root.find_child_tag_mut("label") {
             label.add_listener(listener.clone());
         }
-        self.root_tag_mut().add_listener(listener);
+        root.add_listener(listener);
+        self
+    }
+
+    pub fn markup_only(mut self) -> Self {
+        let root = self.root_tag_mut();
+        root.remove_child_contains_class(Self::RIPPLE_CLASS);
+        root.remove_child_tag("script");
         self
     }
 }
