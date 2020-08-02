@@ -29,22 +29,22 @@ impl Component for Root {
                 <h1 class = "demo-title mdc-typography--headline5">{ "Material design components" }</h1>
                 {
                     List::new("contents").items(vec![
-                        ListItem::new("contents-buttons")
+                        ListItem::default()
                             .text("Buttons")
                             .on_click(self.link.callback(|_| utils::window().location().set_href("#buttons").unwrap())),
-                        ListItem::new("contents-checkboxes")
+                        ListItem::default()
                             .text("Checkboxes")
                             .on_click(self.link.callback(|_| utils::window().location().set_href("#checkboxes").unwrap())),
-                        ListItem::new("contents-radio_buttons")
+                        ListItem::default()
                             .text("Radio buttons")
                             .on_click(self.link.callback(|_| utils::window().location().set_href("#radio_buttons").unwrap())),
-                        ListItem::new("contents-text_fields")
+                        ListItem::default()
                             .text("Text fields")
                             .on_click(self.link.callback(|_| utils::window().location().set_href("#text_fields").unwrap())),
-                        ListItem::new("contents-lists")
+                        ListItem::default()
                             .text("Lists")
                             .on_click(self.link.callback(|_| utils::window().location().set_href("#lists").unwrap())),
-                        ListItem::new("contents-data_tables")
+                        ListItem::default()
                             .text("Data tables")
                             .on_click(self.link.callback(|_| utils::window().location().set_href("#data_tables").unwrap())),
                     ])
