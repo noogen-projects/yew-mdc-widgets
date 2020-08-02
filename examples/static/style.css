@@ -25,6 +25,7 @@ body {
 }
 
 .demo-item {
+    display: inline-block;
     margin: 8px 16px;
 }
 
