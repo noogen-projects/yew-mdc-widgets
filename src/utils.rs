@@ -1,9 +1,14 @@
-use yew::{html, Html, virtual_dom::VTag};
-use std::ops::{DerefMut, Deref};
+use std::{rc::Rc, borrow::Borrow, hash::Hash, ops::{DerefMut, Deref}};
+
+use yew::{html, Html, virtual_dom::{VTag, Listener}};
 
 pub trait VTagExt {
     fn add_class(&mut self, class: impl AsRef<str>);
     fn remove_any_class(&mut self, classes: &[&str]);
+    fn attr<Q>(&mut self, attr: &Q) -> Option<&String>
+    where
+        Q: ?Sized + Hash + Eq,
+        String: Borrow<Q>;
     fn set_attr(&mut self, attr: impl Into<String>, value: impl Into<String>);
     fn remove_attr(&mut self, attr: impl AsRef<str>) -> Option<String>;
     fn is_contains_class(&self, class: &str) -> bool;
@@ -43,6 +48,14 @@ impl VTagExt for VTag {
                 .collect::<Vec<_>>()
                 .join(" ");
         }
+    }
+
+    fn attr<Q>(&mut self, attr: &Q) -> Option<&String>
+    where
+        Q: ?Sized + Hash + Eq,
+        String: Borrow<Q>,
+    {
+        self.attributes.get(attr)
     }
 
     fn set_attr(&mut self, attr: impl Into<String>, value: impl Into<String>) {
@@ -142,6 +155,18 @@ impl VTagExt for Html {
     fn remove_any_class(&mut self, classes: &[&str]) {
         if let Html::VTag(tag) = self {
             tag.remove_any_class(classes);
+        }
+    }
+
+    fn attr<Q>(&mut self, attr: &Q) -> Option<&String>
+    where
+        Q: ?Sized + Hash + Eq,
+        String: Borrow<Q>,
+    {
+        if let Html::VTag(tag) = self {
+            tag.attr(attr)
+        } else {
+            None
         }
     }
 
@@ -412,6 +437,11 @@ pub trait MdcWidget {
             _ => (),
         }
         panic!("The root element of the {} must be a tag!", Self::NAME);
+    }
+
+    fn add_listener(mut self, listener: Rc<dyn Listener>) -> Self where Self: Sized {
+        self.root_tag_mut().add_listener(listener);
+        self
     }
 }
 

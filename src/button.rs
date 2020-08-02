@@ -124,8 +124,7 @@ impl Button {
     }
 
     pub fn on_click(mut self, callback: Callback<MouseEvent>) -> Self {
-        self.root_tag_mut().add_listener(Rc::new(onclick::Wrapper::new(callback)));
-        self
+        self.add_listener(Rc::new(onclick::Wrapper::new(callback)))
     }
 }
 

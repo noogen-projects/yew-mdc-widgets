@@ -8,9 +8,22 @@ use crate::{
     Text,
     utils::{VTagExt, MdcWidget},
 };
+use std::borrow::Borrow;
 
 pub struct ListItem {
     html: Html,
+}
+
+impl Default for ListItem {
+    fn default() -> Self {
+        let item = Self {
+            html: html! {
+                <li class = "mdc-list-item">
+                </li>
+            },
+        };
+        item.ripple(true)
+    }
 }
 
 impl ListItem {
@@ -23,13 +36,21 @@ impl ListItem {
     const SECONDARY_TEXT_ITEM_CLASS: &'static str = "mdc-list-item__secondary-text";
 
     pub fn new<'a>(id: impl Into<Text<'a>>) -> Self {
-        let item = Self {
-            html: html! {
-                <li id = id.into() class = "mdc-list-item">
-                </li>
-            },
-        };
-        item.ripple(true)
+        Self::default().id(id)
+    }
+
+    pub fn id<'a>(mut self, id: impl Into<Text<'a>>) -> Self {
+        let id = id.into();
+        let root = self.root_tag_mut();
+
+        root.set_attr("id", id.as_ref());
+        if root.is_some_child_contains_class(Self::RIPPLE_CLASS) {
+            root.remove_child_tag("script");
+            root.children.push(html! {
+                <script>{ format!("mdc.ripple.MDCRipple.attachTo(document.getElementById('{}'))", id) }</script>
+            });
+        }
+        self
     }
 
     pub fn text(mut self, text: impl Into<Html>) -> Self {
@@ -159,8 +180,7 @@ impl ListItem {
     }
 
     pub fn on_click(mut self, callback: Callback<MouseEvent>) -> Self {
-        self.root_tag_mut().add_listener(Rc::new(onclick::Wrapper::new(callback)));
-        self
+        self.add_listener(Rc::new(onclick::Wrapper::new(callback)))
     }
 }
 
@@ -249,11 +269,19 @@ impl List {
     pub fn item(mut self, item: impl Into<Html>) -> Self {
         let mut item = item.into();
         let root = self.root_tag_mut();
+        let item_number = root.children.len();
 
-        if root.children.len() == 0 {
+        if item_number == 0 {
             item.set_attr("tabindex", "0");
         }
-        root.children.push(item.into());
+        if item.attr("id").is_none() && item.is_some_child_contains_class(ListItem::RIPPLE_CLASS) {
+            if let Some(id) = root.attr("id") {
+                item = ListItem {
+                    html: item,
+                }.id(format!("{}-item-{}", id, item_number)).into();
+            }
+        }
+        root.children.push(item);
         self
     }
 
