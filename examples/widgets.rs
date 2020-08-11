@@ -482,10 +482,9 @@ impl Root {
                             List::new("complex-list")
                                 .two_line()
                                 .avatar()
-                                .items(vec![
-                                    ListItem::default().icon("folder").text("Dog Photos").text("9 Jan 2018").icon("info"),
-                                    ListItem::default().icon("folder").text("Cat Photos").text("22 Dec 2017").icon("info"),
-                                ])
+                                .item(ListItem::default().icon("folder").text("Dog Photos").text("9 Jan 2018").icon("info"))
+                                .divider_inset_leading()
+                                .item(ListItem::default().icon("folder").text("Cat Photos").text("22 Dec 2017").icon("info"))
                                 .divider()
                                 .items(vec![
                                     ListItem::default().icon("folder").text("Potatoes").text("30 Noc 2017").icon("info"),
@@ -498,9 +497,9 @@ impl Root {
                     <h3 class = "mdc-typography--subtitle1">{ "List with activated item" }</h3>
                     <span class = "demo-item bordered-list demo-panel">
                         {
-                            List::new("activated-list").items(vec![
+                            List::new("activated-list").single_selection().items(vec![
                                 ListItem::default().icon("inbox").text("Inbox"),
-                                ListItem::default().icon("star").text("Star"),
+                                ListItem::default().icon("star").text("Star").selected(true),
                                 ListItem::default().icon("send").text("Send"),
                                 ListItem::default().icon("drafts").text("Drafts"),
                             ])

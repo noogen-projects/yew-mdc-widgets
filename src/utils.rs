@@ -5,7 +5,7 @@ use yew::{html, Html, virtual_dom::{VTag, Listener}};
 pub trait VTagExt {
     fn add_class(&mut self, class: impl AsRef<str>);
     fn remove_any_class(&mut self, classes: &[&str]);
-    fn attr<Q>(&mut self, attr: &Q) -> Option<&String>
+    fn attr<Q>(&self, attr: &Q) -> Option<&String>
     where
         Q: ?Sized + Hash + Eq,
         String: Borrow<Q>;
@@ -50,7 +50,7 @@ impl VTagExt for VTag {
         }
     }
 
-    fn attr<Q>(&mut self, attr: &Q) -> Option<&String>
+    fn attr<Q>(&self, attr: &Q) -> Option<&String>
     where
         Q: ?Sized + Hash + Eq,
         String: Borrow<Q>,
@@ -158,7 +158,7 @@ impl VTagExt for Html {
         }
     }
 
-    fn attr<Q>(&mut self, attr: &Q) -> Option<&String>
+    fn attr<Q>(&self, attr: &Q) -> Option<&String>
     where
         Q: ?Sized + Hash + Eq,
         String: Borrow<Q>,

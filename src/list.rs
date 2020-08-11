@@ -8,7 +8,6 @@ use crate::{
     Text,
     utils::{VTagExt, MdcWidget},
 };
-use std::borrow::Borrow;
 
 pub struct ListItem {
     html: Html,
@@ -179,7 +178,7 @@ impl ListItem {
         self
     }
 
-    pub fn on_click(mut self, callback: Callback<MouseEvent>) -> Self {
+    pub fn on_click(self, callback: Callback<MouseEvent>) -> Self {
         self.add_listener(Rc::new(onclick::Wrapper::new(callback)))
     }
 }
@@ -218,6 +217,18 @@ impl List {
                 </>
             },
         }
+    }
+
+    pub fn single_selection(mut self) -> Self {
+        if let Some(id) = self.root_tag().attr("id") {
+            let statement = format!("document.getElementById('{}').singleSelection = true;", id);
+            if let Some(script) = self.html.find_child_tag_mut("script") {
+                if let Some(Html::VText(text)) = script.children.children.first_mut() {
+                    text.text.push_str(&statement);
+                }
+            }
+        }
+        self
     }
 
     /// Modifier to style list with two lines (primary and secondary lines).
@@ -295,6 +306,33 @@ impl List {
     pub fn divider(mut self) -> Self {
         self.root_tag_mut().children.push(html! {
             <li role = "separator" class = "mdc-list-divider"></li>
+        });
+        self
+    }
+
+    /// Optional, increases the leading margin of the divider so that it does not intersect
+    /// the graphics column.
+    pub fn divider_inset_leading(mut self) -> Self {
+        self.root_tag_mut().children.push(html! {
+            <li role = "separator" class = "mdc-list-divider mdc-list-divider--inset-leading"></li>
+        });
+        self
+    }
+
+    /// Optional, increases the trailing margin of the divider so that it coincides with the
+    /// item's padding.
+    pub fn divider_inset_trailing(mut self) -> Self {
+        self.root_tag_mut().children.push(html! {
+            <li role = "separator" class = "mdc-list-divider mdc-list-divider--inset-trailing"></li>
+        });
+        self
+    }
+
+    /// Optional, alters the inset to correspond to the item's padding rather than the leading
+    /// graphics column.
+    pub fn divider_inset_padding(mut self) -> Self {
+        self.root_tag_mut().children.push(html! {
+            <li role = "separator" class = "mdc-list-divider mdc-list-divider--inset-padding"></li>
         });
         self
     }
