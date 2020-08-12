@@ -1,7 +1,9 @@
 #![recursion_limit = "4096"]
 
 use yew::{initialize, App, run_loop, utils, html, Component, ComponentLink, Html};
-use yew_mdc_widgets::{Button, ButtonStyle, Checkbox, Radio, TextField, DataTable, TableCell, List, ListItem};
+use yew_mdc_widgets::{
+    Button, ButtonStyle, Checkbox, Radio, TextField, DataTable, TableCell, List, ListItem, Menu,
+};
 
 struct Root {
     link: ComponentLink<Self>,
@@ -45,6 +47,9 @@ impl Component for Root {
                             .text("Lists")
                             .on_click(self.link.callback(|_| utils::window().location().set_href("#lists").unwrap())),
                         ListItem::default()
+                            .text("Menu")
+                            .on_click(self.link.callback(|_| utils::window().location().set_href("#menu").unwrap())),
+                        ListItem::default()
                             .text("Data tables")
                             .on_click(self.link.callback(|_| utils::window().location().set_href("#data_tables").unwrap())),
                     ])
@@ -64,6 +69,9 @@ impl Component for Root {
 
                 <h2 class = "demo-title mdc-typography--headline6"><a name = "lists"></a>{ "Lists" }</h2>
                 { self.view_lists() }
+
+                <h2 class = "demo-title mdc-typography--headline6"><a name = "menu"></a>{ "Menu" }</h2>
+                { self.view_menu() }
 
                 <h2 class = "demo-title mdc-typography--headline6"><a name = "data_tables"></a>{ "Data tables" }</h2>
                 { self.view_data_tables() }
@@ -504,6 +512,32 @@ impl Root {
                                 ListItem::default().icon("drafts").text("Drafts"),
                             ])
                         }
+                    </span>
+                </div>
+            </div>
+        }
+    }
+
+    fn view_menu(&self) -> Html {
+        html! {
+            <div>
+                <div>
+                    <h3 class = "mdc-typography--subtitle1">{ "Simple" }</h3>
+                    <span class = "demo-item demo-list">
+                        <div id = "demo-menu" class = Menu::ANCHOR_CLASS>
+                            {
+                                Button::new("simple-menu-button")
+                                    .label("Open Menu")
+                                    .on_click(self.link.callback(|_| Menu::open_existing("simple-menu")))
+                            }
+                            {
+                                Menu::new("simple-menu").items(vec![
+                                    ListItem::default().text("Menu Item"),
+                                    ListItem::default().text("Menu Item"),
+                                    ListItem::default().text("Menu Item"),
+                                ])
+                            }
+                        </div>
                     </span>
                 </div>
             </div>

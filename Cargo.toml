@@ -15,4 +15,4 @@ yew = { version = "0.17", features = ["web_sys"] }
 js-sys = "0.3"
 
 [dev-dependencies]
-tiny_http = "0.7.0"
+tiny_http = "0.7"

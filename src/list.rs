@@ -220,13 +220,10 @@ impl List {
     }
 
     pub fn single_selection(mut self) -> Self {
-        if let Some(id) = self.root_tag().attr("id") {
+        let root = self.root_tag_mut();
+        if let Some(id) = root.attr("id") {
             let statement = format!("document.getElementById('{}').singleSelection = true;", id);
-            if let Some(script) = self.html.find_child_tag_mut("script") {
-                if let Some(Html::VText(text)) = script.children.children.first_mut() {
-                    text.text.push_str(&statement);
-                }
-            }
+            root.add_child_script_statement(statement);
         }
         self
     }
@@ -334,6 +331,13 @@ impl List {
         self.root_tag_mut().children.push(html! {
             <li role = "separator" class = "mdc-list-divider mdc-list-divider--inset-padding"></li>
         });
+        self
+    }
+
+    pub fn markup_only(mut self) -> Self {
+        if let Html::VList(mut list) = self.html {
+            self.html = list.children.remove(0);
+        }
         self
     }
 }

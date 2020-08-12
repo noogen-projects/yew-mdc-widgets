@@ -27,6 +27,7 @@ pub trait VTagExt {
     fn find_child_tag_idx(&self, child_tag_name: &str) -> Option<usize>;
     fn find_child_tag_recursively(&self, child_tag_name: &str) -> Option<&VTag>;
     fn remove_child_tag(&mut self, child_tag_name: &str) -> Option<Html>;
+    fn add_child_script_statement(&mut self, statement: impl AsRef<str>);
 }
 
 impl VTagExt for VTag {
@@ -142,6 +143,10 @@ impl VTagExt for VTag {
     fn remove_child_tag(&mut self, child_tag_name: &str) -> Option<Html> {
         self.find_child_tag_idx(child_tag_name)
             .map(|idx| self.children.remove(idx))
+    }
+
+    fn add_child_script_statement(&mut self, statement: impl AsRef<str>) {
+        add_child_script_statement(self.find_child_tag_mut("script"), statement)
     }
 }
 
@@ -323,6 +328,17 @@ impl VTagExt for Html {
             _ => None,
         }
     }
+
+    fn add_child_script_statement(&mut self, statement: impl AsRef<str>) {
+        match self {
+            Html::VTag(tag) => tag.add_child_script_statement(statement),
+            Html::VList(list) => add_child_script_statement(
+                find_child_tag_mut(list.children.iter_mut(), "script"),
+                statement,
+            ),
+            _ => (),
+        }
+    }
 }
 
 fn is_some_child_contains_class<'a>(children: impl IntoIterator<Item = &'a Html>, class: &str) -> bool {
@@ -408,6 +424,14 @@ fn find_child_tag_idx<'a>(children: impl IntoIterator<Item = &'a Html>, child_ta
         }
     }
     None
+}
+
+fn add_child_script_statement(child: Option<&mut VTag>, statement: impl AsRef<str>) {
+    if let Some(script) = child {
+        if let Some(Html::VText(text)) = script.children.children.first_mut() {
+            text.text.push_str(statement.as_ref());
+        }
+    }
 }
 
 pub trait MdcWidget {
