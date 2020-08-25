@@ -307,7 +307,7 @@ impl List {
         self
     }
 
-    /// Optional, increases the leading margin of the divider so that it does not intersect
+    /// Increases the leading margin of the divider so that it does not intersect
     /// the graphics column.
     pub fn divider_inset_leading(mut self) -> Self {
         self.root_tag_mut().children.push(html! {
@@ -316,7 +316,7 @@ impl List {
         self
     }
 
-    /// Optional, increases the trailing margin of the divider so that it coincides with the
+    /// Increases the trailing margin of the divider so that it coincides with the
     /// item's padding.
     pub fn divider_inset_trailing(mut self) -> Self {
         self.root_tag_mut().children.push(html! {
@@ -325,7 +325,7 @@ impl List {
         self
     }
 
-    /// Optional, alters the inset to correspond to the item's padding rather than the leading
+    /// Alters the inset to correspond to the item's padding rather than the leading
     /// graphics column.
     pub fn divider_inset_padding(mut self) -> Self {
         self.root_tag_mut().children.push(html! {
