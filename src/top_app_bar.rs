@@ -17,7 +17,7 @@ impl TopAppBar {
         let id = id.into();
         Self {
             html: html! {
-                <header class = "mdc-top-app-bar">
+                <header id = id class = "mdc-top-app-bar">
                     <div class = "mdc-top-app-bar__row">
                         <section class = "mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
                             <span class = "mdc-top-app-bar__title"></span>
