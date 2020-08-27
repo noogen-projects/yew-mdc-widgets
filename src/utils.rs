@@ -1,6 +1,15 @@
-use std::{rc::Rc, borrow::Borrow, hash::Hash, ops::{DerefMut, Deref}};
+use std::{
+    borrow::Borrow,
+    hash::Hash,
+    ops::{Deref, DerefMut},
+    rc::Rc,
+};
 
-use yew::{html, Html, virtual_dom::{VTag, Listener}};
+use yew::{
+    html,
+    virtual_dom::{Listener, VTag},
+    Html,
+};
 
 pub trait VTagExt {
     fn add_class(&mut self, class: impl AsRef<str>);
@@ -26,6 +35,7 @@ pub trait VTagExt {
     fn find_child_tag_mut(&mut self, child_tag_name: &str) -> Option<&mut VTag>;
     fn find_child_tag_idx(&self, child_tag_name: &str) -> Option<usize>;
     fn find_child_tag_recursively(&self, child_tag_name: &str) -> Option<&VTag>;
+    fn find_child_tag_recursively_mut(&mut self, child_tag_name: &str) -> Option<&mut VTag>;
     fn remove_child_tag(&mut self, child_tag_name: &str) -> Option<Html>;
     fn add_child_script_statement(&mut self, statement: impl AsRef<str>);
     fn insert_child(&mut self, idx: usize, child: impl Into<Html>);
@@ -141,6 +151,10 @@ impl VTagExt for VTag {
         find_child_tag_recursively(self.children.iter(), child_tag_name)
     }
 
+    fn find_child_tag_recursively_mut(&mut self, child_tag_name: &str) -> Option<&mut VTag> {
+        find_child_tag_recursively_mut(self.children.iter_mut(), child_tag_name)
+    }
+
     fn remove_child_tag(&mut self, child_tag_name: &str) -> Option<Html> {
         self.find_child_tag_idx(child_tag_name)
             .map(|idx| self.children.remove(idx))
@@ -219,7 +233,7 @@ impl VTagExt for Html {
                 } else {
                     false
                 }
-            },
+            }
             _ => false,
         }
     }
@@ -251,10 +265,7 @@ impl VTagExt for Html {
     fn remove_child_contains_class(&mut self, class: &str) -> Option<Html> {
         match self {
             Html::VTag(tag) => tag.remove_child_contains_class(class),
-            Html::VList(list) => {
-                find_child_contains_class_idx(list.iter(), class)
-                    .map(|idx| list.children.remove(idx))
-            },
+            Html::VList(list) => find_child_contains_class_idx(list.iter(), class).map(|idx| list.children.remove(idx)),
             _ => None,
         }
     }
@@ -323,13 +334,18 @@ impl VTagExt for Html {
         }
     }
 
+    fn find_child_tag_recursively_mut(&mut self, child_tag_name: &str) -> Option<&mut VTag> {
+        match self {
+            Html::VTag(tag) => tag.find_child_tag_recursively_mut(child_tag_name),
+            Html::VList(list) => find_child_tag_recursively_mut(list.children.iter_mut(), child_tag_name),
+            _ => None,
+        }
+    }
+
     fn remove_child_tag(&mut self, child_tag_name: &str) -> Option<Html> {
         match self {
             Html::VTag(tag) => tag.remove_child_tag(child_tag_name),
-            Html::VList(list) => {
-                find_child_tag_idx(list.iter(), child_tag_name)
-                    .map(|idx| list.children.remove(idx))
-            },
+            Html::VList(list) => find_child_tag_idx(list.iter(), child_tag_name).map(|idx| list.children.remove(idx)),
             _ => None,
         }
     }
@@ -337,10 +353,9 @@ impl VTagExt for Html {
     fn add_child_script_statement(&mut self, statement: impl AsRef<str>) {
         match self {
             Html::VTag(tag) => tag.add_child_script_statement(statement),
-            Html::VList(list) => add_child_script_statement(
-                find_child_tag_mut(list.children.iter_mut(), "script"),
-                statement,
-            ),
+            Html::VList(list) => {
+                add_child_script_statement(find_child_tag_mut(list.children.iter_mut(), "script"), statement)
+            }
             _ => (),
         }
     }
@@ -370,7 +385,9 @@ fn find_child_contains_class_idx<'a>(children: impl IntoIterator<Item = &'a Html
     })
 }
 
-fn find_child_contains_class_mut<'a>(children: impl IntoIterator<Item = &'a mut Html>, class: &str) -> Option<&'a mut VTag> {
+fn find_child_contains_class_mut<'a>(
+    children: impl IntoIterator<Item = &'a mut Html>, class: &str,
+) -> Option<&'a mut VTag> {
     children.into_iter().find_map(|child| match child {
         Html::VTag(child) if child.is_contains_class(class) => Some(child.deref_mut()),
         _ => None,
@@ -402,7 +419,9 @@ fn find_child_tag<'a>(children: impl IntoIterator<Item = &'a Html>, child_tag_na
     None
 }
 
-fn find_child_tag_mut<'a>(children: impl IntoIterator<Item = &'a mut Html>, child_tag_name: &str) -> Option<&'a mut VTag> {
+fn find_child_tag_mut<'a>(
+    children: impl IntoIterator<Item = &'a mut Html>, child_tag_name: &str,
+) -> Option<&'a mut VTag> {
     for child in children {
         if let Html::VTag(child) = child {
             if child.tag() == child_tag_name {
@@ -413,12 +432,36 @@ fn find_child_tag_mut<'a>(children: impl IntoIterator<Item = &'a mut Html>, chil
     None
 }
 
-fn find_child_tag_recursively<'a>(children: impl IntoIterator<Item = &'a Html>, child_tag_name: &str) -> Option<&'a VTag> {
+fn find_child_tag_recursively<'a>(
+    children: impl IntoIterator<Item = &'a Html>, child_tag_name: &str,
+) -> Option<&'a VTag> {
     for child in children {
         let tag = match child {
             Html::VTag(child) if child.tag() == child_tag_name => Some(child.deref()),
             Html::VTag(child) => find_child_tag_recursively(child.children.iter(), child_tag_name),
             Html::VList(list) => find_child_tag_recursively(list.children.iter(), child_tag_name),
+            _ => None,
+        };
+        if tag.is_some() {
+            return tag;
+        }
+    }
+    None
+}
+
+fn find_child_tag_recursively_mut<'a>(
+    children: impl IntoIterator<Item = &'a mut Html>, child_tag_name: &str,
+) -> Option<&'a mut VTag> {
+    for child in children {
+        let tag = match child {
+            Html::VTag(child) => {
+                if child.tag() == child_tag_name {
+                    Some(child.deref_mut())
+                } else {
+                    find_child_tag_recursively_mut(child.children.iter_mut(), child_tag_name)
+                }
+            }
+            Html::VList(list) => find_child_tag_recursively_mut(list.children.iter_mut(), child_tag_name),
             _ => None,
         };
         if tag.is_some() {
@@ -457,9 +500,11 @@ pub trait MdcWidget {
     fn root_tag(&self) -> &VTag {
         match self.html() {
             Html::VTag(tag) => return tag,
-            Html::VList(list) => if let Some(Html::VTag(tag)) = list.children.first() {
-                return tag;
-            },
+            Html::VList(list) => {
+                if let Some(Html::VTag(tag)) = list.children.first() {
+                    return tag;
+                }
+            }
             _ => (),
         }
         panic!("The root element of the {} must be a tag!", Self::NAME);
@@ -468,15 +513,20 @@ pub trait MdcWidget {
     fn root_tag_mut(&mut self) -> &mut VTag {
         match self.html_mut() {
             Html::VTag(tag) => return tag,
-            Html::VList(list) => if let Some(Html::VTag(tag)) = list.children.first_mut() {
-                return tag;
-            },
+            Html::VList(list) => {
+                if let Some(Html::VTag(tag)) = list.children.first_mut() {
+                    return tag;
+                }
+            }
             _ => (),
         }
         panic!("The root element of the {} must be a tag!", Self::NAME);
     }
 
-    fn add_listener(mut self, listener: Rc<dyn Listener>) -> Self where Self: Sized {
+    fn add_listener(mut self, listener: Rc<dyn Listener>) -> Self
+    where
+        Self: Sized,
+    {
         self.root_tag_mut().add_listener(listener);
         self
     }
@@ -488,9 +538,12 @@ pub fn ripple(widget: &mut impl MdcWidget, ripple_class: impl AsRef<str>, enable
     if enabled {
         if !root.is_some_child_contains_class(ripple_class) {
             let idx = root.children.len().checked_sub(1).unwrap_or(0);
-            root.children.insert(idx, html! {
-                <div class = ripple_class></div>
-            });
+            root.children.insert(
+                idx,
+                html! {
+                    <div class = ripple_class></div>
+                },
+            );
         }
     } else {
         root.remove_child_contains_class(ripple_class);

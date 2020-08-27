@@ -1,13 +1,17 @@
 use std::{
+    ops::{Deref, DerefMut},
     rc::Rc,
-    ops::{Deref, DerefMut}
 };
 
-use yew::{html, html::{onclick, oninput}, Html, Callback, MouseEvent, InputData};
+use yew::{
+    html,
+    html::{onclick, oninput},
+    Callback, Html, InputData, MouseEvent,
+};
 
 use crate::{
+    utils::{MdcWidget, VTagExt},
     Text,
-    utils::{VTagExt, MdcWidget},
 };
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -68,13 +72,16 @@ impl TextField {
             html: Self::base_html(id),
             style: TextFieldStyle::Outlined,
         };
-        text_field.root_tag_mut().children.insert(1, html! {
-            <span class="mdc-notched-outline">
-                <span class="mdc-notched-outline__leading"></span>
-                <span class="mdc-notched-outline__notch"></span>
-                <span class="mdc-notched-outline__trailing"></span>
-            </span>
-        });
+        text_field.root_tag_mut().children.insert(
+            1,
+            html! {
+                <span class="mdc-notched-outline">
+                    <span class="mdc-notched-outline__leading"></span>
+                    <span class="mdc-notched-outline__notch"></span>
+                    <span class="mdc-notched-outline__trailing"></span>
+                </span>
+            },
+        );
         text_field.class(TextFieldStyle::Outlined.class())
     }
 
@@ -87,12 +94,15 @@ impl TextField {
     }
 
     pub fn ripple(mut self, enabled: bool) -> Self {
-        if self.style!= TextFieldStyle::Outlined {
+        if self.style != TextFieldStyle::Outlined {
             if enabled {
                 if !self.root_tag().is_some_child_contains_class("mdc-text-field__ripple") {
-                    self.root_tag_mut().children.insert(0, html! {
-                        <span class = "mdc-text-field__ripple"></span>
-                    });
+                    self.root_tag_mut().children.insert(
+                        0,
+                        html! {
+                            <span class = "mdc-text-field__ripple"></span>
+                        },
+                    );
                 }
                 if !self.root_tag().is_some_child_contains_class("mdc-line-ripple") {
                     self.root_tag_mut().children.push(html! {
@@ -122,14 +132,21 @@ impl TextField {
 
         match self.style {
             TextFieldStyle::Filled => {
-                let idx = self.root_tag().find_child_tag_idx("input").map(|idx| idx + 1).unwrap_or(0);
-                self.root_tag_mut().children.insert(idx, html! {
-                    <span class = "mdc-floating-label" id = label_id>{ label }</span>
-                });
+                let idx = self
+                    .root_tag()
+                    .find_child_tag_idx("input")
+                    .map(|idx| idx + 1)
+                    .unwrap_or(0);
+                self.root_tag_mut().children.insert(
+                    idx,
+                    html! {
+                        <span class = "mdc-floating-label" id = label_id>{ label }</span>
+                    },
+                );
                 if let Some(input_tag) = self.root_tag_mut().find_child_tag_mut("input") {
                     input_tag.set_attr("aria-labelledby", label_id);
                 }
-            },
+            }
             TextFieldStyle::Outlined => {
                 if let Some(tag) = self.root_tag_mut().find_child_contains_class_mut("mdc-notched-outline") {
                     if let Some(notch) = tag.find_child_contains_class_mut("mdc-notched-outline__notch") {
@@ -142,7 +159,7 @@ impl TextField {
                 if let Some(input_tag) = self.root_tag_mut().find_child_tag_mut("input") {
                     input_tag.set_attr("aria-labelledby", label_id);
                 }
-            },
+            }
             TextFieldStyle::FilledFullWidth => {
                 if let Some(input_tag) = self.root_tag_mut().find_child_tag_mut("input") {
                     if let Html::VText(label) = label.into() {
@@ -150,7 +167,7 @@ impl TextField {
                         input_tag.set_attr("aria-label", label.text);
                     }
                 }
-            },
+            }
         }
         self
     }
@@ -171,11 +188,14 @@ impl TextField {
             input_tag.set_attr("aria-controls", helper_id.clone());
             input_tag.set_attr("aria-describedby", helper_id.clone());
         }
-        self.html_mut().insert_child(1, html! {
-            <div class="mdc-text-field-helper-line">
-                <div class="mdc-text-field-helper-text" id=helper_id aria-hidden="true">{helper_text}</div>
-            </div>
-        });
+        self.html_mut().insert_child(
+            1,
+            html! {
+                <div class="mdc-text-field-helper-line">
+                    <div class="mdc-text-field-helper-text" id=helper_id aria-hidden="true">{helper_text}</div>
+                </div>
+            },
+        );
         // match self.style {
         //     TextFieldStyle::Filled => {
         //         if let Some(input_tag) = self.root_tag_mut().find_child_tag_mut("input") {
@@ -214,7 +234,9 @@ impl TextField {
     }
 
     pub fn root_id(&self) -> &str {
-        self.root_tag().attributes.get("id")
+        self.root_tag()
+            .attributes
+            .get("id")
             .expect("The TextField widget must have ID")
     }
 
@@ -222,8 +244,11 @@ impl TextField {
         self.add_listener(Rc::new(onclick::Wrapper::new(callback)))
     }
 
-    pub fn on_input(self, callback: Callback<InputData>) -> Self {
-        self.add_listener(Rc::new(oninput::Wrapper::new(callback)))
+    pub fn on_input(mut self, callback: Callback<InputData>) -> Self {
+        if let Some(input) = self.root_tag_mut().find_child_tag_recursively_mut("input") {
+            input.add_listener(Rc::new(oninput::Wrapper::new(callback)));
+        }
+        self
     }
 }
 
