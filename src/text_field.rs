@@ -1,6 +1,9 @@
-use std::ops::{Deref, DerefMut};
+use std::{
+    rc::Rc,
+    ops::{Deref, DerefMut}
+};
 
-use yew::{html, Html};
+use yew::{html, html::{onclick, oninput}, Html, Callback, MouseEvent, InputData};
 
 use crate::{
     Text,
@@ -155,6 +158,14 @@ impl TextField {
     pub fn root_id(&self) -> &str {
         self.root_tag().attributes.get("id")
             .expect("The TextField widget must have ID")
+    }
+
+    pub fn on_click(self, callback: Callback<MouseEvent>) -> Self {
+        self.add_listener(Rc::new(onclick::Wrapper::new(callback)))
+    }
+
+    pub fn on_input(self, callback: Callback<InputData>) -> Self {
+        self.add_listener(Rc::new(oninput::Wrapper::new(callback)))
     }
 }
 
