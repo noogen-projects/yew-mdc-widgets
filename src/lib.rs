@@ -2,7 +2,9 @@
 
 use std::borrow::Cow;
 
-pub use self::{button::*, checkbox::*, data_table::*, icon_button::*, text_field::*, list::*, menu::*, radio::*};
+pub use self::{
+    button::*, checkbox::*, data_table::*, icon_button::*, list::*, menu::*, radio::*, text_field::*, top_app_bar::*,
+};
 
 pub mod button;
 pub mod checkbox;
@@ -12,6 +14,7 @@ pub mod list;
 pub mod menu;
 pub mod radio;
 pub mod text_field;
+pub mod top_app_bar;
 pub mod utils;
 
 type Text<'a> = Cow<'a, str>;
