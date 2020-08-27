@@ -28,6 +28,7 @@ pub trait VTagExt {
     fn find_child_tag_recursively(&self, child_tag_name: &str) -> Option<&VTag>;
     fn remove_child_tag(&mut self, child_tag_name: &str) -> Option<Html>;
     fn add_child_script_statement(&mut self, statement: impl AsRef<str>);
+    fn insert_child(&mut self, idx: usize, child: impl Into<Html>);
 }
 
 impl VTagExt for VTag {
@@ -147,6 +148,10 @@ impl VTagExt for VTag {
 
     fn add_child_script_statement(&mut self, statement: impl AsRef<str>) {
         add_child_script_statement(self.find_child_tag_mut("script"), statement)
+    }
+
+    fn insert_child(&mut self, idx: usize, child: impl Into<Html>) {
+        self.children.insert(idx, child.into());
     }
 }
 
@@ -336,6 +341,14 @@ impl VTagExt for Html {
                 find_child_tag_mut(list.children.iter_mut(), "script"),
                 statement,
             ),
+            _ => (),
+        }
+    }
+
+    fn insert_child(&mut self, idx: usize, child: impl Into<Html>) {
+        match self {
+            Html::VTag(tag) => tag.insert_child(idx, child),
+            Html::VList(list) => list.insert(idx, child.into()),
             _ => (),
         }
     }

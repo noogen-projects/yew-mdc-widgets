@@ -401,6 +401,28 @@ impl Root {
                         { TextField::fullwidth("text-field-fullwidth").label("Fullwidth text field") }
                     </span>
                 </div>
+                <div>
+                    <span class = "demo-item">
+                        { TextField::filled("text-field-filled-labeled-helpertext").label("Filled disabled text field").helper_text("Helper text") }
+                    </span>
+                    <span class = "demo-item">
+                        { TextField::outlined("text-field-outlined-labeled-helpertext").label("Outlined disabled text field").helper_text("Helper text") }
+                    </span>
+                    <span class = "demo-item" style = "width: 100%">
+                        { TextField::fullwidth("text-field-fullwidth-helpertext").label("Fullwidth disabled text field").helper_text("Helper text") }
+                    </span>
+                </div>
+                 <div>
+                    <span class = "demo-item">
+                        { TextField::filled("text-field-filled-labeled-disabled").label("Filled disabled text field").disabled() }
+                    </span>
+                    <span class = "demo-item">
+                        { TextField::outlined("text-field-outlined-labeled-disabled").label("Outlined disabled text field").disabled() }
+                    </span>
+                    <span class = "demo-item" style = "width: 100%">
+                        { TextField::fullwidth("text-field-fullwidth-disabled").label("Fullwidth disabled text field").disabled() }
+                    </span>
+                </div>
             </div>
         }
     }

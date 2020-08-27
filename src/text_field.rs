@@ -155,6 +155,64 @@ impl TextField {
         self
     }
 
+    pub fn disabled(mut self) -> Self {
+        self.add_class("mdc-text-field--disabled");
+        if let Some(input_tag) = self.root_tag_mut().find_child_tag_mut("input") {
+            input_tag.set_attr("disabled", "");
+        }
+        self
+    }
+
+    pub fn helper_text(mut self, helper_text: impl Into<Html>) -> Self {
+        let id = self.root_id();
+        let helper_id = format!("{}-helper", id);
+
+        if let Some(input_tag) = self.root_tag_mut().find_child_tag_mut("input") {
+            input_tag.set_attr("aria-controls", helper_id.clone());
+            input_tag.set_attr("aria-describedby", helper_id.clone());
+        }
+        self.html_mut().insert_child(1, html! {
+            <div class="mdc-text-field-helper-line">
+                <div class="mdc-text-field-helper-text" id=helper_id aria-hidden="true">{helper_text}</div>
+            </div>
+        });
+        // match self.style {
+        //     TextFieldStyle::Filled => {
+        //         if let Some(input_tag) = self.root_tag_mut().find_child_tag_mut("input") {
+        //             input_tag.set_attr("aria-controls", helper_id.clone());
+        //             input_tag.set_attr("aria-describedby", helper_id.clone());
+        //         }
+        //         self.children.push(html! {
+        //             <div class="mdc-text-field-helper-line">
+        //                 <div class="mdc-text-field-helper-text" id=helper_id aria-hidden="true">{helper_text}</div>
+        //             </div>
+        //         });
+        //     },
+        //     TextFieldStyle::Outlined => {
+        //         if let Some(tag) = self.root_tag_mut().find_child_contains_class_mut("mdc-notched-outline") {
+        //             if let Some(notch) = tag.find_child_contains_class_mut("mdc-notched-outline__notch") {
+        //                 notch.children.push(html! {
+        //                     <span class = "mdc-floating-label" id = label_id>{ label }</span>
+        //                 });
+        //             }
+        //         }
+        //
+        //         if let Some(input_tag) = self.root_tag_mut().find_child_tag_mut("input") {
+        //             input_tag.set_attr("aria-labelledby", label_id);
+        //         }
+        //     },
+        //     TextFieldStyle::FilledFullWidth => {
+        //         if let Some(input_tag) = self.root_tag_mut().find_child_tag_mut("input") {
+        //             if let Html::VText(label) = label.into() {
+        //                 input_tag.set_attr("placeholder", &label.text);
+        //                 input_tag.set_attr("aria-label", label.text);
+        //             }
+        //         }
+        //     },
+        // }
+        self
+    }
+
     pub fn root_id(&self) -> &str {
         self.root_tag().attributes.get("id")
             .expect("The TextField widget must have ID")
