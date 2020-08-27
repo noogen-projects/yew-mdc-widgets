@@ -1,12 +1,13 @@
 use std::{
-    rc::Rc, ops::{Deref, DerefMut},
+    ops::{Deref, DerefMut},
+    rc::Rc,
 };
 
 use yew::{html, html::onclick, Callback, Html, MouseEvent};
 
 use crate::{
+    utils::{ripple, root_and_input_child_disabled, MdcWidget, VTagExt},
     Text,
-    utils::{VTagExt, MdcWidget, ripple, root_and_input_child_disabled},
 };
 
 #[derive(Debug, Clone)]
@@ -44,9 +45,12 @@ impl Checkbox {
             self.html = html! { <>{ self.html }</> }
         }
         if let Html::VList(list) = &mut self.html {
-            list.children.insert(1, html! {
-                <label for = self.input_id>{ label }</label>
-            });
+            list.children.insert(
+                1,
+                html! {
+                    <label for = self.input_id>{ label }</label>
+                },
+            );
         }
         self
     }
