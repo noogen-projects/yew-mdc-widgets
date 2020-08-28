@@ -381,38 +381,55 @@ impl Root {
         html! {
             <div>
                 <div>
+                    <h3 class = "mdc-typography--subtitle1">{ "Default" }</h3>
                     <span class = "demo-item">
                         { TextField::filled("text-field-filled") }
                     </span>
                     <span class = "demo-item">
-                        { TextField::filled("text-field-filled-labeled").label("Filled text field") }
+                        { TextField::outlined("text-field-outlined") }
+                    </span>
+                    <span class = "demo-item" style = "width: 100%">
+                        { TextField::fullwidth("text-field-fullwidth") }
                     </span>
                 </div>
                 <div>
+                    <h3 class = "mdc-typography--subtitle1">{ "Labeled" }</h3>
                     <span class = "demo-item">
-                        { TextField::outlined("text-field-outlined") }
+                        { TextField::filled("text-field-filled-labeled").label("Filled text field") }
                     </span>
                     <span class = "demo-item">
                         { TextField::outlined("text-field-outlined-labeled").label("Outlined text field") }
                     </span>
+                    <span class = "demo-item" style = "width: 100%">
+                        { TextField::fullwidth("text-field-fullwidth-labeled").label("Fullwidth text field") }
+                    </span>
                 </div>
                 <div>
+                    <h3 class = "mdc-typography--subtitle1">{ "Helper text" }</h3>
+                    <span class = "demo-item">
+                        { TextField::filled("text-field-filled-labeled-helpertext").label("Filled text field").helper_text("Helper text") }
+                    </span>
+                    <span class = "demo-item">
+                        { TextField::outlined("text-field-outlined-labeled-helpertext").label("Outlined text field").helper_text("Helper text") }
+                    </span>
                     <span class = "demo-item" style = "width: 100%">
-                        { TextField::fullwidth("text-field-fullwidth").label("Fullwidth text field") }
+                        { TextField::fullwidth("text-field-fullwidth-helpertext").label("Fullwidth text field").helper_text("Helper text") }
                     </span>
                 </div>
                 <div>
+                    <h3 class = "mdc-typography--subtitle1">{ "Char counter" }</h3>
                     <span class = "demo-item">
-                        { TextField::filled("text-field-filled-labeled-helpertext").label("Filled disabled text field").helper_text("Helper text") }
+                        { TextField::filled("text-field-filled-labeled-charcounter").label("Filled text field").char_counter(20).helper_text("help") }
                     </span>
                     <span class = "demo-item">
-                        { TextField::outlined("text-field-outlined-labeled-helpertext").label("Outlined disabled text field").helper_text("Helper text") }
+                        { TextField::outlined("text-field-outlined-labeled-charcounter").label("Outlined text field").char_counter(20).helper_text("help") }
                     </span>
                     <span class = "demo-item" style = "width: 100%">
-                        { TextField::fullwidth("text-field-fullwidth-helpertext").label("Fullwidth disabled text field").helper_text("Helper text") }
+                        { TextField::fullwidth("text-field-fullwidth-charcounter").label("Fullwidth text field").char_counter(20).helper_text("help") }
                     </span>
                 </div>
                  <div>
+                    <h3 class = "mdc-typography--subtitle1">{ "Disabled" }</h3>
                     <span class = "demo-item">
                         { TextField::filled("text-field-filled-labeled-disabled").label("Filled disabled text field").disabled() }
                     </span>
