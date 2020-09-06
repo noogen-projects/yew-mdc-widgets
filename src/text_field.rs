@@ -188,48 +188,53 @@ impl TextField {
             input_tag.set_attr("aria-controls", helper_id.clone());
             input_tag.set_attr("aria-describedby", helper_id.clone());
         }
-        self.html_mut().insert_child(
-            1,
-            html! {
-                <div class="mdc-text-field-helper-line">
+
+        if let Some(helper_line_div) = self
+            .html_mut()
+            .find_child_contains_class_mut("mdc-text-field-helper-line")
+        {
+            helper_line_div.children.insert(
+                0,
+                html! {
                     <div class="mdc-text-field-helper-text" id=helper_id aria-hidden="true">{helper_text}</div>
-                </div>
-            },
-        );
-        // match self.style {
-        //     TextFieldStyle::Filled => {
-        //         if let Some(input_tag) = self.root_tag_mut().find_child_tag_mut("input") {
-        //             input_tag.set_attr("aria-controls", helper_id.clone());
-        //             input_tag.set_attr("aria-describedby", helper_id.clone());
-        //         }
-        //         self.children.push(html! {
-        //             <div class="mdc-text-field-helper-line">
-        //                 <div class="mdc-text-field-helper-text" id=helper_id aria-hidden="true">{helper_text}</div>
-        //             </div>
-        //         });
-        //     },
-        //     TextFieldStyle::Outlined => {
-        //         if let Some(tag) = self.root_tag_mut().find_child_contains_class_mut("mdc-notched-outline") {
-        //             if let Some(notch) = tag.find_child_contains_class_mut("mdc-notched-outline__notch") {
-        //                 notch.children.push(html! {
-        //                     <span class = "mdc-floating-label" id = label_id>{ label }</span>
-        //                 });
-        //             }
-        //         }
-        //
-        //         if let Some(input_tag) = self.root_tag_mut().find_child_tag_mut("input") {
-        //             input_tag.set_attr("aria-labelledby", label_id);
-        //         }
-        //     },
-        //     TextFieldStyle::FilledFullWidth => {
-        //         if let Some(input_tag) = self.root_tag_mut().find_child_tag_mut("input") {
-        //             if let Html::VText(label) = label.into() {
-        //                 input_tag.set_attr("placeholder", &label.text);
-        //                 input_tag.set_attr("aria-label", label.text);
-        //             }
-        //         }
-        //     },
-        // }
+                },
+            );
+        } else {
+            self.html_mut().insert_child(
+                1,
+                html! {
+                    <div class="mdc-text-field-helper-line">
+                        <div class="mdc-text-field-helper-text" id=helper_id aria-hidden="true">{helper_text}</div>
+                    </div>
+                },
+            );
+        }
+        self
+    }
+
+    pub fn char_counter(mut self, max_length: usize) -> Self {
+        let helper_string = format!("0 / {}", max_length);
+
+        if let Some(input_tag) = self.root_tag_mut().find_child_tag_mut("input") {
+            input_tag.set_attr("maxlength", format!("{}", max_length));
+        }
+        if let Some(helper_line_div) = self
+            .html_mut()
+            .find_child_contains_class_mut("mdc-text-field-helper-line")
+        {
+            helper_line_div.children.push(html! {
+                    <div class="mdc-text-field-character-counter">{helper_string}</div>
+            });
+        } else {
+            self.html_mut().insert_child(
+                1,
+                html! {
+                    <div class="mdc-text-field-helper-line">
+                        <div class="mdc-text-field-character-counter">{helper_string}</div>
+                    </div>
+                },
+            );
+        }
         self
     }
 
