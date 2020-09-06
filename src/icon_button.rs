@@ -92,7 +92,7 @@ impl IconButton {
     }
 
     pub fn on_click(self, callback: Callback<MouseEvent>) -> Self {
-        self.add_listener(Rc::new(onclick::Wrapper::new(callback)))
+        self.listener(Rc::new(onclick::Wrapper::new(callback)))
     }
 
     fn enable_toggle(&mut self) {

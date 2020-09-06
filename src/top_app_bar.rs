@@ -13,6 +13,9 @@ pub struct TopAppBar {
 }
 
 impl TopAppBar {
+    const SCROLLED_CLASS: &'static str = "mdc-top-app-bar--fixed-scrolled";
+    const BAR_VAR_NAME: &'static str = "top_app_bar";
+
     pub fn new<'a>(id: impl Into<Text<'a>>) -> Self {
         let id = id.into();
         Self {
@@ -25,7 +28,7 @@ impl TopAppBar {
                         <section class = "mdc-top-app-bar__section mdc-top-app-bar__section--align-end" role = "toolbar">
                         </section>
                     </div>
-                    <script>{ format!("mdc.topAppBar.MDCTopAppBar.attachTo(document.getElementById('{}'));", id) }</script>
+                    <script>{ format!(r"{{const {} = mdc.topAppBar.MDCTopAppBar.attachTo(document.getElementById('{}'));}}", Self::BAR_VAR_NAME, id) }</script>
                 </header>
             },
         }
@@ -64,6 +67,42 @@ impl TopAppBar {
                 end_section.children.push(item);
             }
         }
+        self
+    }
+
+    pub fn enable_shadow_when_scroll(mut self) -> Self {
+        let root = self.root_tag_mut();
+        if root.is_contains_class("mdc-top-app-bar") && !root.is_contains_class(Self::SCROLLED_CLASS) {
+            if let Some(id) = root.attr("id") {
+                let statement = format!(
+                    r#"
+                    const old_scroll = window.onscroll;
+                    window.onscroll = function() {{
+                        if (old_scroll && {{}}.toString.call(old_scroll) === '[object Function]') {{ old_scroll(); }}
+                        var bar = document.getElementById('{id}');
+                        if (window.pageYOffset > 0) {{
+                            bar.classList.add("{class}");
+                        }} else {{
+                            bar.classList.remove("{class}");
+                        }}
+                    }}
+                "#,
+                    id = id,
+                    class = Self::SCROLLED_CLASS
+                );
+                root.add_child_script_statement(statement);
+            }
+        }
+        self
+    }
+
+    pub fn add_navigation_event(mut self, script: impl AsRef<str>) -> Self {
+        let statement = format!(
+            "{}.listen('MDCTopAppBar:nav', () => {{ {} }});",
+            Self::BAR_VAR_NAME,
+            script.as_ref()
+        );
+        self.root_tag_mut().add_child_script_statement(statement);
         self
     }
 

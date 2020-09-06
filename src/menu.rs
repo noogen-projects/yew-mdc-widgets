@@ -3,10 +3,11 @@ use std::ops::{Deref, DerefMut};
 use yew::{html, Html};
 
 use crate::{
-    Text, List,
-    utils::{VTagExt, MdcWidget},
+    utils::{MdcWidget, VTagExt},
+    List, Text,
 };
 
+#[derive(Debug, Clone)]
 pub struct Menu {
     html: Html,
     list: List,
@@ -17,7 +18,7 @@ impl Menu {
 
     pub fn from_list<'a>(id: impl Into<Text<'a>>, list: List) -> Self {
         let id = id.into();
-        let list = list.markup_only();
+        let list = list.markup_only().attr("role", "menu");
         Self {
             html: html! {
                 <div id = id class = "mdc-menu mdc-menu-surface">
@@ -30,19 +31,25 @@ impl Menu {
 
     pub fn new<'a>(id: impl Into<Text<'a>>) -> Self {
         let id = id.into();
-        let list = List::new(format!("{}-list", id));
+        let list = List::ul(format!("{}-list", id));
         Self::from_list(id, list)
     }
 
     pub fn open_existing(id: impl AsRef<str>) {
-        js_sys::eval(&format!("mdc.menu.MDCMenu.attachTo(document.getElementById('{}')).open = true;", id.as_ref()))
-            .expect("JavaScript evaluation error");
+        js_sys::eval(&format!(
+            "mdc.menu.MDCMenu.attachTo(document.getElementById('{}')).open = true;",
+            id.as_ref()
+        ))
+        .expect("JavaScript evaluation error");
     }
 
     pub fn open(mut self) -> Self {
         let root = self.root_tag_mut();
         if let Some(id) = root.attr("id") {
-            let statement = format!("mdc.menu.MDCMenu.attachTo(document.getElementById('{}')).open = true;", id);
+            let statement = format!(
+                "mdc.menu.MDCMenu.attachTo(document.getElementById('{}')).open = true;",
+                id
+            );
             root.add_child_script_statement(statement);
         }
         self

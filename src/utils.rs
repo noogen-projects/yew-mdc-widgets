@@ -12,6 +12,8 @@ use yew::{
 };
 
 pub trait VTagExt {
+    fn root_tag(&self) -> Option<&VTag>;
+    fn root_tag_mut(&mut self) -> Option<&mut VTag>;
     fn add_class(&mut self, class: impl AsRef<str>);
     fn remove_any_class(&mut self, classes: &[&str]);
     fn attr<Q>(&self, attr: &Q) -> Option<&String>
@@ -42,6 +44,14 @@ pub trait VTagExt {
 }
 
 impl VTagExt for VTag {
+    fn root_tag(&self) -> Option<&VTag> {
+        Some(self)
+    }
+
+    fn root_tag_mut(&mut self) -> Option<&mut VTag> {
+        Some(self)
+    }
+
     fn add_class(&mut self, class: impl AsRef<str>) {
         let class = class.as_ref().trim();
         if let Some(classes) = self.attributes.get_mut("class") {
@@ -80,7 +90,7 @@ impl VTagExt for VTag {
 
     fn is_contains_class(&self, class: &str) -> bool {
         if let Some(classes) = self.attributes.get("class") {
-            classes.split_whitespace().find(|&item| item == class).is_some()
+            classes.split_whitespace().any(|item| item == class)
         } else {
             false
         }
@@ -88,7 +98,7 @@ impl VTagExt for VTag {
 
     fn is_contains_any_class(&self, classes: &[&str]) -> bool {
         if let Some(class) = self.attributes.get("class") {
-            class.split_whitespace().find(|item| classes.contains(item)).is_some()
+            class.split_whitespace().any(|item| classes.contains(&item))
         } else {
             false
         }
@@ -170,6 +180,32 @@ impl VTagExt for VTag {
 }
 
 impl VTagExt for Html {
+    fn root_tag(&self) -> Option<&VTag> {
+        match self {
+            Html::VTag(tag) => return Some(tag),
+            Html::VList(list) => {
+                if let Some(Html::VTag(tag)) = list.children.first() {
+                    return Some(tag);
+                }
+            }
+            _ => (),
+        }
+        None
+    }
+
+    fn root_tag_mut(&mut self) -> Option<&mut VTag> {
+        match self {
+            Html::VTag(tag) => return Some(tag),
+            Html::VList(list) => {
+                if let Some(Html::VTag(tag)) = list.children.first_mut() {
+                    return Some(tag);
+                }
+            }
+            _ => (),
+        }
+        None
+    }
+
     fn add_class(&mut self, class: impl AsRef<str>) {
         if let Html::VTag(tag) = self {
             tag.add_class(class);
@@ -485,7 +521,12 @@ fn find_child_tag_idx<'a>(children: impl IntoIterator<Item = &'a Html>, child_ta
 fn add_child_script_statement(child: Option<&mut VTag>, statement: impl AsRef<str>) {
     if let Some(script) = child {
         if let Some(Html::VText(text)) = script.children.children.first_mut() {
-            text.text.push_str(statement.as_ref());
+            let text = &mut text.text;
+            if text.starts_with('{') && text.ends_with('}') {
+                text.insert_str(text.len() - 1, statement.as_ref());
+            } else {
+                text.push_str(statement.as_ref());
+            }
         }
     }
 }
@@ -498,36 +539,30 @@ pub trait MdcWidget {
     fn html_mut(&mut self) -> &mut Html;
 
     fn root_tag(&self) -> &VTag {
-        match self.html() {
-            Html::VTag(tag) => return tag,
-            Html::VList(list) => {
-                if let Some(Html::VTag(tag)) = list.children.first() {
-                    return tag;
-                }
-            }
-            _ => (),
-        }
-        panic!("The root element of the {} must be a tag!", Self::NAME);
+        self.html()
+            .root_tag()
+            .unwrap_or_else(|| panic!("The root element of the {} must be a tag!", Self::NAME))
     }
 
     fn root_tag_mut(&mut self) -> &mut VTag {
-        match self.html_mut() {
-            Html::VTag(tag) => return tag,
-            Html::VList(list) => {
-                if let Some(Html::VTag(tag)) = list.children.first_mut() {
-                    return tag;
-                }
-            }
-            _ => (),
-        }
-        panic!("The root element of the {} must be a tag!", Self::NAME);
+        self.html_mut()
+            .root_tag_mut()
+            .unwrap_or_else(|| panic!("The root element of the {} must be a tag!", Self::NAME))
     }
 
-    fn add_listener(mut self, listener: Rc<dyn Listener>) -> Self
+    fn listener(mut self, listener: Rc<dyn Listener>) -> Self
     where
         Self: Sized,
     {
         self.root_tag_mut().add_listener(listener);
+        self
+    }
+
+    fn attr(mut self, attr: impl Into<String>, value: impl Into<String>) -> Self
+    where
+        Self: Sized,
+    {
+        self.root_tag_mut().set_attr(attr.into(), value.into());
         self
     }
 }
@@ -537,7 +572,7 @@ pub fn ripple(widget: &mut impl MdcWidget, ripple_class: impl AsRef<str>, enable
     let root = widget.root_tag_mut();
     if enabled {
         if !root.is_some_child_contains_class(ripple_class) {
-            let idx = root.children.len().checked_sub(1).unwrap_or(0);
+            let idx = root.children.len().saturating_sub(1);
             root.children.insert(
                 idx,
                 html! {

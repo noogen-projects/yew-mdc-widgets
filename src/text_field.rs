@@ -241,7 +241,7 @@ impl TextField {
     }
 
     pub fn on_click(self, callback: Callback<MouseEvent>) -> Self {
-        self.add_listener(Rc::new(onclick::Wrapper::new(callback)))
+        self.listener(Rc::new(onclick::Wrapper::new(callback)))
     }
 
     pub fn on_input(mut self, callback: Callback<InputData>) -> Self {

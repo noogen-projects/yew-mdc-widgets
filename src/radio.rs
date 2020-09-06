@@ -1,14 +1,16 @@
 use std::{
-    rc::Rc, ops::{Deref, DerefMut},
+    ops::{Deref, DerefMut},
+    rc::Rc,
 };
 
 use yew::{html, html::onclick, Callback, Html, MouseEvent};
 
 use crate::{
+    utils::{ripple, root_and_input_child_disabled, MdcWidget, VTagExt},
     Text,
-    utils::{VTagExt, MdcWidget, ripple, root_and_input_child_disabled},
 };
 
+#[derive(Debug, Clone)]
 pub struct Radio {
     html: Html,
     input_id: String,
@@ -36,7 +38,7 @@ impl Radio {
         }
     }
 
-    pub fn name_of_set<'a>(mut self, name: impl Into<String>) -> Self {
+    pub fn name_of_set(mut self, name: impl Into<String>) -> Self {
         if let Some(input) = self.root_tag_mut().find_child_tag_mut("input") {
             input.set_attr("name", name);
         }
@@ -48,9 +50,12 @@ impl Radio {
             self.html = html! { <>{ self.html }</> }
         }
         if let Html::VList(list) = &mut self.html {
-            list.children.insert(1, html! {
-                <label for = self.input_id>{ label }</label>
-            });
+            list.children.insert(
+                1,
+                html! {
+                    <label for = self.input_id>{ label }</label>
+                },
+            );
         }
         self
     }

@@ -1,14 +1,16 @@
 use std::{
-    rc::Rc, ops::{Deref, DerefMut},
+    ops::{Deref, DerefMut},
+    rc::Rc,
 };
 
 use yew::{html, html::onclick, Callback, Html, MouseEvent};
 
 use crate::{
+    utils::{MdcWidget, VTagExt},
     Text,
-    utils::{VTagExt, MdcWidget},
 };
 
+#[derive(Debug, Clone)]
 pub struct ListItem {
     html: Html,
 }
@@ -38,6 +40,16 @@ impl ListItem {
         Self::default().id(id)
     }
 
+    pub fn link(href: impl AsRef<str>) -> Self {
+        let item = Self {
+            html: html! {
+                <a class = "mdc-list-item" href = href.as_ref()>
+                </a>
+            },
+        };
+        item.ripple(true)
+    }
+
     pub fn id<'a>(mut self, id: impl Into<Text<'a>>) -> Self {
         let id = id.into();
         let root = self.root_tag_mut();
@@ -60,22 +72,28 @@ impl ListItem {
             primary.remove_any_class(&[Self::TEXT_ITEM_CLASS]);
             primary.add_class(Self::PRIMARY_TEXT_ITEM_CLASS);
 
-            root.children.insert(idx, html! {
-                <span class = Self::TEXT_ITEM_CLASS>
-                    { primary }
-                    <span class = Self::SECONDARY_TEXT_ITEM_CLASS>
-                        { text }
+            root.children.insert(
+                idx,
+                html! {
+                    <span class = Self::TEXT_ITEM_CLASS>
+                        { primary }
+                        <span class = Self::SECONDARY_TEXT_ITEM_CLASS>
+                            { text }
+                        </span>
                     </span>
-                </span>
-            });
+                },
+            );
         } else {
             let idx = root
                 .find_child_contains_class_idx(Self::LAST_TILE_CLASS)
                 .or_else(|| root.find_child_tag_idx("script"))
                 .unwrap_or_else(|| root.children.len());
-            root.children.insert(idx, html! {
-                <span class = Self::TEXT_ITEM_CLASS>{ text }</span>
-            });
+            root.children.insert(
+                idx,
+                html! {
+                    <span class = Self::TEXT_ITEM_CLASS>{ text }</span>
+                },
+            );
         }
         self
     }
@@ -95,9 +113,12 @@ impl ListItem {
         let root = self.root_tag_mut();
         if enabled {
             if !root.is_some_child_contains_class(Self::RIPPLE_CLASS) {
-                root.children.insert(0, html! {
-                    <span class = Self::RIPPLE_CLASS></span>
-                });
+                root.children.insert(
+                    0,
+                    html! {
+                        <span class = Self::RIPPLE_CLASS></span>
+                    },
+                );
             }
             if !root.is_last_child("script") {
                 if let Some(id) = root.attributes.get("id") {
@@ -131,9 +152,12 @@ impl ListItem {
                 .unwrap_or(0);
             (idx, Self::FIRST_TILE_CLASS)
         };
-        root.children.insert(idx, html! {
-            <span class = class>{ tile }</span>
-        });
+        root.children.insert(
+            idx,
+            html! {
+                <span class = class>{ tile }</span>
+            },
+        );
         self
     }
 
@@ -179,7 +203,7 @@ impl ListItem {
     }
 
     pub fn on_click(self, callback: Callback<MouseEvent>) -> Self {
-        self.add_listener(Rc::new(onclick::Wrapper::new(callback)))
+        self.listener(Rc::new(onclick::Wrapper::new(callback)))
     }
 }
 
@@ -201,30 +225,49 @@ impl From<ListItem> for Html {
     }
 }
 
+#[derive(Debug, Clone)]
 pub struct List {
     html: Html,
 }
 
 impl List {
-    pub fn new<'a>(id: impl Into<Text<'a>>) -> Self {
+    const LIST_VAR_NAME: &'static str = "list";
+
+    pub fn ul<'a>(id: impl Into<Text<'a>>) -> Self {
         let id = id.into();
         Self {
             html: html! {
                 <>
-                    <ul id = id class = "mdc-list" tabindex = "-1">
+                    <ul id = id class = "mdc-list">
                     </ul>
-                    <script>{ format!("mdc.list.MDCList.attachTo(document.getElementById('{}'));", id) }</script>
+                    <script>{ format!("{{ const {} = mdc.list.MDCList.attachTo(document.getElementById('{}')); }}", Self::LIST_VAR_NAME, id) }</script>
+                </>
+            },
+        }
+    }
+
+    pub fn nav<'a>(id: impl Into<Text<'a>>) -> Self {
+        let id = id.into();
+        Self {
+            html: html! {
+                <>
+                    <nav id = id class = "mdc-list">
+                    </nav>
+                    <script>{ format!("{{ const {} = mdc.list.MDCList.attachTo(document.getElementById('{}')); }}", Self::LIST_VAR_NAME, id) }</script>
                 </>
             },
         }
     }
 
     pub fn single_selection(mut self) -> Self {
-        let root = self.root_tag_mut();
-        if let Some(id) = root.attr("id") {
-            let statement = format!("document.getElementById('{}').singleSelection = true;", id);
-            root.add_child_script_statement(statement);
-        }
+        self.html
+            .add_child_script_statement(format!("{}.singleSelection = true;", Self::LIST_VAR_NAME));
+        self
+    }
+
+    pub fn wrap_focus(mut self) -> Self {
+        self.html
+            .add_child_script_statement(format!("{}.wrapFocus = true;", Self::LIST_VAR_NAME));
         self
     }
 
@@ -279,14 +322,11 @@ impl List {
         let root = self.root_tag_mut();
         let item_number = root.children.len();
 
-        if item_number == 0 {
-            item.set_attr("tabindex", "0");
-        }
         if item.attr("id").is_none() && item.is_some_child_contains_class(ListItem::RIPPLE_CLASS) {
             if let Some(id) = root.attr("id") {
-                item = ListItem {
-                    html: item,
-                }.id(format!("{}-item-{}", id, item_number)).into();
+                item = ListItem { html: item }
+                    .id(format!("{}-item-{}", id, item_number))
+                    .into();
             }
         }
         root.children.push(item);

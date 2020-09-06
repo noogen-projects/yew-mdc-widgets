@@ -1,12 +1,13 @@
 use std::{
-    rc::Rc, ops::{Deref, DerefMut},
+    ops::{Deref, DerefMut},
+    rc::Rc,
 };
 
 use yew::{html, html::onclick, Callback, Html, MouseEvent};
 
 use crate::{
+    utils::{ripple, MdcWidget, VTagExt},
     Text,
-    utils::{VTagExt, MdcWidget, ripple},
 };
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -94,11 +95,14 @@ impl Button {
 
     pub fn add_before_label(mut self, item: impl Into<Html>) -> Self {
         let root = self.root_tag_mut();
-        let idx = root.find_child_contains_class_idx("mdc-button__label")
-            .unwrap_or_else(|| if root.is_last_child("script") {
-                root.children.len() - 1
-            } else {
-                root.children.len()
+        let idx = root
+            .find_child_contains_class_idx("mdc-button__label")
+            .unwrap_or_else(|| {
+                if root.is_last_child("script") {
+                    root.children.len() - 1
+                } else {
+                    root.children.len()
+                }
             });
         root.children.insert(idx, item.into());
         self
@@ -106,12 +110,15 @@ impl Button {
 
     pub fn add_after_label(mut self, item: impl Into<Html>) -> Self {
         let root = self.root_tag_mut();
-        let idx = root.find_child_contains_class_idx("mdc-button__label")
+        let idx = root
+            .find_child_contains_class_idx("mdc-button__label")
             .map(|idx| idx + 1)
-            .unwrap_or_else(|| if root.is_last_child("script") {
-                root.children.len() - 1
-            } else {
-                root.children.len()
+            .unwrap_or_else(|| {
+                if root.is_last_child("script") {
+                    root.children.len() - 1
+                } else {
+                    root.children.len()
+                }
             });
         root.children.insert(idx, item.into());
         self
@@ -124,7 +131,7 @@ impl Button {
     }
 
     pub fn on_click(self, callback: Callback<MouseEvent>) -> Self {
-        self.add_listener(Rc::new(onclick::Wrapper::new(callback)))
+        self.listener(Rc::new(onclick::Wrapper::new(callback)))
     }
 }
 

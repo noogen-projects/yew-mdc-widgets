@@ -1,11 +1,11 @@
 use std::{
-    rc::Rc,
     ops::{Deref, DerefMut},
+    rc::Rc,
 };
 
-use yew::{html, html::onclick, Callback, Html, MouseEvent, virtual_dom::VTag};
+use yew::{html, html::onclick, virtual_dom::VTag, Callback, Html, MouseEvent};
 
-use crate::{Text, Checkbox, utils::VTagExt};
+use crate::{utils::VTagExt, Checkbox, Text};
 
 pub enum TableCell {
     Numeric(Html),
@@ -54,6 +54,7 @@ impl TableCell {
 
 pub type OnRowClickFn = fn(&VTag) -> Callback<MouseEvent>;
 
+#[derive(Clone)]
 pub struct DataTable {
     html: Html,
     row_selection: bool,
@@ -86,10 +87,7 @@ impl DataTable {
     }
 
     pub fn head(mut self, head: impl IntoIterator<Item = TableCell>) -> Self {
-        let head_cells: Vec<Html> = head
-            .into_iter()
-            .map(|cell| cell.build_head_cell())
-            .collect();
+        let head_cells: Vec<Html> = head.into_iter().map(|cell| cell.build_head_cell()).collect();
 
         let head_row = self.table_header_row_tag_mut();
         for idx in 0..head_row.children.len() {
@@ -105,10 +103,7 @@ impl DataTable {
     }
 
     pub fn row(mut self, row: impl IntoIterator<Item = TableCell>) -> Self {
-        let row: Vec<_> = row
-            .into_iter()
-            .map(|cell| cell.build_body_cell())
-            .collect();
+        let row: Vec<_> = row.into_iter().map(|cell| cell.build_body_cell()).collect();
 
         let row_id = format!("{}-row-{}", self.root_id(), self.row_count());
         let mut row = html! {
@@ -234,18 +229,14 @@ impl DataTable {
 
     pub fn table_body_tag(&self) -> &VTag {
         match self.table_tag().children.get(1) {
-            Some(Html::VTag(tag)) if tag.tag() == "tbody" => {
-                tag
-            },
+            Some(Html::VTag(tag)) if tag.tag() == "tbody" => tag,
             _ => panic!("The DataTable widget must be contains the table body tag!"),
         }
     }
 
     fn table_body_tag_mut(&mut self) -> &mut VTag {
         match self.table_tag_mut().children.get_mut(1) {
-            Some(Html::VTag(tag)) if tag.tag() == "tbody" => {
-                tag
-            },
+            Some(Html::VTag(tag)) if tag.tag() == "tbody" => tag,
             _ => panic!("The DataTable widget must be contains the table body tag!"),
         }
     }

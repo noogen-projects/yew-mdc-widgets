@@ -1,14 +1,23 @@
 body {
     font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif;
+    margin: 0;
 }
 
 #root {
     width: 100%;
     overflow: auto;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
+    margin-bottom: 32px;
+}
+
+.mdc-drawer {
+    position: fixed;
+}
+
+.app-content {
+    flex: auto;
+    overflow: auto;
+    position: relative;
 }
 
 .widget-list div {
@@ -18,10 +27,17 @@ body {
 .demo-content {
     width: 100%;
     max-width: 1200px;
+    margin: auto;
 }
 
 .demo-title {
+    margin-top: 32px;
     border-bottom: 1px solid rgba(0,0,0,.87);
+}
+
+.demo-title > a {
+    top: -74px;
+    position: relative;
 }
 
 .demo-item {

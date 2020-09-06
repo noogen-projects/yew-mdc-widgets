@@ -2,7 +2,8 @@
 
 use yew::{html, initialize, run_loop, utils, App, Component, ComponentLink, Html};
 use yew_mdc_widgets::{
-    Button, ButtonStyle, Checkbox, DataTable, IconButton, List, ListItem, Menu, Radio, TableCell, TextField,
+    Button, ButtonStyle, Checkbox, DataTable, Drawer, IconButton, List, ListItem, MdcWidget, Menu, Radio, TableCell,
+    TextField, TopAppBar,
 };
 
 struct Root {
@@ -26,62 +27,76 @@ impl Component for Root {
     }
 
     fn view(&self) -> Html {
+        let contents = vec![
+            ListItem::link("#buttons").text("Buttons").attr("tabindex", "0"),
+            ListItem::link("#icon_buttons").text("Icon buttons"),
+            ListItem::link("#checkboxes").text("Checkboxes"),
+            ListItem::link("#radio_buttons").text("Radio buttons"),
+            ListItem::link("#text_fields").text("Text fields"),
+            ListItem::link("#lists").text("Lists"),
+            ListItem::link("#menu").text("Menu"),
+            ListItem::link("#data_tables").text("Data tables"),
+        ];
+
+        let drawer = Drawer::new("app-drawer")
+            .title(html! { <h3 tabindex = 0>{ "Widgets" }</h3> })
+            .modal()
+            .content(List::nav("main-menu").items(contents.clone()).markup_only());
+        let attaching_drawer = Drawer::get_attaching_script("app-drawer");
+
+        let top_app_bar = TopAppBar::new("top-app-bar")
+            .title("Yew MDC Widgets")
+            .navigation_item(IconButton::new("top-app-bar-menu-icon").icon("menu"))
+            .enable_shadow_when_scroll()
+            .add_navigation_event("drawer.open = !drawer.open;");
+
         html! {
-            <div class = "demo-content">
-                <h1 class = "demo-title mdc-typography--headline5">{ "Material design components" }</h1>
-                {
-                    List::new("contents").items(vec![
-                        ListItem::default()
-                            .text("Buttons")
-                            .on_click(self.link.callback(|_| utils::window().location().set_href("#buttons").unwrap())),
-                        ListItem::default()
-                            .text("Icon buttons")
-                            .on_click(self.link.callback(|_| utils::window().location().set_href("#icon_buttons").unwrap())),
-                        ListItem::default()
-                            .text("Checkboxes")
-                            .on_click(self.link.callback(|_| utils::window().location().set_href("#checkboxes").unwrap())),
-                        ListItem::default()
-                            .text("Radio buttons")
-                            .on_click(self.link.callback(|_| utils::window().location().set_href("#radio_buttons").unwrap())),
-                        ListItem::default()
-                            .text("Text fields")
-                            .on_click(self.link.callback(|_| utils::window().location().set_href("#text_fields").unwrap())),
-                        ListItem::default()
-                            .text("Lists")
-                            .on_click(self.link.callback(|_| utils::window().location().set_href("#lists").unwrap())),
-                        ListItem::default()
-                            .text("Menu")
-                            .on_click(self.link.callback(|_| utils::window().location().set_href("#menu").unwrap())),
-                        ListItem::default()
-                            .text("Data tables")
-                            .on_click(self.link.callback(|_| utils::window().location().set_href("#data_tables").unwrap())),
-                    ])
-                }
+            <>
+                { drawer }
+                <div class="mdc-drawer-scrim"></div>
 
-                <h2 class = "demo-title mdc-typography--headline6"><a name = "buttons"></a>{ "Buttons" }</h2>
-                { self.view_buttons() }
+                <div class = vec!["app-content", Drawer::APP_CONTENT_CLASS]>
+                    { top_app_bar }
+                    <script>{ format!(r"
+                        const drawer = {};
+                        const listEl = document.querySelector('.mdc-drawer .mdc-list');                    
+                        listEl.addEventListener('click', (event) => {{
+                            drawer.open = false;
+                        }});
+                    ", attaching_drawer) }</script>
 
-                <h2 class = "demo-title mdc-typography--headline6"><a name = "icon_buttons"></a>{ "Icon buttons" }</h2>
-                { self.view_icon_buttons() }
+                    <div class = "mdc-top-app-bar--fixed-adjust">
+                        <div class = "demo-content">
+                            <h1 class = "demo-title mdc-typography--headline5">{ "Material design components" }</h1>
+                            { List::nav("contents").items(contents) }
 
-                <h2 class = "demo-title mdc-typography--headline6"><a name = "checkboxes"></a>{ "Checkboxes" }</h2>
-                { self.view_checkboxes() }
+                            <h2 class = "demo-title mdc-typography--headline6"><a name = "buttons"></a>{ "Buttons" }</h2>
+                            { self.view_buttons() }
 
-                <h2 class = "demo-title mdc-typography--headline6"><a name = "radio_buttons"></a>{ "Radio buttons" }</h2>
-                { self.view_radio_buttons() }
+                            <h2 class = "demo-title mdc-typography--headline6"><a name = "icon_buttons"></a>{ "Icon buttons" }</h2>
+                            { self.view_icon_buttons() }
 
-                <h2 class = "demo-title mdc-typography--headline6"><a name = "text_fields"></a>{ "Text fields" }</h2>
-                { self.view_text_fields() }
+                            <h2 class = "demo-title mdc-typography--headline6"><a name = "checkboxes"></a>{ "Checkboxes" }</h2>
+                            { self.view_checkboxes() }
 
-                <h2 class = "demo-title mdc-typography--headline6"><a name = "lists"></a>{ "Lists" }</h2>
-                { self.view_lists() }
+                            <h2 class = "demo-title mdc-typography--headline6"><a name = "radio_buttons"></a>{ "Radio buttons" }</h2>
+                            { self.view_radio_buttons() }
 
-                <h2 class = "demo-title mdc-typography--headline6"><a name = "menu"></a>{ "Menu" }</h2>
-                { self.view_menu() }
+                            <h2 class = "demo-title mdc-typography--headline6"><a name = "text_fields"></a>{ "Text fields" }</h2>
+                            { self.view_text_fields() }
 
-                <h2 class = "demo-title mdc-typography--headline6"><a name = "data_tables"></a>{ "Data tables" }</h2>
-                { self.view_data_tables() }
-            </div>
+                            <h2 class = "demo-title mdc-typography--headline6"><a name = "lists"></a>{ "Lists" }</h2>
+                            { self.view_lists() }
+
+                            <h2 class = "demo-title mdc-typography--headline6"><a name = "menu"></a>{ "Menu" }</h2>
+                            { self.view_menu() }
+
+                            <h2 class = "demo-title mdc-typography--headline6"><a name = "data_tables"></a>{ "Data tables" }</h2>
+                            { self.view_data_tables() }
+                        </div>
+                    </div>
+                </div>
+            </>
         }
     }
 }
@@ -434,7 +449,7 @@ impl Root {
                     <h3 class = "mdc-typography--subtitle1">{ "Single-Line" }</h3>
                     <span class = "demo-item demo-list">
                         {
-                            List::new("single-line-list").items(vec![
+                            List::ul("single-line-list").items(vec![
                                 ListItem::default().text("List Item"),
                                 ListItem::default().text("List Item"),
                                 ListItem::default().text("List Item"),
@@ -443,7 +458,7 @@ impl Root {
                     </span>
                     <span class = "demo-item demo-list">
                         {
-                            List::new("single-line-list-icon").items(vec![
+                            List::ul("single-line-list-icon").items(vec![
                                 ListItem::default().icon("wifi").text("Leading Icon"),
                                 ListItem::default().icon("bluetooth").text("Leading Icon"),
                                 ListItem::default().icon("data_usage").text("Leading Icon"),
@@ -452,7 +467,7 @@ impl Root {
                     </span>
                     <span class = "demo-item demo-list">
                         {
-                            List::new("single-line-list-trailing-icon").items(vec![
+                            List::ul("single-line-list-trailing-icon").items(vec![
                                 ListItem::default().text("Trailing Icon").icon("info"),
                                 ListItem::default().text("Trailing Icon").icon("info"),
                                 ListItem::default().text("Trailing Icon").icon("info"),
@@ -461,7 +476,7 @@ impl Root {
                     </span>
                     <span class = "demo-item demo-list">
                         {
-                            List::new("single-line-list-checkbox").items(vec![
+                            List::ul("single-line-list-checkbox").items(vec![
                                 ListItem::default()
                                     .tile(Checkbox::new("single-line-list-checkbox-item-1-checkbox").markup_only())
                                     .label("Checkbox Item"),
@@ -476,7 +491,7 @@ impl Root {
                     </span>
                     <span class = "demo-item demo-list">
                         {
-                            List::new("single-line-list-radio").items(vec![
+                            List::ul("single-line-list-radio").items(vec![
                                 ListItem::default()
                                     .label("Radio Item")
                                     .tile(Radio::new("single-line-list-radio-item-1-radio").name_of_set("single-line-list-radio").markup_only()),
@@ -491,7 +506,7 @@ impl Root {
                     </span>
                     <span class = "demo-item demo-list">
                         {
-                            List::new("single-line-no-ripple-list").items(vec![
+                            List::ul("single-line-no-ripple-list").items(vec![
                                 ListItem::default().ripple(false).text("No ripple"),
                                 ListItem::default().ripple(false).text("No ripple"),
                                 ListItem::default().ripple(false).text("No ripple"),
@@ -503,7 +518,7 @@ impl Root {
                     <h3 class = "mdc-typography--subtitle1">{ "Two-Line" }</h3>
                     <span class = "demo-item demo-list">
                         {
-                            List::new("two-line-list").two_line().items(vec![
+                            List::ul("two-line-list").two_line().items(vec![
                                 ListItem::default().text("List Item").text("Secondary text"),
                                 ListItem::default().text("List Item").text("Secondary text"),
                                 ListItem::default().text("List Item").text("Secondary text"),
@@ -512,7 +527,7 @@ impl Root {
                     </span>
                     <span class = "demo-item demo-list">
                         {
-                            List::new("two-line-list-icon").two_line().items(vec![
+                            List::ul("two-line-list-icon").two_line().items(vec![
                                 ListItem::default().icon("wifi").text("Leading Icon").text("Secondary text"),
                                 ListItem::default().icon("bluetooth").text("Leading Icon").text("Secondary text"),
                                 ListItem::default().icon("data_usage").text("Leading Icon").text("Secondary text"),
@@ -521,7 +536,7 @@ impl Root {
                     </span>
                     <span class = "demo-item demo-list">
                         {
-                            List::new("two-line-list-trailing-icon").two_line().items(vec![
+                            List::ul("two-line-list-trailing-icon").two_line().items(vec![
                                 ListItem::default().text("Trailing Icon").text("Secondary text").icon("info"),
                                 ListItem::default().text("Trailing Icon").text("Secondary text").icon("info"),
                                 ListItem::default().text("Trailing Icon").text("Secondary text").icon("info"),
@@ -530,7 +545,7 @@ impl Root {
                     </span>
                     <span class = "demo-item demo-list">
                         {
-                            List::new("two-line-list-checkbox").two_line().items(vec![
+                            List::ul("two-line-list-checkbox").two_line().items(vec![
                                 ListItem::default()
                                     .tile(Checkbox::new("two-line-list-checkbox-item-1-checkbox").markup_only())
                                     .text("Checkbox Item")
@@ -548,7 +563,7 @@ impl Root {
                     </span>
                     <span class = "demo-item demo-list">
                         {
-                            List::new("two-line-list-radio").two_line().items(vec![
+                            List::ul("two-line-list-radio").two_line().items(vec![
                                 ListItem::default()
                                     .text("Radio Item")
                                     .text("Secondary text")
@@ -566,7 +581,7 @@ impl Root {
                     </span>
                     <span class = "demo-item demo-list">
                         {
-                            List::new("two-line-no-ripple-list").two_line().items(vec![
+                            List::ul("two-line-no-ripple-list").two_line().items(vec![
                                 ListItem::default().ripple(false).text("No ripple").text("Secondary text"),
                                 ListItem::default().ripple(false).text("No ripple").text("Secondary text"),
                                 ListItem::default().ripple(false).text("No ripple").text("Secondary text"),
@@ -578,14 +593,14 @@ impl Root {
                 <div class = "demo-item mdc-list-group demo-group-list demo-panel">
                     <h3 class = "mdc-list-group__subheader">{ "List 1" }</h3>
                     {
-                        List::new("list-group-1").items(vec![
+                        List::ul("list-group-1").items(vec![
                             ListItem::default().text("List Item"),
                             ListItem::default().text("List Item"),
                         ])
                     }
                     <h3 class = "mdc-list-group__subheader">{ "List 2" }</h3>
                     {
-                        List::new("list-group-2").items(vec![
+                        List::ul("list-group-2").items(vec![
                             ListItem::default().text("List Item"),
                             ListItem::default().text("List Item"),
                         ])
@@ -595,7 +610,7 @@ impl Root {
                     <h3 class = "mdc-typography--subtitle1">{ "Two-Line with Leading and Trailing Icon and Divider" }</h3>
                     <span class = "demo-item bordered-list demo-panel">
                         {
-                            List::new("complex-list")
+                            List::ul("complex-list")
                                 .two_line()
                                 .avatar()
                                 .item(ListItem::default().icon("folder").text("Dog Photos").text("9 Jan 2018").icon("info"))
@@ -613,7 +628,7 @@ impl Root {
                     <h3 class = "mdc-typography--subtitle1">{ "List with activated item" }</h3>
                     <span class = "demo-item bordered-list demo-panel">
                         {
-                            List::new("activated-list").single_selection().items(vec![
+                            List::ul("activated-list").single_selection().items(vec![
                                 ListItem::default().icon("inbox").text("Inbox"),
                                 ListItem::default().icon("star").text("Star").selected(true),
                                 ListItem::default().icon("send").text("Send"),
