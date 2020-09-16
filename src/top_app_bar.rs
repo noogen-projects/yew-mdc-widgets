@@ -58,6 +58,15 @@ impl TopAppBar {
         self
     }
 
+    pub fn start_section_item(mut self, item: impl Into<Html>) -> Self {
+        if let Some(Html::VTag(row)) = self.root_tag_mut().children.first_mut() {
+            if let Some(Html::VTag(start_section)) = row.children.first_mut() {
+                start_section.children.push(item.into());
+            }
+        }
+        self
+    }
+
     pub fn action_item(mut self, item: impl Into<Html>) -> Self {
         let mut item = item.into();
         item.add_class("mdc-top-app-bar__action-item");
