@@ -67,9 +67,13 @@ impl TopAppBar {
         self
     }
 
-    pub fn between_section_item(mut self, item: impl Into<Html>) -> Self {
+    pub fn middle_section(mut self, content: impl Into<Html>) -> Self {
         if let Some(Html::VTag(row)) = self.root_tag_mut().children.first_mut() {
-            row.children.insert(1, item.into());
+            let idx = row.children.len() - 1;
+            row.children.insert(
+                idx,
+                html! { <section class = "mdc-top-app-bar__section">{ content }</section> },
+            );
         }
         self
     }
