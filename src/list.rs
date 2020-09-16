@@ -374,6 +374,12 @@ impl List {
         self
     }
 
+    pub fn subheader(self, subheader: impl Into<Html>) -> Self {
+        let mut subheader = subheader.into();
+        subheader.add_class("mdc-list-group__subheader");
+        self.item(subheader)
+    }
+
     pub fn markup_only(mut self) -> Self {
         if let Html::VList(mut list) = self.html {
             self.html = list.children.remove(0);
