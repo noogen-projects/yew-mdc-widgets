@@ -69,3 +69,25 @@ body {
 .rounded-button, .rounded-button .mdc-button__ripple {
     border-radius: 18px;
 }
+
+.demo-card {
+    width: 350px;
+    margin: 48px 0;
+}
+
+.demo-card__primary {
+    padding: 1rem;
+}
+
+.demo-card__secondary {
+    padding: 0 1rem 8px;
+    color: rgba(0, 0, 0, .54);
+}
+
+.demo-card__title, .demo-card__subtitle {
+    margin: 0;
+}
+
+.demo-card__secondary, .demo-card__subtitle {
+    color: rgba(0, 0, 0, .54);
+}

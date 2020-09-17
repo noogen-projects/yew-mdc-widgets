@@ -55,11 +55,6 @@ impl Menu {
         self
     }
 
-    pub fn class(mut self, class: impl AsRef<str>) -> Self {
-        self.root_tag_mut().add_class(class);
-        self
-    }
-
     pub fn item(mut self, item: impl Into<Html>) -> Self {
         self.list = self.list.item(item);
         self

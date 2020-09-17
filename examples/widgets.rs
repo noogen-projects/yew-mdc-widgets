@@ -1,9 +1,11 @@
 #![recursion_limit = "4096"]
 
+use std::iter::FromIterator;
+
 use yew::{html, initialize, run_loop, utils, App, Component, ComponentLink, Html};
 use yew_mdc_widgets::{
-    Button, ButtonStyle, Checkbox, DataTable, Drawer, IconButton, List, ListItem, MdcWidget, Menu, Radio, TableCell,
-    TextField, TopAppBar,
+    Button, ButtonStyle, Card, CardContent, Checkbox, DataTable, Drawer, IconButton, List, ListItem, MdcWidget, Menu,
+    Radio, TableCell, TextField, TopAppBar,
 };
 
 struct Root {
@@ -36,6 +38,7 @@ impl Component for Root {
             ListItem::link("#lists").text("Lists"),
             ListItem::link("#menu").text("Menu"),
             ListItem::link("#data_tables").text("Data tables"),
+            ListItem::link("#cards").text("Cards"),
         ];
 
         let drawer = Drawer::new("app-drawer")
@@ -93,6 +96,9 @@ impl Component for Root {
 
                             <h2 class = "demo-title mdc-typography--headline6"><a name = "data_tables"></a>{ "Data tables" }</h2>
                             { self.view_data_tables() }
+
+                            <h2 class = "demo-title mdc-typography--headline6"><a name = "cards"></a>{ "Cards" }</h2>
+                            { self.view_cards() }
                         </div>
                     </div>
                 </div>
@@ -747,6 +753,47 @@ impl Root {
                                 TableCell::text("New filing flavor"),
                             ])
                     }</div>
+                </div>
+            </div>
+        }
+    }
+
+    fn view_cards(&self) -> Html {
+        html! {
+            <div>
+                <div>
+                    <h3 class = "mdc-typography--subtitle1">{ "Regular" }</h3>
+                    <span class = "demo-item">
+                        {
+                            Card::new("card-regular")
+                                .class("demo-card")
+                                .content(CardContent::primary_action(html! {
+                                    <>
+                                        {
+                                            CardContent::media_16_9()
+                                                .attr("style", r#"background-image: url("https://material-components.github.io/material-components-web-catalog/static/media/photos/3x2/2.jpg");"#)
+                                        }
+                                        <div class = "demo-card__primary">
+                                            <h2 class = "demo-card__title mdc-typography mdc-typography--headline6">{ "Our Changing Planet" }</h2>
+                                            <h3 class = "demo-card__subtitle mdc-typography mdc-typography--subtitle2">{ "by Kurt Wagner" }</h3>
+                                        </div>
+                                        <div class = "demo-card__secondary mdc-typography mdc-typography--body2">
+                                            { "Visit ten places on our planet that are undergoing the biggest changes today." }
+                                        </div>
+                                    </>
+                                }))
+                                .content(CardContent::actions().action_buttons(Html::from_iter(vec![
+                                        Button::new("card-regular-read").class(CardContent::ACTION_BUTTON_CLASSES).label("Read"),
+                                        Button::new("card-regular-bookmark").class(CardContent::ACTION_BUTTON_CLASSES).label("Bookmark"),
+                                    ]))
+                                    .action_icons(Html::from_iter(vec![
+                                        IconButton::new("card-regular-favorite").class(CardContent::ACTION_ICON_CLASSES).toggle("favorite", "favorite_border"),
+                                        IconButton::new("card-regular-share").class(CardContent::ACTION_ICON_CLASSES).icon("share"),
+                                        IconButton::new("card-regular-more").class(CardContent::ACTION_ICON_CLASSES).icon("more_vert"),
+                                    ]))
+                                )
+                        }
+                    </span>
                 </div>
             </div>
         }

@@ -121,11 +121,6 @@ impl TextField {
         self
     }
 
-    pub fn class(mut self, class: impl AsRef<str>) -> Self {
-        self.root_tag_mut().add_class(class);
-        self
-    }
-
     pub fn label(mut self, label: impl Into<Html>) -> Self {
         let id = self.root_id();
         let label_id = format!("{}-label", id);

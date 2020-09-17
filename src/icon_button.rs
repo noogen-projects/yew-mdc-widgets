@@ -51,11 +51,6 @@ impl IconButton {
         self.add_item_with_class(item, "mdc-icon-button__icon")
     }
 
-    pub fn class(mut self, class: impl AsRef<str>) -> Self {
-        self.root_tag_mut().add_class(class);
-        self
-    }
-
     pub fn ripple(mut self, enabled: bool) -> Self {
         if !self.is_toggle {
             let root = self.root_tag_mut();

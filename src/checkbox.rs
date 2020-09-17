@@ -90,11 +90,6 @@ impl Checkbox {
         self
     }
 
-    pub fn class(mut self, class: impl AsRef<str>) -> Self {
-        self.root_tag_mut().add_class(class);
-        self
-    }
-
     pub fn on_click(mut self, callback: Callback<MouseEvent>) -> Self {
         let listener = Rc::new(onclick::Wrapper::new(callback));
         let root = self.root_tag_mut();

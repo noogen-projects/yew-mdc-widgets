@@ -132,11 +132,6 @@ impl Drawer {
         );
         self
     }
-
-    pub fn class(mut self, class: impl AsRef<str>) -> Self {
-        self.root_tag_mut().add_class(class);
-        self
-    }
 }
 
 impl MdcWidget for Drawer {

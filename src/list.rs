@@ -197,11 +197,6 @@ impl ListItem {
         self
     }
 
-    pub fn class(mut self, class: impl AsRef<str>) -> Self {
-        self.root_tag_mut().add_class(class);
-        self
-    }
-
     pub fn on_click(self, callback: Callback<MouseEvent>) -> Self {
         self.listener(Rc::new(onclick::Wrapper::new(callback)))
     }
@@ -310,11 +305,6 @@ impl List {
     /// Configures the leading tile of each row to display videos.
     pub fn video(self) -> Self {
         self.class("mdc-list--video-list")
-    }
-
-    pub fn class(mut self, class: impl AsRef<str>) -> Self {
-        self.root_tag_mut().add_class(class);
-        self
     }
 
     pub fn item(mut self, item: impl Into<Html>) -> Self {

@@ -48,11 +48,6 @@ impl Button {
         button.ripple(true)
     }
 
-    pub fn class(mut self, class: impl AsRef<str>) -> Self {
-        self.root_tag_mut().add_class(class);
-        self
-    }
-
     pub fn label(mut self, label: impl Into<Html>) -> Self {
         self.root_tag_mut().children.push(html! {
             <span class = "mdc-button__label">{ label }</span>

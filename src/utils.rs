@@ -565,6 +565,14 @@ pub trait MdcWidget {
         self.root_tag_mut().set_attr(attr.into(), value.into());
         self
     }
+
+    fn class(mut self, class: impl AsRef<str>) -> Self
+    where
+        Self: Sized,
+    {
+        self.root_tag_mut().add_class(class);
+        self
+    }
 }
 
 pub fn ripple(widget: &mut impl MdcWidget, ripple_class: impl AsRef<str>, enabled: bool) {

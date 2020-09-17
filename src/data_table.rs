@@ -5,7 +5,7 @@ use std::{
 
 use yew::{html, html::onclick, virtual_dom::VTag, Callback, Html, MouseEvent};
 
-use crate::{utils::VTagExt, Checkbox, Text};
+use crate::{utils::VTagExt, Checkbox, MdcWidget, Text};
 
 pub enum TableCell {
     Numeric(Html),
