@@ -72,7 +72,6 @@ body {
 
 .demo-card {
     width: 350px;
-    margin: 48px 0;
 }
 
 .demo-card__primary {
@@ -80,8 +79,12 @@ body {
 }
 
 .demo-card__secondary {
-    padding: 0 1rem 8px;
+    padding: 1rem 1rem 8px;
     color: rgba(0, 0, 0, .54);
+}
+
+.regular .demo-card__secondary {
+    padding-top: 0;
 }
 
 .demo-card__title, .demo-card__subtitle {
@@ -90,4 +93,22 @@ body {
 
 .demo-card__secondary, .demo-card__subtitle {
     color: rgba(0, 0, 0, .54);
+}
+
+.over-media .mdc-card__media-content {
+    display: flex;
+    align-items: flex-end;
+}
+
+.over-media .demo-card__title, #card-over-media .demo-card__subtitle {
+    color: #fff;
+}
+
+.primary-action-horizontal {
+    display: flex;
+    flex-direction: row;
+}
+
+.primary-action-horizontal .mdc-card__media--square {
+    width: 110px;
 }
