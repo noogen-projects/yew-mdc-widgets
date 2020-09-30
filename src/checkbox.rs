@@ -6,7 +6,7 @@ use std::{
 use yew::{html, html::onclick, Callback, Html, MouseEvent};
 
 use crate::{
-    utils::{ripple, root_and_input_child_disabled, MdcWidget, VTagExt},
+    utils::{ripple_element, root_and_input_child_disabled, MdcWidget, VTagExt},
     Text,
 };
 
@@ -45,9 +45,12 @@ impl Checkbox {
             self.html = html! { <>{ self.html }</> }
         }
         if let Html::VList(list) = &mut self.html {
-            list.children.insert(1, html! {
-                <label for = self.input_id>{ label }</label>
-            });
+            list.children.insert(
+                1,
+                html! {
+                    <label for = self.input_id>{ label }</label>
+                },
+            );
         }
         self
     }
@@ -60,7 +63,7 @@ impl Checkbox {
     }
 
     pub fn ripple(mut self, enabled: bool) -> Self {
-        ripple(&mut self, Self::RIPPLE_CLASS, enabled);
+        ripple_element(&mut self, Self::RIPPLE_CLASS, enabled);
         self
     }
 

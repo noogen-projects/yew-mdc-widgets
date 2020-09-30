@@ -3,11 +3,11 @@ use std::{
     rc::Rc,
 };
 
-use yew::{html, html::onclick, Callback, Html, MouseEvent};
+use yew::{html, html::onclick, services::ConsoleService, Callback, Html, MouseEvent};
 
 use crate::{
-    utils::{ripple, MdcWidget, VTagExt},
-    Text,
+    utils::{ripple_element, MdcWidget, VTagExt},
+    Text, AUTO_INIT_ATTR,
 };
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -37,15 +37,28 @@ impl ButtonStyle {
 
 #[derive(Debug, Clone)]
 pub struct Button {
+    auto_init: bool,
+    ripple: bool,
     html: Html,
 }
 
 impl Button {
-    pub fn new<'a>(id: impl Into<Text<'a>>) -> Self {
-        let button = Self {
-            html: html! { <button id = id.into() class = "mdc-button"></button> },
-        };
+    pub fn new() -> Self {
+        Self {
+            auto_init: false,
+            ripple: false,
+            html: html! { <button class = "mdc-button"></button> },
+        }
+    }
+
+    pub fn auto() -> Self {
+        let mut button = Self::new();
+        button.auto_init = true;
         button.ripple(true)
+    }
+
+    pub fn manual<'a>(id: impl Into<Text<'a>>) -> Self {
+        Self::new().id(id).ripple(true)
     }
 
     pub fn label(mut self, label: impl Into<Html>) -> Self {
@@ -63,19 +76,28 @@ impl Button {
     }
 
     pub fn ripple(mut self, enabled: bool) -> Self {
-        ripple(&mut self, "mdc-button__ripple", enabled);
+        ripple_element(&mut self, "mdc-button__ripple", enabled);
+        let auto_init = self.auto_init;
         let root = self.root_tag_mut();
-        if enabled {
-            if !root.is_last_child("script") {
-                if let Some(id) = root.attributes.get("id") {
-                    root.children.push(html! {
-                        <script>{ format!("mdc.ripple.MDCRipple.attachTo(document.getElementById('{}'))", id) }</script>
-                    });
-                }
-            }
-        } else {
-            root.remove_child_tag("script");
+
+        if root.attr(AUTO_INIT_ATTR).is_some() {
+            root.remove_attr(AUTO_INIT_ATTR);
         }
+        root.remove_child_tag("script");
+
+        if enabled && auto_init {
+            root.set_attr(AUTO_INIT_ATTR, "MDCRipple");
+        } else if enabled {
+            if let Some(id) = root.attributes.get("id") {
+                root.children.push(html! {
+                    <script>{ format!("mdc.ripple.MDCRipple.attachTo(document.getElementById('{}'))", id) }</script>
+                });
+            } else {
+                ConsoleService::error("Can not enable ripple for button without id");
+                return self;
+            }
+        }
+        self.ripple = enabled;
         self
     }
 
@@ -139,6 +161,12 @@ impl MdcWidget for Button {
 
     fn html_mut(&mut self) -> &mut Html {
         &mut self.html
+    }
+
+    fn auto_init(mut self, enabled: bool) -> Self {
+        self.auto_init = enabled;
+        let ripple = self.ripple;
+        self.ripple(ripple)
     }
 }
 

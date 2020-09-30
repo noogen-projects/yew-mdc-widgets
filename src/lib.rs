@@ -21,3 +21,9 @@ pub mod top_app_bar;
 pub mod utils;
 
 type Text<'a> = Cow<'a, str>;
+
+const AUTO_INIT_ATTR: &str = "data-mdc-auto-init";
+
+pub fn auto_init() {
+    js_sys::eval("window.mdc.autoInit()").expect("JavaScript evaluation error");
+}
