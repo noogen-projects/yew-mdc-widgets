@@ -13,18 +13,18 @@ pub struct CardContent {
 }
 
 impl CardContent {
-    pub const PRIMARY_ACTION_CLASS: &'static str = "mdc-card__primary-action";
-    pub const MEDIA_CLASS: &'static str = "mdc-card__media";
-    pub const MEDIA_SQUARE_CLASS: &'static str = "mdc-card__media--square";
-    pub const MEDIA_16_9_CLASS: &'static str = "mdc-card__media--16-9";
-    pub const MEDIA_CONTENT_CLASS: &'static str = "mdc-card__media-content";
     pub const ACTIONS_CLASS: &'static str = "mdc-card__actions";
     pub const ACTIONS_FULL_BLEED_CLASS: &'static str = "mdc-card__actions--full-bleed";
-    pub const ACTION_CLASS: &'static str = "mdc-card__action";
-    pub const ACTION_BUTTON_CLASSES: &'static str = "mdc-card__action mdc-card__action--button";
-    pub const ACTION_ICON_CLASSES: &'static str = "mdc-card__action mdc-card__action--icon";
     pub const ACTION_BUTTONS_CLASS: &'static str = "mdc-card__action-buttons";
+    pub const ACTION_BUTTON_CLASSES: &'static str = "mdc-card__action mdc-card__action--button";
+    pub const ACTION_CLASS: &'static str = "mdc-card__action";
     pub const ACTION_ICONS_CLASS: &'static str = "mdc-card__action-icons";
+    pub const ACTION_ICON_CLASSES: &'static str = "mdc-card__action mdc-card__action--icon";
+    pub const MEDIA_16_9_CLASS: &'static str = "mdc-card__media--16-9";
+    pub const MEDIA_CLASS: &'static str = "mdc-card__media";
+    pub const MEDIA_CONTENT_CLASS: &'static str = "mdc-card__media-content";
+    pub const MEDIA_SQUARE_CLASS: &'static str = "mdc-card__media--square";
+    pub const PRIMARY_ACTION_CLASS: &'static str = "mdc-card__primary-action";
 
     /// The main tappable area of the card. Typically contains most (or all) card content
     /// *except* `mdc-card__actions`. Only applicable to cards that have a primary action

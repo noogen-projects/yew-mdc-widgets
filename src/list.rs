@@ -28,13 +28,13 @@ impl Default for ListItem {
 }
 
 impl ListItem {
-    const RIPPLE_CLASS: &'static str = "mdc-list-item__ripple";
-    const SELECTION_CLASS: &'static str = "mdc-list-item--selected";
     const FIRST_TILE_CLASS: &'static str = "mdc-list-item__graphic";
     const LAST_TILE_CLASS: &'static str = "mdc-list-item__meta";
-    const TEXT_ITEM_CLASS: &'static str = "mdc-list-item__text";
     const PRIMARY_TEXT_ITEM_CLASS: &'static str = "mdc-list-item__primary-text";
+    const RIPPLE_CLASS: &'static str = "mdc-list-item__ripple";
     const SECONDARY_TEXT_ITEM_CLASS: &'static str = "mdc-list-item__secondary-text";
+    const SELECTION_CLASS: &'static str = "mdc-list-item--selected";
+    const TEXT_ITEM_CLASS: &'static str = "mdc-list-item__text";
 
     pub fn new<'a>(id: impl Into<Text<'a>>) -> Self {
         Self::default().id(id)
@@ -72,28 +72,22 @@ impl ListItem {
             primary.remove_any_class(&[Self::TEXT_ITEM_CLASS]);
             primary.add_class(Self::PRIMARY_TEXT_ITEM_CLASS);
 
-            root.children.insert(
-                idx,
-                html! {
-                    <span class = Self::TEXT_ITEM_CLASS>
-                        { primary }
-                        <span class = Self::SECONDARY_TEXT_ITEM_CLASS>
-                            { text }
-                        </span>
+            root.children.insert(idx, html! {
+                <span class = Self::TEXT_ITEM_CLASS>
+                    { primary }
+                    <span class = Self::SECONDARY_TEXT_ITEM_CLASS>
+                        { text }
                     </span>
-                },
-            );
+                </span>
+            });
         } else {
             let idx = root
                 .find_child_contains_class_idx(Self::LAST_TILE_CLASS)
                 .or_else(|| root.find_child_tag_idx("script"))
                 .unwrap_or_else(|| root.children.len());
-            root.children.insert(
-                idx,
-                html! {
-                    <span class = Self::TEXT_ITEM_CLASS>{ text }</span>
-                },
-            );
+            root.children.insert(idx, html! {
+                <span class = Self::TEXT_ITEM_CLASS>{ text }</span>
+            });
         }
         self
     }
@@ -113,12 +107,9 @@ impl ListItem {
         let root = self.root_tag_mut();
         if enabled {
             if !root.is_some_child_contains_class(Self::RIPPLE_CLASS) {
-                root.children.insert(
-                    0,
-                    html! {
-                        <span class = Self::RIPPLE_CLASS></span>
-                    },
-                );
+                root.children.insert(0, html! {
+                    <span class = Self::RIPPLE_CLASS></span>
+                });
             }
             if !root.is_last_child("script") {
                 if let Some(id) = root.attributes.get("id") {
@@ -152,12 +143,9 @@ impl ListItem {
                 .unwrap_or(0);
             (idx, Self::FIRST_TILE_CLASS)
         };
-        root.children.insert(
-            idx,
-            html! {
-                <span class = class>{ tile }</span>
-            },
-        );
+        root.children.insert(idx, html! {
+            <span class = class>{ tile }</span>
+        });
         self
     }
 

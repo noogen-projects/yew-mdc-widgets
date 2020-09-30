@@ -13,13 +13,13 @@ pub struct Drawer {
 }
 
 impl Drawer {
-    pub const MODAL_CLASS: &'static str = "mdc-drawer--modal";
-    pub const DISMISSIBLE_CLASS: &'static str = "mdc-drawer--dismissible";
     pub const APP_CONTENT_CLASS: &'static str = "mdc-drawer-app-content";
-    pub const HEADER_CLASS: &'static str = "mdc-drawer__header";
-    pub const TITLE_CLASS: &'static str = "mdc-drawer__title";
-    pub const SUBTITLE_CLASS: &'static str = "mdc-drawer__subtitle";
     pub const CONTENT_CLASS: &'static str = "mdc-drawer__content";
+    pub const DISMISSIBLE_CLASS: &'static str = "mdc-drawer--dismissible";
+    pub const HEADER_CLASS: &'static str = "mdc-drawer__header";
+    pub const MODAL_CLASS: &'static str = "mdc-drawer--modal";
+    pub const SUBTITLE_CLASS: &'static str = "mdc-drawer__subtitle";
+    pub const TITLE_CLASS: &'static str = "mdc-drawer__title";
 
     pub fn get_attaching_script(id: impl AsRef<str>) -> String {
         format!(
@@ -73,12 +73,9 @@ impl Drawer {
     pub fn header(mut self, header: impl Into<Html>) -> Self {
         let root = self.root_tag_mut();
         root.remove_child_contains_class(Self::HEADER_CLASS);
-        root.insert_child(
-            0,
-            html! {
-                <div class = Self::HEADER_CLASS>{ header }</div>
-            },
-        );
+        root.insert_child(0, html! {
+            <div class = Self::HEADER_CLASS>{ header }</div>
+        });
         self
     }
 
@@ -124,12 +121,9 @@ impl Drawer {
         let root = self.root_tag_mut();
         root.remove_child_contains_class(Self::CONTENT_CLASS);
         let idx = root.children.len().saturating_sub(1);
-        root.insert_child(
-            idx,
-            html! {
-                <div class = Self::CONTENT_CLASS>{ content }</div>
-            },
-        );
+        root.insert_child(idx, html! {
+            <div class = Self::CONTENT_CLASS>{ content }</div>
+        });
         self
     }
 }

@@ -13,8 +13,8 @@ pub struct TopAppBar {
 }
 
 impl TopAppBar {
-    const SCROLLED_CLASS: &'static str = "mdc-top-app-bar--fixed-scrolled";
     const BAR_VAR_NAME: &'static str = "top_app_bar";
+    const SCROLLED_CLASS: &'static str = "mdc-top-app-bar--fixed-scrolled";
 
     pub fn new<'a>(id: impl Into<Text<'a>>) -> Self {
         let id = id.into();

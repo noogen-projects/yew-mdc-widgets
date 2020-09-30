@@ -45,12 +45,9 @@ impl Checkbox {
             self.html = html! { <>{ self.html }</> }
         }
         if let Html::VList(list) = &mut self.html {
-            list.children.insert(
-                1,
-                html! {
-                    <label for = self.input_id>{ label }</label>
-                },
-            );
+            list.children.insert(1, html! {
+                <label for = self.input_id>{ label }</label>
+            });
         }
         self
     }
