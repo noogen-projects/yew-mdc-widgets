@@ -7,7 +7,7 @@ use yew::{html, html::onclick, Callback, Html, MouseEvent};
 
 use crate::{
     utils::{MdcWidget, VTagExt},
-    Text,
+    Text, AUTO_INIT_ATTR,
 };
 
 #[derive(Debug, Clone)]
@@ -17,12 +17,17 @@ pub struct IconButton {
 }
 
 impl IconButton {
-    pub fn new<'a>(id: impl Into<Text<'a>>) -> Self {
-        let button = Self {
-            html: html! { <button id = id.into() class = "mdc-icon-button"></button> },
+    pub fn simple() -> Self {
+        Self {
+            html: html! { <button class = "mdc-icon-button" data-mdc-ripple-is-unbounded = ""></button> },
             is_toggle: false,
-        };
-        button.ripple(true)
+        }
+    }
+
+    pub fn new() -> Self {
+        let mut icon_button = Self::simple();
+        icon_button.root_tag_mut().set_attr(AUTO_INIT_ATTR, "MDCRipple");
+        icon_button
     }
 
     pub fn icon<'a>(mut self, name: impl Into<Text<'a>>) -> Self {
@@ -55,15 +60,9 @@ impl IconButton {
         if !self.is_toggle {
             let root = self.root_tag_mut();
             if enabled {
-                if !root.is_last_child("script") {
-                    if let Some(id) = root.attributes.get("id") {
-                        root.children.push(html! {
-                        <script>{ format!("(new mdc.ripple.MDCRipple(document.getElementById('{}'))).unbounded = true", id) }</script>
-                    });
-                    }
-                }
+                root.set_attr(AUTO_INIT_ATTR, "MDCRipple");
             } else {
-                root.remove_child_tag("script");
+                root.remove_attr(AUTO_INIT_ATTR);
             }
         }
         self
@@ -93,12 +92,7 @@ impl IconButton {
     fn enable_toggle(&mut self) {
         if !self.is_toggle {
             let root = self.root_tag_mut();
-            root.remove_child_tag("script");
-            if let Some(id) = root.attributes.get("id") {
-                root.children.push(html! {
-                    <script>{ format!("mdc.iconButton.MDCIconButtonToggle.attachTo(document.getElementById('{}'))", id) }</script>
-                });
-            }
+            root.set_attr(AUTO_INIT_ATTR, "MDCIconButtonToggle");
             self.is_toggle = true;
         }
     }
@@ -107,10 +101,7 @@ impl IconButton {
         let mut item = item.into();
         item.add_class(class);
 
-        let root = self.root_tag_mut();
-        let idx = root.find_child_tag_idx("script").unwrap_or_else(|| root.children.len());
-        root.children.insert(idx, item);
-
+        self.root_tag_mut().children.push(item);
         self
     }
 }

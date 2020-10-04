@@ -37,9 +37,9 @@ impl ButtonStyle {
 
 #[derive(Debug, Clone)]
 pub struct Button {
+    html: Html,
     auto_init: bool,
     ripple: bool,
-    html: Html,
 }
 
 impl Button {

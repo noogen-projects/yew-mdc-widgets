@@ -560,7 +560,7 @@ pub trait MdcWidget {
         self
     }
 
-    fn auto_init(self, enabled: bool) -> Self
+    fn auto_init(self, _enabled: bool) -> Self
     where
         Self: Sized,
     {

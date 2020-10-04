@@ -49,7 +49,7 @@ impl Component for Root {
 
         let top_app_bar = TopAppBar::new("top-app-bar")
             .title("Yew MDC Widgets")
-            .navigation_item(IconButton::new("top-app-bar-menu-icon").icon("menu"))
+            .navigation_item(IconButton::new().icon("menu"))
             .enable_shadow_when_scroll()
             .add_navigation_event("drawer.open = !drawer.open;");
 
@@ -206,32 +206,32 @@ impl Root {
                 <div>
                     <h3 class = "mdc-typography--subtitle1">{ "Icon Button" }</h3>
                     <span class = "demo-item">
-                        { IconButton::new("icon-btn-default").icon("wifi") }
+                        { IconButton::new().icon("wifi") }
                     </span>
                     <span class = "demo-item">
-                        { IconButton::new("icon-btn-not-ripple").ripple(false).icon("wifi") }
+                        { IconButton::new().ripple(false).icon("wifi") }
                     </span>
                     <span class = "demo-item">
-                        { IconButton::new("icon-btn-disabled").disabled(true).icon("wifi") }
+                        { IconButton::new().disabled(true).icon("wifi") }
                     </span>
                 </div>
                 <div>
                     <h3 class = "mdc-typography--subtitle1">{ "Icon Toggle Button" }</h3>
                     <span class = "demo-item">
-                        { IconButton::new("icon-toggle-btn-default").toggle("favorite", "favorite_border") }
+                        { IconButton::new().toggle("favorite", "favorite_border") }
                     </span>
                     <span class = "demo-item">
-                        { IconButton::new("icon-toggle-btn-on").toggle("favorite", "favorite_border").on() }
+                        { IconButton::new().toggle("favorite", "favorite_border").on() }
                     </span>
                     <span class = "demo-item">
-                        { IconButton::new("icon-toggle-btn-disabled").toggle("favorite", "favorite_border").disabled(true) }
+                        { IconButton::new().toggle("favorite", "favorite_border").disabled(true) }
                     </span>
                 </div>
                 <div>
                     <h3 class = "mdc-typography--subtitle1">{ "Svg Icon Toggle Button" }</h3>
                     <span class = "demo-item">
                         {
-                            IconButton::new("svg-icon-toggle-btn-default")
+                            IconButton::new()
                                 .toggle_on(html! {
                                     <svg xmlns = "http://www.w3.org/2000/svg" viewBox = "0 0 24 24" width = "24" height = "24">
                                         <path d = "M12.97 2.59a1.5 1.5 0 00-1.94 0l-7.5 6.363A1.5 1.5 0 003 10.097V19.5A1.5 1.5 0 \
@@ -253,7 +253,7 @@ impl Root {
                     </span>
                     <span class = "demo-item">
                         {
-                            IconButton::new("svg-icon-toggle-btn-disabled")
+                            IconButton::new()
                                 .toggle_on(html! {
                                     <svg xmlns = "http://www.w3.org/2000/svg" viewBox = "0 0 24 24" width = "24" height = "24">
                                         <path d = "M12.97 2.59a1.5 1.5 0 00-1.94 0l-7.5 6.363A1.5 1.5 0 003 10.097V19.5A1.5 1.5 0 \
@@ -791,9 +791,9 @@ impl Root {
                                         Button::auto().class(CardContent::ACTION_BUTTON_CLASSES).label("Bookmark"),
                                     ]))
                                     .action_icons(Html::from_iter(vec![
-                                        IconButton::new("card-regular-favorite").class(CardContent::ACTION_ICON_CLASSES).toggle("favorite", "favorite_border"),
-                                        IconButton::new("card-regular-share").class(CardContent::ACTION_ICON_CLASSES).icon("share"),
-                                        IconButton::new("card-regular-more").class(CardContent::ACTION_ICON_CLASSES).icon("more_vert"),
+                                        IconButton::new().class(CardContent::ACTION_ICON_CLASSES).toggle("favorite", "favorite_border"),
+                                        IconButton::new().class(CardContent::ACTION_ICON_CLASSES).icon("share"),
+                                        IconButton::new().class(CardContent::ACTION_ICON_CLASSES).icon("more_vert"),
                                     ]))
                                 )
                         }
@@ -827,9 +827,9 @@ impl Root {
                                         Button::auto().class(CardContent::ACTION_BUTTON_CLASSES).label("Bookmark"),
                                     ]))
                                     .action_icons(Html::from_iter(vec![
-                                        IconButton::new("card-over-media-favorite").class(CardContent::ACTION_ICON_CLASSES).toggle("favorite", "favorite_border"),
-                                        IconButton::new("card-over-media-share").class(CardContent::ACTION_ICON_CLASSES).icon("share"),
-                                        IconButton::new("card-over-media-more").class(CardContent::ACTION_ICON_CLASSES).icon("more_vert"),
+                                        IconButton::new().class(CardContent::ACTION_ICON_CLASSES).toggle("favorite", "favorite_border"),
+                                        IconButton::new().class(CardContent::ACTION_ICON_CLASSES).icon("share"),
+                                        IconButton::new().class(CardContent::ACTION_ICON_CLASSES).icon("more_vert"),
                                     ]))
                                 )
                         }
@@ -863,9 +863,9 @@ impl Root {
                                         Button::auto().class(CardContent::ACTION_BUTTON_CLASSES).label("Bookmark"),
                                     ]))
                                     .action_icons(Html::from_iter(vec![
-                                        IconButton::new("card-header-favorite").class(CardContent::ACTION_ICON_CLASSES).toggle("favorite", "favorite_border"),
-                                        IconButton::new("card-header-share").class(CardContent::ACTION_ICON_CLASSES).icon("share"),
-                                        IconButton::new("card-header-more").class(CardContent::ACTION_ICON_CLASSES).icon("more_vert"),
+                                        IconButton::new().class(CardContent::ACTION_ICON_CLASSES).toggle("favorite", "favorite_border"),
+                                        IconButton::new().class(CardContent::ACTION_ICON_CLASSES).icon("share"),
+                                        IconButton::new().class(CardContent::ACTION_ICON_CLASSES).icon("more_vert"),
                                     ]))
                                 )
                         }
@@ -894,9 +894,9 @@ impl Root {
                                         Button::auto().class(CardContent::ACTION_BUTTON_CLASSES).label("Bookmark"),
                                     ]))
                                     .action_icons(Html::from_iter(vec![
-                                        IconButton::new("card-horizontal-favorite").class(CardContent::ACTION_ICON_CLASSES).toggle("favorite", "favorite_border"),
-                                        IconButton::new("card-horizontal-share").class(CardContent::ACTION_ICON_CLASSES).icon("share"),
-                                        IconButton::new("card-horizontal-more").class(CardContent::ACTION_ICON_CLASSES).icon("more_vert"),
+                                        IconButton::new().class(CardContent::ACTION_ICON_CLASSES).toggle("favorite", "favorite_border"),
+                                        IconButton::new().class(CardContent::ACTION_ICON_CLASSES).icon("share"),
+                                        IconButton::new().class(CardContent::ACTION_ICON_CLASSES).icon("more_vert"),
                                     ]))
                                 )
                         }
