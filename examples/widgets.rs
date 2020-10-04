@@ -118,82 +118,82 @@ impl Root {
                 <div>
                     <h3 class = "mdc-typography--subtitle1">{ "Text Button" }</h3>
                     <span class = "demo-item">
-                        { Button::auto().label("Default") }
+                        { Button::new().label("Default") }
                     </span>
                     <span class = "demo-item">
-                        { Button::new().label("No ripple") }
+                        { Button::simple().label("No ripple") }
                     </span>
                     <span class = "demo-item">
-                        { Button::auto().disabled(true).label("Disabled") }
+                        { Button::new().disabled(true).label("Disabled") }
                     </span>
                     <span class = "demo-item">
-                        { Button::auto().icon("favorite").label("Icon") }
+                        { Button::new().icon("favorite").label("Icon") }
                     </span>
                     <span class = "demo-item">
-                        { Button::auto().label("Trailing icon").icon("favorite") }
+                        { Button::new().label("Trailing icon").icon("favorite") }
                     </span>
                 </div>
                 <div>
                     <h3 class = "mdc-typography--subtitle1">{ "Outlined Button" }</h3>
                     <span class = "demo-item">
-                        { Button::auto().style(ButtonStyle::Outlined).label("Default") }
+                        { Button::new().style(ButtonStyle::Outlined).label("Default") }
                     </span>
                     <span class = "demo-item">
-                        { Button::new().style(ButtonStyle::Outlined).label("No ripple") }
+                        { Button::simple().style(ButtonStyle::Outlined).label("No ripple") }
                     </span>
                     <span class = "demo-item">
-                        { Button::auto().style(ButtonStyle::Outlined).disabled(true).label("Disabled") }
+                        { Button::new().style(ButtonStyle::Outlined).disabled(true).label("Disabled") }
                     </span>
                     <span class = "demo-item">
-                        { Button::auto().style(ButtonStyle::Outlined).icon("favorite").label("Icon") }
+                        { Button::new().style(ButtonStyle::Outlined).icon("favorite").label("Icon") }
                     </span>
                     <span class = "demo-item">
-                        { Button::auto().style(ButtonStyle::Outlined).label("Trailing icon").icon("favorite") }
+                        { Button::new().style(ButtonStyle::Outlined).label("Trailing icon").icon("favorite") }
                     </span>
                 </div>
                 <div>
                     <h3 class = "mdc-typography--subtitle1">{ "Raised Button" }</h3>
                     <span class = "demo-item">
-                        { Button::auto().style(ButtonStyle::Raised).label("Default") }
+                        { Button::new().style(ButtonStyle::Raised).label("Default") }
                     </span>
                     <span class = "demo-item">
-                        { Button::new().style(ButtonStyle::Raised).label("No ripple") }
+                        { Button::simple().style(ButtonStyle::Raised).label("No ripple") }
                     </span>
                     <span class = "demo-item">
-                        { Button::auto().style(ButtonStyle::Raised).disabled(true).label("Disabled") }
+                        { Button::new().style(ButtonStyle::Raised).disabled(true).label("Disabled") }
                     </span>
                     <span class = "demo-item">
-                        { Button::auto().style(ButtonStyle::Raised).icon("favorite").label("Icon") }
+                        { Button::new().style(ButtonStyle::Raised).icon("favorite").label("Icon") }
                     </span>
                     <span class = "demo-item">
-                        { Button::auto().style(ButtonStyle::Raised).label("Trailing icon").icon("favorite") }
+                        { Button::new().style(ButtonStyle::Raised).label("Trailing icon").icon("favorite") }
                     </span>
                 </div>
                 <div>
                     <h3 class = "mdc-typography--subtitle1">{ "Unelevated Button" }</h3>
                     <span class = "demo-item">
-                        { Button::auto().style(ButtonStyle::Unelevated).label("Default") }
+                        { Button::new().style(ButtonStyle::Unelevated).label("Default") }
                     </span>
                     <span class = "demo-item">
-                        { Button::new().style(ButtonStyle::Unelevated).label("No ripple") }
+                        { Button::simple().style(ButtonStyle::Unelevated).label("No ripple") }
                     </span>
                     <span class = "demo-item">
-                        { Button::auto().style(ButtonStyle::Unelevated).disabled(true).label("Disabled") }
+                        { Button::new().style(ButtonStyle::Unelevated).disabled(true).label("Disabled") }
                     </span>
                     <span class = "demo-item">
-                        { Button::auto().style(ButtonStyle::Unelevated).icon("favorite").label("Icon") }
+                        { Button::new().style(ButtonStyle::Unelevated).icon("favorite").label("Icon") }
                     </span>
                     <span class = "demo-item">
-                        { Button::auto().style(ButtonStyle::Unelevated).label("Trailing icon").icon("favorite") }
+                        { Button::new().style(ButtonStyle::Unelevated).label("Trailing icon").icon("favorite") }
                     </span>
                 </div>
                 <div>
                     <h3 class = "mdc-typography--subtitle1">{ "Stylized Button" }</h3>
                     <span class = "demo-item">
-                        { Button::auto().style(ButtonStyle::Raised).class("rounded-button").label("Rounded") }
+                        { Button::new().style(ButtonStyle::Raised).class("rounded-button").label("Rounded") }
                     </span>
                     <span class = "demo-item">
-                        { Button::auto().style(ButtonStyle::Outlined).class("rounded-button").label("Rounded").icon("favorite") }
+                        { Button::new().style(ButtonStyle::Outlined).class("rounded-button").label("Rounded").icon("favorite") }
                     </span>
                 </div>
             </div>
@@ -676,7 +676,7 @@ impl Root {
                     <span class = "demo-item demo-list">
                         <div id = "demo-menu" class = Menu::ANCHOR_CLASS>
                             {
-                                Button::auto()
+                                Button::new()
                                     .label("Open Menu")
                                     .on_click(self.link.callback(|_| Menu::open_existing("simple-menu")))
                             }
@@ -787,8 +787,8 @@ impl Root {
                                     </>
                                 }))
                                 .content(CardContent::actions().action_buttons(Html::from_iter(vec![
-                                        Button::auto().class(CardContent::ACTION_BUTTON_CLASSES).label("Read"),
-                                        Button::auto().class(CardContent::ACTION_BUTTON_CLASSES).label("Bookmark"),
+                                        Button::new().class(CardContent::ACTION_BUTTON_CLASSES).label("Read"),
+                                        Button::new().class(CardContent::ACTION_BUTTON_CLASSES).label("Bookmark"),
                                     ]))
                                     .action_icons(Html::from_iter(vec![
                                         IconButton::new().class(CardContent::ACTION_ICON_CLASSES).toggle("favorite", "favorite_border"),
@@ -823,8 +823,8 @@ impl Root {
                                     </>
                                 }))
                                 .content(CardContent::actions().action_buttons(Html::from_iter(vec![
-                                        Button::auto().class(CardContent::ACTION_BUTTON_CLASSES).label("Read"),
-                                        Button::auto().class(CardContent::ACTION_BUTTON_CLASSES).label("Bookmark"),
+                                        Button::new().class(CardContent::ACTION_BUTTON_CLASSES).label("Read"),
+                                        Button::new().class(CardContent::ACTION_BUTTON_CLASSES).label("Bookmark"),
                                     ]))
                                     .action_icons(Html::from_iter(vec![
                                         IconButton::new().class(CardContent::ACTION_ICON_CLASSES).toggle("favorite", "favorite_border"),
@@ -859,8 +859,8 @@ impl Root {
                                     </>
                                 }))
                                 .content(CardContent::actions().action_buttons(Html::from_iter(vec![
-                                        Button::auto().class(CardContent::ACTION_BUTTON_CLASSES).label("Read"),
-                                        Button::auto().class(CardContent::ACTION_BUTTON_CLASSES).label("Bookmark"),
+                                        Button::new().class(CardContent::ACTION_BUTTON_CLASSES).label("Read"),
+                                        Button::new().class(CardContent::ACTION_BUTTON_CLASSES).label("Bookmark"),
                                     ]))
                                     .action_icons(Html::from_iter(vec![
                                         IconButton::new().class(CardContent::ACTION_ICON_CLASSES).toggle("favorite", "favorite_border"),
@@ -890,8 +890,8 @@ impl Root {
                                     </>
                                 }).class("primary-action-horizontal"))
                                 .content(CardContent::actions().action_buttons(Html::from_iter(vec![
-                                        Button::auto().class(CardContent::ACTION_BUTTON_CLASSES).label("Read"),
-                                        Button::auto().class(CardContent::ACTION_BUTTON_CLASSES).label("Bookmark"),
+                                        Button::new().class(CardContent::ACTION_BUTTON_CLASSES).label("Read"),
+                                        Button::new().class(CardContent::ACTION_BUTTON_CLASSES).label("Bookmark"),
                                     ]))
                                     .action_icons(Html::from_iter(vec![
                                         IconButton::new().class(CardContent::ACTION_ICON_CLASSES).toggle("favorite", "favorite_border"),
