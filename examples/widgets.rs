@@ -286,54 +286,54 @@ impl Root {
                 <div>
                     <h3 class = "mdc-typography--subtitle1">{ "Unchecked" }</h3>
                     <span class = "demo-item">
-                        { Checkbox::new("checkbox-unchecked") }
+                        { Checkbox::new() }
                     </span>
                     <span class = "demo-item">
-                        { Checkbox::new("checkbox-unchecked-no-ripple").ripple(false) }
+                        { Checkbox::new().ripple(false) }
                     </span>
                     <span class = "demo-item">
-                        { Checkbox::new("checkbox-unchecked-disabled").disabled(true) }
+                        { Checkbox::new().disabled(true) }
                     </span>
                 </div>
                 <div>
                     <h3 class = "mdc-typography--subtitle1">{ "Indeterminate" }</h3>
                     <span class = "demo-item">
-                        { Checkbox::new("checkbox-indeterminate").indeterminate(true) }
+                        { Checkbox::new().indeterminate(true) }
                     </span>
                     <span class = "demo-item">
-                        { Checkbox::new("checkbox-indeterminate-no-ripple").indeterminate(true).ripple(false) }
+                        { Checkbox::new().indeterminate(true).ripple(false) }
                     </span>
                     <span class = "demo-item">
-                        { Checkbox::new("checkbox-indeterminate-disabled").indeterminate(true).disabled(true) }
+                        { Checkbox::new().indeterminate(true).disabled(true) }
                     </span>
                 </div>
                 <div>
                     <h3 class = "mdc-typography--subtitle1">{ "Checked" }</h3>
                     <span class = "demo-item">
-                        { Checkbox::new("checkbox-checked").checked(true) }
+                        { Checkbox::new().checked(true) }
                     </span>
                     <span class = "demo-item">
-                        { Checkbox::new("checkbox-checked-no-ripple").checked(true).ripple(false) }
+                        { Checkbox::new().checked(true).ripple(false) }
                     </span>
                     <span class = "demo-item">
-                        { Checkbox::new("checkbox-checked-disabled").checked(true).disabled(true) }
+                        { Checkbox::new().checked(true).disabled(true) }
                     </span>
                 </div>
                 <div>
                     <h3 class = "mdc-typography--subtitle1">{ "Labeled" }</h3>
                     <span class = "demo-item">
                         <div class = "mdc-form-field">
-                            { Checkbox::new("checkbox-label").label("checkbox") }
+                            { Checkbox::new().id("checkbox-label").label("checkbox") }
                         </div>
                     </span>
                     <span class = "demo-item">
                         <div class = "mdc-form-field">
-                            { Checkbox::new("checkbox-label-no-ripple").ripple(false).checked(true).label("checkbox") }
+                            { Checkbox::new().id("checkbox-label-no-ripple").ripple(false).checked(true).label("checkbox") }
                         </div>
                     </span>
                     <span class = "demo-item">
                         <div class = "mdc-form-field">
-                            { Checkbox::new("checkbox-label-disabled").disabled(true).label("checkbox") }
+                            { Checkbox::new().id("checkbox-label-disabled").disabled(true).label("checkbox") }
                         </div>
                     </span>
                 </div>
@@ -505,13 +505,13 @@ impl Root {
                         {
                             List::ul("single-line-list-checkbox").items(vec![
                                 ListItem::default()
-                                    .tile(Checkbox::new("single-line-list-checkbox-item-1-checkbox").markup_only())
+                                    .tile(Checkbox::simple().ripple(false))
                                     .label("Checkbox Item"),
                                 ListItem::default()
-                                    .tile(Checkbox::new("single-line-list-checkbox-item-2-checkbox").markup_only())
+                                    .tile(Checkbox::simple().ripple(false))
                                     .label("Checkbox Item"),
                                 ListItem::default()
-                                    .tile(Checkbox::new("single-line-list-checkbox-item-3-checkbox").markup_only())
+                                    .tile(Checkbox::simple().ripple(false))
                                     .label("Checkbox Item"),
                             ])
                         }
@@ -574,15 +574,15 @@ impl Root {
                         {
                             List::ul("two-line-list-checkbox").two_line().items(vec![
                                 ListItem::default()
-                                    .tile(Checkbox::new("two-line-list-checkbox-item-1-checkbox").markup_only())
+                                    .tile(Checkbox::simple().ripple(false))
                                     .text("Checkbox Item")
                                     .text("Secondary text"),
                                 ListItem::default()
-                                    .tile(Checkbox::new("two-line-list-checkbox-item-2-checkbox").markup_only())
+                                    .tile(Checkbox::simple().ripple(false))
                                     .text("Checkbox Item")
                                     .text("Secondary text"),
                                 ListItem::default()
-                                    .tile(Checkbox::new("two-line-list-checkbox-item-3-checkbox").markup_only())
+                                    .tile(Checkbox::simple().ripple(false))
                                     .text("Checkbox Item")
                                     .text("Secondary text"),
                             ])

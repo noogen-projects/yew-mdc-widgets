@@ -3,29 +3,26 @@ use std::{
     rc::Rc,
 };
 
-use yew::{html, html::onclick, Callback, Html, MouseEvent};
+use yew::{html, html::onclick, services::ConsoleService, Callback, Html, MouseEvent};
 
 use crate::{
     utils::{ripple_element, root_and_input_child_disabled, MdcWidget, VTagExt},
-    Text,
+    Text, AUTO_INIT_ATTR,
 };
 
 #[derive(Debug, Clone)]
 pub struct Checkbox {
     html: Html,
-    input_id: String,
 }
 
 impl Checkbox {
     const RIPPLE_CLASS: &'static str = "mdc-checkbox__ripple";
 
-    pub fn new<'a>(id: impl Into<Text<'a>>) -> Self {
-        let id = id.into();
-        let input_id = format!("{}-input", id);
+    pub fn simple() -> Self {
         Self {
             html: html! {
-                <div id = id class = "mdc-checkbox">
-                    <input type = "checkbox" id = input_id class = "mdc-checkbox__native-control" />
+                <div class = "mdc-checkbox">
+                    <input type = "checkbox" class = "mdc-checkbox__native-control" />
                     <div class = "mdc-checkbox__background">
                         <svg class = "mdc-checkbox__checkmark" viewBox = "0 0 24 24">
                             <path class = "mdc-checkbox__checkmark-path" fill = "none" d = "M1.73,12.91 8.1,19.28 22.79,4.59" />
@@ -33,24 +30,45 @@ impl Checkbox {
                         <div class = "mdc-checkbox__mixedmark"></div>
                     </div>
                     <div class = Self::RIPPLE_CLASS></div>
-                    <script>{ format!("mdc.checkbox.MDCCheckbox.attachTo(document.getElementById('{}'));", id) }</script>
                 </div>
             },
-            input_id,
         }
     }
 
+    pub fn new() -> Self {
+        let mut checkbox = Self::simple();
+        checkbox.root_tag_mut().set_attr(AUTO_INIT_ATTR, "MDCCheckbox");
+        checkbox
+    }
+
+    pub fn id<'a>(mut self, id: impl Into<Text<'a>>) -> Self {
+        let id = id.into();
+        let input_id = format!("{}-input", id);
+        let root = self.root_tag_mut();
+        root.set_attr("id", id);
+        if let Some(input) = root.find_child_tag_mut("input") {
+            input.set_attr("id", input_id);
+        };
+        self
+    }
+
     pub fn label(mut self, label: impl Into<Html>) -> Self {
-        if let Html::VTag(_) = &self.html {
-            self.html = html! { <>{ self.html }</> }
-        }
-        if let Html::VList(list) = &mut self.html {
-            list.children.insert(
-                1,
-                html! {
-                    <label for = self.input_id>{ label }</label>
-                },
-            );
+        if let Some(input_id) = self
+            .root_tag()
+            .find_child_tag("input")
+            .and_then(|input| input.attributes.get("id"))
+        {
+            let label = html! {
+                <label for = input_id>{ label }</label>
+            };
+            if let Html::VTag(_) = &self.html {
+                self.html = html! { <>{ self.html }</> }
+            }
+            if let Html::VList(list) = &mut self.html {
+                list.children.insert(1, label);
+            }
+        } else {
+            ConsoleService::error("Could not find input tag's id attribute");
         }
         self
     }
@@ -97,13 +115,6 @@ impl Checkbox {
             label.add_listener(listener.clone());
         }
         root.add_listener(listener);
-        self
-    }
-
-    pub fn markup_only(mut self) -> Self {
-        let root = self.root_tag_mut();
-        root.remove_child_contains_class(Self::RIPPLE_CLASS);
-        root.remove_child_tag("script");
         self
     }
 }

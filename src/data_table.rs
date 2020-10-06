@@ -250,7 +250,8 @@ impl DataTable {
 
     fn head_checkbox(root_id: impl AsRef<str>) -> Html {
         let root_id = root_id.as_ref();
-        let checkbox = Checkbox::new(format!("{}-header-checkbox", root_id))
+        let checkbox = Checkbox::new()
+            .id(format!("{}-header-checkbox", root_id))
             .class("mdc-data-table__header-row-checkbox mdc-checkbox--selected");
         html! {
             <th class = "mdc-data-table__header-cell mdc-data-table__header-cell--checkbox" role = "columnheader" scope = "col">
@@ -261,7 +262,8 @@ impl DataTable {
 
     fn row_checkbox(row_id: impl AsRef<str>) -> Html {
         let row_id = row_id.as_ref();
-        let checkbox = Checkbox::new(format!("{}-checkbox", row_id))
+        let checkbox = Checkbox::new()
+            .id(format!("{}-checkbox", row_id))
             .class("mdc-data-table__row-checkbox")
             .labeled_by(row_id);
         html! {
