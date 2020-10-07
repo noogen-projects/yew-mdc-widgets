@@ -347,54 +347,54 @@ impl Root {
                 <div>
                     <h3 class = "mdc-typography--subtitle1">{ "Default" }</h3>
                     <span class = "demo-item">
-                        { Radio::new("radio-default-1").name_of_set("default-set") }
+                        { Radio::new().name_of_set("default-set") }
                     </span>
                     <span class = "demo-item">
-                        { Radio::new("radio-default-2").name_of_set("default-set").checked(true) }
+                        { Radio::new().name_of_set("default-set").checked(true) }
                     </span>
                     <span class = "demo-item">
-                        { Radio::new("radio-no-ripple-1").name_of_set("no-ripple-set").ripple(false) }
+                        { Radio::new().name_of_set("no-ripple-set").ripple(false) }
                     </span>
                     <span class = "demo-item">
-                        { Radio::new("radio-no-ripple-2").name_of_set("no-ripple-set").ripple(false).checked(true) }
+                        { Radio::new().name_of_set("no-ripple-set").ripple(false).checked(true) }
                     </span>
                     <span class = "demo-item">
-                        { Radio::new("radio-disabled-1").name_of_set("disabled-set").disabled(true) }
+                        { Radio::new().name_of_set("disabled-set").disabled(true) }
                     </span>
                     <span class = "demo-item">
-                        { Radio::new("radio-disabled-2").name_of_set("disabled-set").disabled(true).checked(true) }
+                        { Radio::new().name_of_set("disabled-set").disabled(true).checked(true) }
                     </span>
                 </div>
                 <div>
                     <h3 class = "mdc-typography--subtitle1">{ "Labeled" }</h3>
                     <span class = "demo-item">
                         <div class = "mdc-form-field">
-                            { Radio::new("label-radio-1").name_of_set("label-set").label("Radio 1") }
+                            { Radio::new().id("label-radio-1").name_of_set("label-set").label("Radio 1") }
                         </div>
                     </span>
                     <span class = "demo-item">
                         <div class = "mdc-form-field">
-                            { Radio::new("label-radio-2").name_of_set("label-set").checked(true).label("Radio 2") }
+                            { Radio::new().id("label-radio-2").name_of_set("label-set").checked(true).label("Radio 2") }
                         </div>
                     </span>
                     <span class = "demo-item">
                         <div class = "mdc-form-field">
-                            { Radio::new("radio-label-no-ripple-1").name_of_set("label-no-ripple-set").ripple(false).label("No ripple 1") }
+                            { Radio::new().id("radio-label-no-ripple-1").name_of_set("label-no-ripple-set").ripple(false).label("No ripple 1") }
                         </div>
                     </span>
                     <span class = "demo-item">
                         <div class = "mdc-form-field">
-                            { Radio::new("radio-label-no-ripple-2").name_of_set("label-no-ripple-set").ripple(false).checked(true).label("No ripple 2") }
+                            { Radio::new().id("radio-label-no-ripple-2").name_of_set("label-no-ripple-set").ripple(false).checked(true).label("No ripple 2") }
                         </div>
                     </span>
                     <span class = "demo-item">
                         <div class = "mdc-form-field">
-                            { Radio::new("radio-label-disabled-1").name_of_set("dlabel-isabled-set").disabled(true).label("Disabled 1") }
+                            { Radio::new().id("radio-label-disabled-1").name_of_set("dlabel-isabled-set").disabled(true).label("Disabled 1") }
                         </div>
                     </span>
                     <span class = "demo-item">
                         <div class = "mdc-form-field">
-                            { Radio::new("radio-label-disabled-2").name_of_set("label-disabled-set").disabled(true).checked(true).label("Disabled 2") }
+                            { Radio::new().id("radio-label-disabled-2").name_of_set("label-disabled-set").disabled(true).checked(true).label("Disabled 2") }
                         </div>
                     </span>
                 </div>
@@ -521,13 +521,13 @@ impl Root {
                             List::ul("single-line-list-radio").items(vec![
                                 ListItem::default()
                                     .label("Radio Item")
-                                    .tile(Radio::new("single-line-list-radio-item-1-radio").name_of_set("single-line-list-radio").markup_only()),
+                                    .tile(Radio::simple().ripple(false).name_of_set("single-line-list-radio")),
                                 ListItem::default()
                                     .label("Radio Item")
-                                    .tile(Radio::new("single-line-list-radio-item-2-radio").name_of_set("single-line-list-radio").markup_only()),
+                                    .tile(Radio::simple().ripple(false).name_of_set("single-line-list-radio")),
                                 ListItem::default()
                                     .label("Radio Item")
-                                    .tile(Radio::new("single-line-list-radio-item-3-radio").name_of_set("single-line-list-radio").markup_only()),
+                                    .tile(Radio::simple().ripple(false).name_of_set("single-line-list-radio")),
                             ])
                         }
                     </span>
@@ -594,15 +594,15 @@ impl Root {
                                 ListItem::default()
                                     .text("Radio Item")
                                     .text("Secondary text")
-                                    .tile(Radio::new("two-line-list-radio-item-1-radio").name_of_set("two-line-list-radio").markup_only()),
+                                    .tile(Radio::simple().ripple(false).name_of_set("two-line-list-radio")),
                                 ListItem::default()
                                     .text("Radio Item")
                                     .text("Secondary text")
-                                    .tile(Radio::new("two-line-list-radio-item-2-radio").name_of_set("two-line-list-radio").markup_only()),
+                                    .tile(Radio::simple().ripple(false).name_of_set("two-line-list-radio")),
                                 ListItem::default()
                                     .text("Radio Item")
                                     .text("Secondary text")
-                                    .tile(Radio::new("two-line-list-radio-item-3-radio").name_of_set("two-line-list-radio").markup_only()),
+                                    .tile(Radio::simple().ripple(false).name_of_set("two-line-list-radio")),
                             ])
                         }
                     </span>

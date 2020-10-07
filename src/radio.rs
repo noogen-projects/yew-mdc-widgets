@@ -3,39 +3,51 @@ use std::{
     rc::Rc,
 };
 
-use yew::{html, html::onclick, Callback, Html, MouseEvent};
+use yew::{html, html::onclick, services::ConsoleService, Callback, Html, MouseEvent};
 
 use crate::{
     utils::{ripple_element, root_and_input_child_disabled, MdcWidget, VTagExt},
-    Text,
+    Text, AUTO_INIT_ATTR,
 };
 
 #[derive(Debug, Clone)]
 pub struct Radio {
     html: Html,
-    input_id: String,
 }
 
 impl Radio {
     const RIPPLE_CLASS: &'static str = "mdc-radio__ripple";
 
-    pub fn new<'a>(id: impl Into<Text<'a>>) -> Self {
-        let id = id.into();
-        let input_id = format!("{}-input", id);
+    pub fn simple() -> Self {
         Self {
             html: html! {
-                <div id = id class="mdc-radio">
-                    <input type = "radio" id = input_id class = "mdc-radio__native-control" />
+                <div class="mdc-radio">
+                    <input type = "radio" class = "mdc-radio__native-control" />
                     <div class = "mdc-radio__background">
                         <div class = "mdc-radio__outer-circle"></div>
                         <div class = "mdc-radio__inner-circle"></div>
                     </div>
                     <div class = Self::RIPPLE_CLASS></div>
-                    <script>{ format!("mdc.radio.MDCRadio.attachTo(document.getElementById('{}'));", id) }</script>
                 </div>
             },
-            input_id,
         }
+    }
+
+    pub fn new() -> Self {
+        let mut radio = Self::simple();
+        radio.root_tag_mut().set_attr(AUTO_INIT_ATTR, "MDCRadio");
+        radio
+    }
+
+    pub fn id<'a>(mut self, id: impl Into<Text<'a>>) -> Self {
+        let id = id.into();
+        let input_id = format!("{}-input", id);
+        let root = self.root_tag_mut();
+        root.set_attr("id", id);
+        if let Some(input) = root.find_child_tag_mut("input") {
+            input.set_attr("id", input_id);
+        };
+        self
     }
 
     pub fn name_of_set(mut self, name: impl Into<String>) -> Self {
@@ -46,16 +58,22 @@ impl Radio {
     }
 
     pub fn label(mut self, label: impl Into<Html>) -> Self {
-        if let Html::VTag(_) = &self.html {
-            self.html = html! { <>{ self.html }</> }
-        }
-        if let Html::VList(list) = &mut self.html {
-            list.children.insert(
-                1,
-                html! {
-                    <label for = self.input_id>{ label }</label>
-                },
-            );
+        if let Some(input_id) = self
+            .root_tag()
+            .find_child_tag("input")
+            .and_then(|input| input.attributes.get("id"))
+        {
+            let label = html! {
+                <label for = input_id>{ label }</label>
+            };
+            if let Html::VTag(_) = &self.html {
+                self.html = html! { <>{ self.html }</> }
+            }
+            if let Html::VList(list) = &mut self.html {
+                list.children.insert(1, label);
+            }
+        } else {
+            ConsoleService::error("Could not find input tag's id attribute");
         }
         self
     }
@@ -84,13 +102,6 @@ impl Radio {
             label.add_listener(listener.clone());
         }
         root.add_listener(listener);
-        self
-    }
-
-    pub fn markup_only(mut self) -> Self {
-        let root = self.root_tag_mut();
-        root.remove_child_contains_class(Self::RIPPLE_CLASS);
-        root.remove_child_tag("script");
         self
     }
 }
