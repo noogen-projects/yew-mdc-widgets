@@ -16,6 +16,9 @@ impl TopAppBar {
     const BAR_VAR_NAME: &'static str = "top_app_bar";
     const SCROLLED_CLASS: &'static str = "mdc-top-app-bar--fixed-scrolled";
 
+    /// Class used to style the content below the dense top app bar to prevent the top app bar from covering it
+    pub const DENSE_FIXED_ADJUST_CLASS: &'static str = "mdc-top-app-bar--dense-fixed-adjust";
+
     pub fn new<'a>(id: impl Into<Text<'a>>) -> Self {
         let id = id.into();
         Self {
@@ -124,6 +127,11 @@ impl TopAppBar {
         );
         self.root_tag_mut().add_child_script_statement(statement);
         self
+    }
+
+    /// Style the top app bar as a dense top app bar
+    pub fn dense(self) -> Self {
+        self.class("mdc-top-app-bar--dense")
     }
 }
 
