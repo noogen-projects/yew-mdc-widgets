@@ -16,8 +16,19 @@ impl TopAppBar {
     const BAR_VAR_NAME: &'static str = "top_app_bar";
     const SCROLLED_CLASS: &'static str = "mdc-top-app-bar--fixed-scrolled";
 
+    /// Class used to style the content below the standard and fixed top app bar to prevent the top app bar from
+    /// covering it
+    pub const FIXED_ADJUST_CLASS: &'static str = "mdc-top-app-bar--fixed-adjust";
+
+    /// Class used to style the content below the prominent top app bar to prevent the top app bar from covering it
+    pub const PROMINENT_FIXED_ADJUST_CLASS: &'static str = "mdc-top-app-bar--prominent-fixed-adjust";
+
     /// Class used to style the content below the dense top app bar to prevent the top app bar from covering it
     pub const DENSE_FIXED_ADJUST_CLASS: &'static str = "mdc-top-app-bar--dense-fixed-adjust";
+
+    /// Class used to style the content below the top app bar when styled as both dense and prominent, to prevent the
+    /// top app bar from covering it
+    pub const DENSE_PROMINENT_FIXED_ADJUST_CLASS: &'static str = "mdc-top-app-bar--dense-prominent-fixed-adjust";
 
     pub fn new<'a>(id: impl Into<Text<'a>>) -> Self {
         let id = id.into();
@@ -127,6 +138,16 @@ impl TopAppBar {
         );
         self.root_tag_mut().add_child_script_statement(statement);
         self
+    }
+
+    /// Style the top app bar as a fixed top app bar
+    pub fn fixed(self) -> Self {
+        self.class("mdc-top-app-bar--fixed")
+    }
+
+    /// Style the top app bar as a prominent top app bar
+    pub fn prominent(self) -> Self {
+        self.class("mdc-top-app-bar--prominent")
     }
 
     /// Style the top app bar as a dense top app bar

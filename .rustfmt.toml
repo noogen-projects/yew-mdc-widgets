@@ -10,7 +10,6 @@ format_macro_matchers = true
 merge_imports = true
 newline_style = "Unix"
 overflow_delimited_expr = true
-reorder_impl_items = true
 report_fixme = "Always"
 report_todo = "Always"
 use_field_init_shorthand = true
