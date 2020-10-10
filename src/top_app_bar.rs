@@ -115,7 +115,7 @@ impl TopAppBar {
     
                         const obj = {factory};
                         const bar = document.getElementById('{id}');
-                        if (obj.pageYOffset > 0) {{
+                        if (obj.pageYOffset > 0 || obj.scrollTop > 0) {{
                             bar.classList.add("{class}");
                         }} else {{
                             bar.classList.remove("{class}");
