@@ -104,34 +104,40 @@ impl TopAppBar {
         self
     }
 
+    pub fn shadow_when_scroll_script(&self, factory: impl AsRef<str>) -> Option<String> {
+        self.root_tag().attr("id").map(|id| {
+            format!(
+                r#"
+                const obj = {factory};
+                const old_scroll = obj.onscroll;
+                obj.onscroll = function() {{
+                    if (old_scroll && {{}}.toString.call(old_scroll) === '[object Function]') {{ old_scroll(); }}
+
+                    const obj = {factory};
+                    const bar = document.getElementById('{id}');
+                    if (obj.pageYOffset > 0) {{
+                        bar.classList.add("{class}");
+                    }} else {{
+                        bar.classList.remove("{class}");
+                    }}
+                }}
+            "#,
+                factory = factory.as_ref(),
+                id = id,
+                class = Self::SCROLLED_CLASS
+            )
+        })
+    }
+
     pub fn enable_shadow_when_scroll_window(self) -> Self {
         self.enable_shadow_when_scroll("window")
     }
 
     pub fn enable_shadow_when_scroll(mut self, factory: impl AsRef<str>) -> Self {
+        let script = self.shadow_when_scroll_script(factory);
         let root = self.root_tag_mut();
         if root.is_contains_class("mdc-top-app-bar") && !root.is_contains_class(Self::SCROLLED_CLASS) {
-            if let Some(id) = root.attr("id") {
-                let statement = format!(
-                    r#"
-                    const obj = {factory};
-                    const old_scroll = obj.onscroll;
-                    obj.onscroll = function() {{
-                        if (old_scroll && {{}}.toString.call(old_scroll) === '[object Function]') {{ old_scroll(); }}
-
-                        const obj = {factory};
-                        const bar = document.getElementById('{id}');
-                        if (obj.pageYOffset > 0) {{
-                            bar.classList.add("{class}");
-                        }} else {{
-                            bar.classList.remove("{class}");
-                        }}
-                    }}
-                "#,
-                    factory = factory.as_ref(),
-                    id = id,
-                    class = Self::SCROLLED_CLASS
-                );
+            if let Some(statement) = script {
                 root.add_child_script_statement(statement);
             }
         }
