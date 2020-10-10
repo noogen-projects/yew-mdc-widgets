@@ -107,21 +107,21 @@ impl TopAppBar {
     pub fn shadow_when_scroll_script(&self, factory: impl AsRef<str>) -> Option<String> {
         self.root_tag().attr("id").map(|id| {
             format!(
-                r#"
-                const obj = {factory};
-                const old_scroll = obj.onscroll;
-                obj.onscroll = function() {{
-                    if (old_scroll && {{}}.toString.call(old_scroll) === '[object Function]') {{ old_scroll(); }}
-
+                r#"{{
                     const obj = {factory};
-                    const bar = document.getElementById('{id}');
-                    if (obj.pageYOffset > 0) {{
-                        bar.classList.add("{class}");
-                    }} else {{
-                        bar.classList.remove("{class}");
+                    const old_scroll = obj.onscroll;
+                    obj.onscroll = function() {{
+                        if (old_scroll && {{}}.toString.call(old_scroll) === '[object Function]') {{ old_scroll(); }}
+    
+                        const obj = {factory};
+                        const bar = document.getElementById('{id}');
+                        if (obj.pageYOffset > 0) {{
+                            bar.classList.add("{class}");
+                        }} else {{
+                            bar.classList.remove("{class}");
+                        }}
                     }}
-                }}
-            "#,
+                }}"#,
                 factory = factory.as_ref(),
                 id = id,
                 class = Self::SCROLLED_CLASS
