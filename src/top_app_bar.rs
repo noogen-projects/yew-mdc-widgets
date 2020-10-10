@@ -118,7 +118,9 @@ impl TopAppBar {
                     const old_scroll = obj.onscroll;
                     obj.onscroll = function() {{
                         if (old_scroll && {{}}.toString.call(old_scroll) === '[object Function]') {{ old_scroll(); }}
-                        var bar = document.getElementById('{id}');
+
+                        const obj = {factory};
+                        const bar = document.getElementById('{id}');
                         if (obj.pageYOffset > 0) {{
                             bar.classList.add("{class}");
                         }} else {{
