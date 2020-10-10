@@ -50,7 +50,7 @@ impl Component for Root {
         let top_app_bar = TopAppBar::new("top-app-bar")
             .title("Yew MDC Widgets")
             .navigation_item(IconButton::new().icon("menu"))
-            .enable_shadow_when_scroll()
+            .enable_shadow_when_scroll_window()
             .add_navigation_event("drawer.open = !drawer.open;");
 
         html! {
