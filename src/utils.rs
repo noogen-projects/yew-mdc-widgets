@@ -12,6 +12,7 @@ use yew::{
 };
 
 use crate::Text;
+use yew::virtual_dom::VNode;
 
 pub trait VTagExt {
     fn root_tag(&self) -> Option<&VTag>;
@@ -41,6 +42,7 @@ pub trait VTagExt {
     fn find_child_tag_recursively(&self, child_tag_name: &str) -> Option<&VTag>;
     fn find_child_tag_recursively_mut(&mut self, child_tag_name: &str) -> Option<&mut VTag>;
     fn remove_child_tag(&mut self, child_tag_name: &str) -> Option<Html>;
+    fn add_child(&mut self, child: impl Into<Html>);
     fn add_child_script_statement(&mut self, statement: impl AsRef<str>);
     fn insert_child(&mut self, idx: usize, child: impl Into<Html>);
 }
@@ -172,6 +174,10 @@ impl VTagExt for VTag {
             .map(|idx| self.children.remove(idx))
     }
 
+    fn add_child(&mut self, child: impl Into<Html>) {
+        self.children.push(child.into());
+    }
+
     fn add_child_script_statement(&mut self, statement: impl AsRef<str>) {
         add_child_script_statement(self.find_child_tag_mut("script"), statement)
     }
@@ -189,7 +195,7 @@ impl VTagExt for Html {
                 if let Some(Html::VTag(tag)) = list.children.first() {
                     return Some(tag);
                 }
-            },
+            }
             _ => (),
         }
         None
@@ -202,7 +208,7 @@ impl VTagExt for Html {
                 if let Some(Html::VTag(tag)) = list.children.first_mut() {
                     return Some(tag);
                 }
-            },
+            }
             _ => (),
         }
         None
@@ -271,7 +277,7 @@ impl VTagExt for Html {
                 } else {
                     false
                 }
-            },
+            }
             _ => false,
         }
     }
@@ -388,12 +394,20 @@ impl VTagExt for Html {
         }
     }
 
+    fn add_child(&mut self, child: impl Into<Html>) {
+        match self {
+            VNode::VTag(tag) => tag.children.push(child.into()),
+            VNode::VList(list) => list.children.push(child.into()),
+            _ => (),
+        }
+    }
+
     fn add_child_script_statement(&mut self, statement: impl AsRef<str>) {
         match self {
             Html::VTag(tag) => tag.add_child_script_statement(statement),
             Html::VList(list) => {
                 add_child_script_statement(find_child_tag_mut(list.children.iter_mut(), "script"), statement)
-            },
+            }
             _ => (),
         }
     }
@@ -498,7 +512,7 @@ fn find_child_tag_recursively_mut<'a>(
                 } else {
                     find_child_tag_recursively_mut(child.children.iter_mut(), child_tag_name)
                 }
-            },
+            }
             Html::VList(list) => find_child_tag_recursively_mut(list.children.iter_mut(), child_tag_name),
             _ => None,
         };
@@ -560,13 +574,6 @@ pub trait MdcWidget {
         self
     }
 
-    fn auto_init(self, _enabled: bool) -> Self
-    where
-        Self: Sized,
-    {
-        todo!()
-    }
-
     fn listener(mut self, listener: Rc<dyn Listener>) -> Self
     where
         Self: Sized,
@@ -598,9 +605,12 @@ pub fn ripple_element(widget: &mut impl MdcWidget, ripple_class: impl AsRef<str>
     if enabled {
         if !root.is_some_child_contains_class(ripple_class) {
             let idx = root.children.len().saturating_sub(1);
-            root.children.insert(idx, html! {
-                <div class = ripple_class></div>
-            });
+            root.children.insert(
+                idx,
+                html! {
+                    <div class = ripple_class></div>
+                },
+            );
         }
     } else {
         root.remove_child_contains_class(ripple_class);
