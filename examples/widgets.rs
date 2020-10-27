@@ -44,7 +44,7 @@ impl Component for Root {
         let drawer = Drawer::new("app-drawer")
             .title(html! { <h3 tabindex = 0>{ "Widgets" }</h3> })
             .modal()
-            .content(List::nav("main-menu").items(contents.clone()).markup_only());
+            .content(List::nav().items(contents.clone()).markup_only());
         let attaching_drawer = Drawer::get_attaching_script("app-drawer");
 
         let top_app_bar = TopAppBar::new("top-app-bar")
@@ -71,7 +71,7 @@ impl Component for Root {
                     <div class = "mdc-top-app-bar--fixed-adjust">
                         <div class = "demo-content">
                             <h1 class = "demo-title mdc-typography--headline5">{ "Material design components" }</h1>
-                            { List::nav("contents").items(contents) }
+                            { List::nav().items(contents) }
 
                             <h2 class = "demo-title mdc-typography--headline6"><a name = "buttons"></a>{ "Buttons" }</h2>
                             { self.view_buttons() }
@@ -476,41 +476,41 @@ impl Root {
                     <h3 class = "mdc-typography--subtitle1">{ "Single-Line" }</h3>
                     <span class = "demo-item demo-list">
                         {
-                            List::ul("single-line-list").items(vec![
-                                ListItem::default().text("List Item"),
-                                ListItem::default().text("List Item"),
-                                ListItem::default().text("List Item"),
+                            List::ul().items(vec![
+                                ListItem::new().text("List Item"),
+                                ListItem::new().text("List Item"),
+                                ListItem::new().text("List Item"),
                             ])
                         }
                     </span>
                     <span class = "demo-item demo-list">
                         {
-                            List::ul("single-line-list-icon").items(vec![
-                                ListItem::default().icon("wifi").text("Leading Icon"),
-                                ListItem::default().icon("bluetooth").text("Leading Icon"),
-                                ListItem::default().icon("data_usage").text("Leading Icon"),
+                            List::ul().items(vec![
+                                ListItem::new().icon("wifi").text("Leading Icon"),
+                                ListItem::new().icon("bluetooth").text("Leading Icon"),
+                                ListItem::new().icon("data_usage").text("Leading Icon"),
                             ])
                         }
                     </span>
                     <span class = "demo-item demo-list">
                         {
-                            List::ul("single-line-list-trailing-icon").items(vec![
-                                ListItem::default().text("Trailing Icon").icon("info"),
-                                ListItem::default().text("Trailing Icon").icon("info"),
-                                ListItem::default().text("Trailing Icon").icon("info"),
+                            List::ul().items(vec![
+                                ListItem::new().text("Trailing Icon").icon("info"),
+                                ListItem::new().text("Trailing Icon").icon("info"),
+                                ListItem::new().text("Trailing Icon").icon("info"),
                             ])
                         }
                     </span>
                     <span class = "demo-item demo-list">
                         {
-                            List::ul("single-line-list-checkbox").items(vec![
-                                ListItem::default()
+                            List::ul().items(vec![
+                                ListItem::new()
                                     .tile(Checkbox::simple().ripple(false))
                                     .label("Checkbox Item"),
-                                ListItem::default()
+                                ListItem::new()
                                     .tile(Checkbox::simple().ripple(false))
                                     .label("Checkbox Item"),
-                                ListItem::default()
+                                ListItem::new()
                                     .tile(Checkbox::simple().ripple(false))
                                     .label("Checkbox Item"),
                             ])
@@ -518,14 +518,14 @@ impl Root {
                     </span>
                     <span class = "demo-item demo-list">
                         {
-                            List::ul("single-line-list-radio").items(vec![
-                                ListItem::default()
+                            List::ul().items(vec![
+                                ListItem::new()
                                     .label("Radio Item")
                                     .tile(Radio::simple().ripple(false).name_of_set("single-line-list-radio")),
-                                ListItem::default()
+                                ListItem::new()
                                     .label("Radio Item")
                                     .tile(Radio::simple().ripple(false).name_of_set("single-line-list-radio")),
-                                ListItem::default()
+                                ListItem::new()
                                     .label("Radio Item")
                                     .tile(Radio::simple().ripple(false).name_of_set("single-line-list-radio")),
                             ])
@@ -533,10 +533,10 @@ impl Root {
                     </span>
                     <span class = "demo-item demo-list">
                         {
-                            List::ul("single-line-no-ripple-list").items(vec![
-                                ListItem::default().ripple(false).text("No ripple"),
-                                ListItem::default().ripple(false).text("No ripple"),
-                                ListItem::default().ripple(false).text("No ripple"),
+                            List::ul().items(vec![
+                                ListItem::simple().text("No ripple"),
+                                ListItem::simple().text("No ripple"),
+                                ListItem::simple().text("No ripple"),
                             ])
                         }
                     </span>
@@ -545,43 +545,43 @@ impl Root {
                     <h3 class = "mdc-typography--subtitle1">{ "Two-Line" }</h3>
                     <span class = "demo-item demo-list">
                         {
-                            List::ul("two-line-list").two_line().items(vec![
-                                ListItem::default().text("List Item").text("Secondary text"),
-                                ListItem::default().text("List Item").text("Secondary text"),
-                                ListItem::default().text("List Item").text("Secondary text"),
+                            List::ul().two_line().items(vec![
+                                ListItem::new().text("List Item").text("Secondary text"),
+                                ListItem::new().text("List Item").text("Secondary text"),
+                                ListItem::new().text("List Item").text("Secondary text"),
                             ])
                         }
                     </span>
                     <span class = "demo-item demo-list">
                         {
-                            List::ul("two-line-list-icon").two_line().items(vec![
-                                ListItem::default().icon("wifi").text("Leading Icon").text("Secondary text"),
-                                ListItem::default().icon("bluetooth").text("Leading Icon").text("Secondary text"),
-                                ListItem::default().icon("data_usage").text("Leading Icon").text("Secondary text"),
+                            List::ul().two_line().items(vec![
+                                ListItem::new().icon("wifi").text("Leading Icon").text("Secondary text"),
+                                ListItem::new().icon("bluetooth").text("Leading Icon").text("Secondary text"),
+                                ListItem::new().icon("data_usage").text("Leading Icon").text("Secondary text"),
                             ])
                         }
                     </span>
                     <span class = "demo-item demo-list">
                         {
-                            List::ul("two-line-list-trailing-icon").two_line().items(vec![
-                                ListItem::default().text("Trailing Icon").text("Secondary text").icon("info"),
-                                ListItem::default().text("Trailing Icon").text("Secondary text").icon("info"),
-                                ListItem::default().text("Trailing Icon").text("Secondary text").icon("info"),
+                            List::ul().two_line().items(vec![
+                                ListItem::new().text("Trailing Icon").text("Secondary text").icon("info"),
+                                ListItem::new().text("Trailing Icon").text("Secondary text").icon("info"),
+                                ListItem::new().text("Trailing Icon").text("Secondary text").icon("info"),
                             ])
                         }
                     </span>
                     <span class = "demo-item demo-list">
                         {
-                            List::ul("two-line-list-checkbox").two_line().items(vec![
-                                ListItem::default()
+                            List::ul().two_line().items(vec![
+                                ListItem::new()
                                     .tile(Checkbox::simple().ripple(false))
                                     .text("Checkbox Item")
                                     .text("Secondary text"),
-                                ListItem::default()
+                                ListItem::new()
                                     .tile(Checkbox::simple().ripple(false))
                                     .text("Checkbox Item")
                                     .text("Secondary text"),
-                                ListItem::default()
+                                ListItem::new()
                                     .tile(Checkbox::simple().ripple(false))
                                     .text("Checkbox Item")
                                     .text("Secondary text"),
@@ -590,16 +590,16 @@ impl Root {
                     </span>
                     <span class = "demo-item demo-list">
                         {
-                            List::ul("two-line-list-radio").two_line().items(vec![
-                                ListItem::default()
+                            List::ul().two_line().items(vec![
+                                ListItem::new()
                                     .text("Radio Item")
                                     .text("Secondary text")
                                     .tile(Radio::simple().ripple(false).name_of_set("two-line-list-radio")),
-                                ListItem::default()
+                                ListItem::new()
                                     .text("Radio Item")
                                     .text("Secondary text")
                                     .tile(Radio::simple().ripple(false).name_of_set("two-line-list-radio")),
-                                ListItem::default()
+                                ListItem::new()
                                     .text("Radio Item")
                                     .text("Secondary text")
                                     .tile(Radio::simple().ripple(false).name_of_set("two-line-list-radio")),
@@ -608,10 +608,10 @@ impl Root {
                     </span>
                     <span class = "demo-item demo-list">
                         {
-                            List::ul("two-line-no-ripple-list").two_line().items(vec![
-                                ListItem::default().ripple(false).text("No ripple").text("Secondary text"),
-                                ListItem::default().ripple(false).text("No ripple").text("Secondary text"),
-                                ListItem::default().ripple(false).text("No ripple").text("Secondary text"),
+                            List::ul().two_line().items(vec![
+                                ListItem::simple().text("No ripple").text("Secondary text"),
+                                ListItem::simple().text("No ripple").text("Secondary text"),
+                                ListItem::simple().text("No ripple").text("Secondary text"),
                             ])
                         }
                     </span>
@@ -620,16 +620,16 @@ impl Root {
                 <div class = "demo-item mdc-list-group demo-group-list demo-panel">
                     <h3 class = "mdc-list-group__subheader">{ "List 1" }</h3>
                     {
-                        List::ul("list-group-1").items(vec![
-                            ListItem::default().text("List Item"),
-                            ListItem::default().text("List Item"),
+                        List::ul().items(vec![
+                            ListItem::new().text("List Item"),
+                            ListItem::new().text("List Item"),
                         ])
                     }
                     <h3 class = "mdc-list-group__subheader">{ "List 2" }</h3>
                     {
-                        List::ul("list-group-2").items(vec![
-                            ListItem::default().text("List Item"),
-                            ListItem::default().text("List Item"),
+                        List::ul().items(vec![
+                            ListItem::new().text("List Item"),
+                            ListItem::new().text("List Item"),
                         ])
                     }
                 </div>
@@ -637,16 +637,16 @@ impl Root {
                     <h3 class = "mdc-typography--subtitle1">{ "Two-Line with Leading and Trailing Icon and Divider" }</h3>
                     <span class = "demo-item bordered-list demo-panel">
                         {
-                            List::ul("complex-list")
+                            List::ul()
                                 .two_line()
                                 .avatar()
-                                .item(ListItem::default().icon("folder").text("Dog Photos").text("9 Jan 2018").icon("info"))
+                                .item(ListItem::new().icon("folder").text("Dog Photos").text("9 Jan 2018").icon("info"))
                                 .divider_inset_leading()
-                                .item(ListItem::default().icon("folder").text("Cat Photos").text("22 Dec 2017").icon("info"))
+                                .item(ListItem::new().icon("folder").text("Cat Photos").text("22 Dec 2017").icon("info"))
                                 .divider()
                                 .items(vec![
-                                    ListItem::default().icon("folder").text("Potatoes").text("30 Noc 2017").icon("info"),
-                                    ListItem::default().icon("folder").text("Carrots").text("17 Oct 2017").icon("info"),
+                                    ListItem::new().icon("folder").text("Potatoes").text("30 Noc 2017").icon("info"),
+                                    ListItem::new().icon("folder").text("Carrots").text("17 Oct 2017").icon("info"),
                                 ])
                         }
                     </span>
@@ -655,11 +655,11 @@ impl Root {
                     <h3 class = "mdc-typography--subtitle1">{ "List with activated item" }</h3>
                     <span class = "demo-item bordered-list demo-panel">
                         {
-                            List::ul("activated-list").single_selection().items(vec![
-                                ListItem::default().icon("inbox").text("Inbox"),
-                                ListItem::default().icon("star").text("Star").selected(true),
-                                ListItem::default().icon("send").text("Send"),
-                                ListItem::default().icon("drafts").text("Drafts"),
+                            List::ul().id("activated-list").single_selection().items(vec![
+                                ListItem::new().icon("inbox").text("Inbox"),
+                                ListItem::new().icon("star").text("Star").selected(true),
+                                ListItem::new().icon("send").text("Send"),
+                                ListItem::new().icon("drafts").text("Drafts"),
                             ])
                         }
                     </span>
@@ -682,9 +682,9 @@ impl Root {
                             }
                             {
                                 Menu::new("simple-menu").items(vec![
-                                    ListItem::default().text("Menu Item"),
-                                    ListItem::default().text("Menu Item"),
-                                    ListItem::default().text("Menu Item"),
+                                    ListItem::new().text("Menu Item"),
+                                    ListItem::new().text("Menu Item"),
+                                    ListItem::new().text("Menu Item"),
                                 ])
                             }
                         </div>

@@ -7,24 +7,12 @@ use yew::{html, html::onclick, Callback, Html, MouseEvent};
 
 use crate::{
     utils::{MdcWidget, VTagExt},
-    Text,
+    Text, AUTO_INIT_ATTR,
 };
 
 #[derive(Debug, Clone)]
 pub struct ListItem {
     html: Html,
-}
-
-impl Default for ListItem {
-    fn default() -> Self {
-        let item = Self {
-            html: html! {
-                <li class = "mdc-list-item">
-                </li>
-            },
-        };
-        item.ripple(true)
-    }
 }
 
 impl ListItem {
@@ -36,32 +24,29 @@ impl ListItem {
     const SELECTION_CLASS: &'static str = "mdc-list-item--selected";
     const TEXT_ITEM_CLASS: &'static str = "mdc-list-item__text";
 
-    pub fn new<'a>(id: impl Into<Text<'a>>) -> Self {
-        Self::default().id(id)
+    pub fn simple() -> Self {
+        Self {
+            html: html! {
+                <li class = "mdc-list-item">
+                    <span class = Self::RIPPLE_CLASS></span>
+                </li>
+            },
+        }
+    }
+
+    pub fn new() -> Self {
+        Self::simple().ripple(true)
     }
 
     pub fn link(href: impl AsRef<str>) -> Self {
         let item = Self {
             html: html! {
                 <a class = "mdc-list-item" href = href.as_ref()>
+                    <span class = Self::RIPPLE_CLASS></span>
                 </a>
             },
         };
         item.ripple(true)
-    }
-
-    pub fn id<'a>(mut self, id: impl Into<Text<'a>>) -> Self {
-        let id = id.into();
-        let root = self.root_tag_mut();
-
-        root.set_attr("id", id.as_ref());
-        if root.is_some_child_contains_class(Self::RIPPLE_CLASS) {
-            root.remove_child_tag("script");
-            root.children.push(html! {
-                <script>{ format!("mdc.ripple.MDCRipple.attachTo(document.getElementById('{}'))", id) }</script>
-            });
-        }
-        self
     }
 
     pub fn text(mut self, text: impl Into<Html>) -> Self {
@@ -72,22 +57,27 @@ impl ListItem {
             primary.remove_any_class(&[Self::TEXT_ITEM_CLASS]);
             primary.add_class(Self::PRIMARY_TEXT_ITEM_CLASS);
 
-            root.children.insert(idx, html! {
-                <span class = Self::TEXT_ITEM_CLASS>
-                    { primary }
-                    <span class = Self::SECONDARY_TEXT_ITEM_CLASS>
-                        { text }
+            root.children.insert(
+                idx,
+                html! {
+                    <span class = Self::TEXT_ITEM_CLASS>
+                        { primary }
+                        <span class = Self::SECONDARY_TEXT_ITEM_CLASS>
+                            { text }
+                        </span>
                     </span>
-                </span>
-            });
+                },
+            );
         } else {
             let idx = root
                 .find_child_contains_class_idx(Self::LAST_TILE_CLASS)
-                .or_else(|| root.find_child_tag_idx("script"))
                 .unwrap_or_else(|| root.children.len());
-            root.children.insert(idx, html! {
-                <span class = Self::TEXT_ITEM_CLASS>{ text }</span>
-            });
+            root.children.insert(
+                idx,
+                html! {
+                    <span class = Self::TEXT_ITEM_CLASS>{ text }</span>
+                },
+            );
         }
         self
     }
@@ -105,26 +95,11 @@ impl ListItem {
 
     pub fn ripple(mut self, enabled: bool) -> Self {
         let root = self.root_tag_mut();
+
         if enabled {
-            if !root.is_some_child_contains_class(Self::RIPPLE_CLASS) {
-                root.children.insert(0, html! {
-                    <span class = Self::RIPPLE_CLASS></span>
-                });
-            }
-            if !root.is_last_child("script") {
-                if let Some(id) = root.attributes.get("id") {
-                    root.children.push(html! {
-                        <script>{ format!("mdc.ripple.MDCRipple.attachTo(document.getElementById('{}'))", id) }</script>
-                    });
-                }
-            }
-        } else if !enabled {
-            if let Some(idx) = root.find_child_contains_class_idx(Self::RIPPLE_CLASS) {
-                root.children.remove(idx);
-            }
-            if let Some(idx) = root.find_child_tag_idx("script") {
-                root.children.remove(idx);
-            }
+            root.set_attr(AUTO_INIT_ATTR, "MDCRipple");
+        } else {
+            root.remove_attr(AUTO_INIT_ATTR);
         }
         self
     }
@@ -134,8 +109,7 @@ impl ListItem {
         let (idx, class) = if root.is_some_child_contains_class(Self::FIRST_TILE_CLASS)
             || root.is_some_child_contains_class(Self::TEXT_ITEM_CLASS)
         {
-            let idx = root.find_child_tag_idx("script").unwrap_or_else(|| root.children.len());
-            (idx, Self::LAST_TILE_CLASS)
+            (root.children.len(), Self::LAST_TILE_CLASS)
         } else {
             let idx = root
                 .find_child_contains_class_idx(Self::RIPPLE_CLASS)
@@ -143,9 +117,12 @@ impl ListItem {
                 .unwrap_or(0);
             (idx, Self::FIRST_TILE_CLASS)
         };
-        root.children.insert(idx, html! {
-            <span class = class>{ tile }</span>
-        });
+        root.children.insert(
+            idx,
+            html! {
+                <span class = class>{ tile }</span>
+            },
+        );
         self
     }
 
@@ -178,7 +155,6 @@ impl ListItem {
 
         let idx = root
             .find_child_contains_class_idx(Self::LAST_TILE_CLASS)
-            .or_else(|| root.find_child_tag_idx("script"))
             .unwrap_or_else(|| root.children.len());
 
         root.children.insert(idx, label);
@@ -216,41 +192,65 @@ pub struct List {
 impl List {
     const LIST_VAR_NAME: &'static str = "list";
 
-    pub fn ul<'a>(id: impl Into<Text<'a>>) -> Self {
-        let id = id.into();
-        Self {
-            html: html! {
-                <>
-                    <ul id = id class = "mdc-list">
-                    </ul>
-                    <script>{ format!("{{ const {} = mdc.list.MDCList.attachTo(document.getElementById('{}')); }}", Self::LIST_VAR_NAME, id) }</script>
-                </>
-            },
+    pub fn ul() -> Self {
+        let mut list = Self {
+            html: html! { <ul class = "mdc-list"></ul> },
+        };
+        list.root_tag_mut().set_attr(AUTO_INIT_ATTR, "MDCList");
+        list
+    }
+
+    pub fn nav() -> Self {
+        let mut list = Self {
+            html: html! { <nav class = "mdc-list"></nav> },
+        };
+        list.root_tag_mut().set_attr(AUTO_INIT_ATTR, "MDCList");
+        list
+    }
+
+    pub fn root_id(&self) -> &str {
+        self.root_tag()
+            .attributes
+            .get("id")
+            .expect("The List widget must have ID")
+    }
+
+    pub fn single_selection(self) -> Self {
+        let statement = format!("{}.MDCList.singleSelection = true;", Self::LIST_VAR_NAME);
+        self.add_script_statement(statement)
+    }
+
+    pub fn wrap_focus(self) -> Self {
+        let statement = format!("{}.MDCList.wrapFocus = true;", Self::LIST_VAR_NAME);
+        self.add_script_statement(statement)
+    }
+
+    pub fn add_script_statement(mut self, statement: String) -> Self {
+        if self.html.find_child_tag("script").is_some() {
+            self.html.add_child_script_statement(statement);
+        } else {
+            let id = self.root_id();
+            let script = format!(
+                r"{{
+                    const {list} = document.getElementById('{id}');
+                    if ({list}.MDCList === undefined) {{
+                        window.mdc.autoInit({list}.parentElement);
+                    }}
+                }}",
+                list = Self::LIST_VAR_NAME,
+                id = id,
+            );
+
+            let Self { html } = self;
+            self = Self {
+                html: html! {
+                    <>
+                        { html }
+                        <script>{ script }</script>
+                    </>
+                },
+            };
         }
-    }
-
-    pub fn nav<'a>(id: impl Into<Text<'a>>) -> Self {
-        let id = id.into();
-        Self {
-            html: html! {
-                <>
-                    <nav id = id class = "mdc-list">
-                    </nav>
-                    <script>{ format!("{{ const {} = mdc.list.MDCList.attachTo(document.getElementById('{}')); }}", Self::LIST_VAR_NAME, id) }</script>
-                </>
-            },
-        }
-    }
-
-    pub fn single_selection(mut self) -> Self {
-        self.html
-            .add_child_script_statement(format!("{}.singleSelection = true;", Self::LIST_VAR_NAME));
-        self
-    }
-
-    pub fn wrap_focus(mut self) -> Self {
-        self.html
-            .add_child_script_statement(format!("{}.wrapFocus = true;", Self::LIST_VAR_NAME));
         self
     }
 

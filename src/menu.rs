@@ -31,7 +31,7 @@ impl Menu {
 
     pub fn new<'a>(id: impl Into<Text<'a>>) -> Self {
         let id = id.into();
-        let list = List::ul(format!("{}-list", id));
+        let list = List::ul().id(format!("{}-list", id));
         Self::from_list(id, list)
     }
 
