@@ -3,7 +3,7 @@
 use std::borrow::Cow;
 
 pub use self::{
-    button::*, card::*, checkbox::*, data_table::*, drawer::*, icon_button::*, list::*, menu::*, radio::*,
+    button::*, card::*, checkbox::*, data_table::*, drawer::*, fab::*, icon_button::*, list::*, menu::*, radio::*,
     text_field::*, top_app_bar::*, utils::MdcWidget,
 };
 
@@ -12,6 +12,7 @@ pub mod card;
 pub mod checkbox;
 pub mod data_table;
 pub mod drawer;
+pub mod fab;
 pub mod icon_button;
 pub mod list;
 pub mod menu;

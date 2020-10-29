@@ -4,7 +4,7 @@ use std::iter::FromIterator;
 
 use yew::{html, initialize, run_loop, utils, App, Component, ComponentLink, Html};
 use yew_mdc_widgets::{
-    auto_init, Button, ButtonStyle, Card, CardContent, Checkbox, DataTable, Drawer, IconButton, List, ListItem,
+    auto_init, Button, ButtonStyle, Card, CardContent, Checkbox, DataTable, Drawer, Fab, IconButton, List, ListItem,
     MdcWidget, Menu, Radio, TableCell, TextField, TopAppBar,
 };
 
@@ -32,6 +32,7 @@ impl Component for Root {
         let contents = vec![
             ListItem::link("#buttons").text("Buttons").attr("tabindex", "0"),
             ListItem::link("#icon_buttons").text("Icon buttons"),
+            ListItem::link("#fabs").text("Floating Action Buttons"),
             ListItem::link("#checkboxes").text("Checkboxes"),
             ListItem::link("#radio_buttons").text("Radio buttons"),
             ListItem::link("#text_fields").text("Text fields"),
@@ -78,6 +79,9 @@ impl Component for Root {
 
                             <h2 class = "demo-title mdc-typography--headline6"><a name = "icon_buttons"></a>{ "Icon buttons" }</h2>
                             { self.view_icon_buttons() }
+
+                            <h2 class = "demo-title mdc-typography--headline6"><a name = "fabs"></a>{ "Floating Action Buttons" }</h2>
+                            { self.view_fabs() }
 
                             <h2 class = "demo-title mdc-typography--headline6"><a name = "checkboxes"></a>{ "Checkboxes" }</h2>
                             { self.view_checkboxes() }
@@ -273,6 +277,91 @@ impl Root {
                                 })
                                 .disabled(true)
                                 .on()
+                        }
+                    </span>
+                </div>
+            </div>
+        }
+    }
+
+    fn view_fabs(&self) -> Html {
+        html! {
+            <div>
+                <div>
+                    <h3 class = "mdc-typography--subtitle1">{ "Regular FAB" }</h3>
+                    <span class = "demo-item">
+                        { Fab::new().icon("add") }
+                    </span>
+                    <span class = "demo-item">
+                        { Fab::new().ripple(false).icon("add") }
+                    </span>
+                    <span class = "demo-item">
+                        { Fab::new().id("exited_fab").icon("add").on_click(self.link.callback(|_| {
+                            js_sys::eval(&format!("document.getElementById('exited_fab').classList.add('{}')", Fab::EXITED_CLASS)).ok();
+                        })) }
+                    </span>
+                </div>
+                <div>
+                    <h3 class = "mdc-typography--subtitle1">{ "Mini FAB" }</h3>
+                    <span class = "demo-item">
+                        { Fab::new().mini().icon("add") }
+                    </span>
+                    <span class = "demo-item">
+                        { Fab::new().ripple(false).mini().icon("add") }
+                    </span>
+                    <span class = "demo-item">
+                        { Fab::new().mini().id("exited_fab_mini").icon("add").on_click(self.link.callback(|_| {
+                            js_sys::eval(&format!("document.getElementById('exited_fab_mini').classList.add('{}')", Fab::EXITED_CLASS)).ok();
+                        })) }
+                    </span>
+                </div>
+                <div>
+                    <h3 class = "mdc-typography--subtitle1">{ "Extended FAB" }</h3>
+                    <span class = "demo-item">
+                        { Fab::new().label("favorite") }
+                    </span>
+                    <span class = "demo-item">
+                        { Fab::new().icon("favorite_border").label("favorite") }
+                    </span>
+                    <span class = "demo-item">
+                        { Fab::new().label("favorite").icon("favorite_border") }
+                    </span>
+                    <span class = "demo-item">
+                        { Fab::new().ripple(false).icon("favorite_border").label("favorite") }
+                    </span>
+                    <span class = "demo-item">
+                        { Fab::new().id("exited_fab_extended").icon("favorite_border").label("favorite").on_click(self.link.callback(|_| {
+                            js_sys::eval(&format!("document.getElementById('exited_fab_extended').classList.add('{}')", Fab::EXITED_CLASS)).ok();
+                        })) }
+                    </span>
+                </div>
+                <div>
+                    <h3 class = "mdc-typography--subtitle1">{ "Svg Fab" }</h3>
+                    <span class = "demo-item">
+                        {
+                            Fab::new()
+                                .item(html! {
+                                    <svg xmlns = "http://www.w3.org/2000/svg" viewBox = "0 0 24 24" width = "24" height = "24">
+                                        <path d = "M12.97 2.59a1.5 1.5 0 00-1.94 0l-7.5 6.363A1.5 1.5 0 003 10.097V19.5A1.5 1.5 0 \
+                                                004.5 21h4.75a.75.75 0 00.75-.75V14h4v6.25c0 .414.336.75.75.75h4.75a1.5 1.5 0 \
+                                                001.5-1.5v-9.403a1.5 1.5 0 00-.53-1.144l-7.5-6.363z">
+                                        </path>
+                                    </svg>
+                                })
+                        }
+                    </span>
+                    <span class = "demo-item">
+                        {
+                            Fab::new()
+                                .item(html! {
+                                    <svg xmlns = "http://www.w3.org/2000/svg" viewBox = "0 0 24 24" width = "24" height = "24">
+                                        <path d = "M12.97 2.59a1.5 1.5 0 00-1.94 0l-7.5 6.363A1.5 1.5 0 003 10.097V19.5A1.5 1.5 0 \
+                                                004.5 21h4.75a.75.75 0 00.75-.75V14h4v6.25c0 .414.336.75.75.75h4.75a1.5 1.5 0 \
+                                                001.5-1.5v-9.403a1.5 1.5 0 00-.53-1.144l-7.5-6.363z">
+                                        </path>
+                                    </svg>
+                                })
+                                .label("Labeled")
                         }
                     </span>
                 </div>

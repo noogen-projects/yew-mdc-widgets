@@ -68,12 +68,8 @@ impl IconButton {
         self
     }
 
-    pub fn on(mut self) -> Self {
-        let root = self.root_tag_mut();
-        if !root.is_contains_class("mdc-icon-button--on") {
-            root.add_class("mdc-icon-button--on");
-        }
-        self
+    pub fn on(self) -> Self {
+        self.class("mdc-icon-button--on")
     }
 
     pub fn disabled(mut self, disabled: bool) -> Self {
@@ -101,7 +97,7 @@ impl IconButton {
         let mut item = item.into();
         item.add_class(class);
 
-        self.root_tag_mut().children.push(item);
+        self.root_tag_mut().add_child(item);
         self
     }
 }
