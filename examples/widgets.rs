@@ -48,7 +48,8 @@ impl Component for Root {
             .content(List::nav().items(contents.clone()).markup_only());
         let attaching_drawer = Drawer::get_attaching_script("app-drawer");
 
-        let top_app_bar = TopAppBar::new("top-app-bar")
+        let top_app_bar = TopAppBar::new()
+            .id("top-app-bar")
             .title("Yew MDC Widgets")
             .navigation_item(IconButton::new().icon("menu"))
             .enable_shadow_when_scroll_window()

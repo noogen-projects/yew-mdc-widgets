@@ -4,7 +4,7 @@ use yew::{html, Html};
 
 use crate::{
     utils::{MdcWidget, VTagExt},
-    Text,
+    AUTO_INIT_ATTR,
 };
 
 #[derive(Debug, Clone)]
@@ -30,11 +30,10 @@ impl TopAppBar {
     /// top app bar from covering it
     pub const DENSE_PROMINENT_FIXED_ADJUST_CLASS: &'static str = "mdc-top-app-bar--dense-prominent-fixed-adjust";
 
-    pub fn new<'a>(id: impl Into<Text<'a>>) -> Self {
-        let id = id.into();
-        Self {
+    pub fn new() -> Self {
+        let mut topappbar = Self {
             html: html! {
-                <header id = id class = "mdc-top-app-bar">
+                <header class = "mdc-top-app-bar">
                     <div class = "mdc-top-app-bar__row">
                         <section class = "mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
                             <span class = "mdc-top-app-bar__title"></span>
@@ -42,10 +41,11 @@ impl TopAppBar {
                         <section class = "mdc-top-app-bar__section mdc-top-app-bar__section--align-end" role = "toolbar">
                         </section>
                     </div>
-                    <script>{ format!(r"{{const {} = mdc.topAppBar.MDCTopAppBar.attachTo(document.getElementById('{}'));}}", Self::BAR_VAR_NAME, id) }</script>
                 </header>
             },
-        }
+        };
+        topappbar.root_tag_mut().set_attr(AUTO_INIT_ATTR, "MDCTopAppBar");
+        topappbar
     }
 
     pub fn title(mut self, title: impl Into<Html>) -> Self {
@@ -104,29 +104,35 @@ impl TopAppBar {
         self
     }
 
-    pub fn shadow_when_scroll_script(&self, factory: impl AsRef<str>) -> Option<String> {
-        self.root_tag().attr("id").map(|id| {
-            format!(
-                r#"{{
+    pub fn root_id(&self) -> &str {
+        self.root_tag()
+            .attributes
+            .get("id")
+            .expect("The TopAppBar widget must have ID")
+    }
+
+    pub fn shadow_when_scroll_script(&self, factory: impl AsRef<str>) -> String {
+        let id = self.root_id();
+        format!(
+            r#"{{
+                const obj = {factory};
+                const old_scroll = obj.onscroll;
+                obj.onscroll = function() {{
+                    if (old_scroll && {{}}.toString.call(old_scroll) === '[object Function]') {{ old_scroll(); }}
+
                     const obj = {factory};
-                    const old_scroll = obj.onscroll;
-                    obj.onscroll = function() {{
-                        if (old_scroll && {{}}.toString.call(old_scroll) === '[object Function]') {{ old_scroll(); }}
-    
-                        const obj = {factory};
-                        const bar = document.getElementById('{id}');
-                        if (obj.pageYOffset > 0 || obj.scrollTop > 0) {{
-                            bar.classList.add("{class}");
-                        }} else {{
-                            bar.classList.remove("{class}");
-                        }}
+                    const bar = document.getElementById('{id}');
+                    if (obj.pageYOffset > 0 || obj.scrollTop > 0) {{
+                        bar.classList.add("{class}");
+                    }} else {{
+                        bar.classList.remove("{class}");
                     }}
-                }}"#,
-                factory = factory.as_ref(),
-                id = id,
-                class = Self::SCROLLED_CLASS
-            )
-        })
+                }}
+            }}"#,
+            factory = factory.as_ref(),
+            id = id,
+            class = Self::SCROLLED_CLASS
+        )
     }
 
     pub fn enable_shadow_when_scroll_window(self) -> Self {
@@ -137,20 +143,49 @@ impl TopAppBar {
         let script = self.shadow_when_scroll_script(factory);
         let root = self.root_tag_mut();
         if root.is_contains_class("mdc-top-app-bar") && !root.is_contains_class(Self::SCROLLED_CLASS) {
-            if let Some(statement) = script {
-                root.add_child_script_statement(statement);
-            }
+            self.add_script_statement(script)
+        } else {
+            self
         }
-        self
     }
 
-    pub fn add_navigation_event(mut self, script: impl AsRef<str>) -> Self {
+    pub fn add_navigation_event(self, script: impl AsRef<str>) -> Self {
         let statement = format!(
-            "{}.listen('MDCTopAppBar:nav', () => {{ {} }});",
+            "{}.MDCTopAppBar.listen('MDCTopAppBar:nav', () => {{ {} }});",
             Self::BAR_VAR_NAME,
             script.as_ref()
         );
-        self.root_tag_mut().add_child_script_statement(statement);
+        self.add_script_statement(statement)
+    }
+
+    pub fn add_script_statement(mut self, statement: String) -> Self {
+        if self.html.find_child_tag("script").is_some() {
+            self.html.add_child_script_statement(statement);
+        } else {
+            let id = self.root_id();
+            let script = format!(
+                r"{{
+                    const {bar} = document.getElementById('{id}');
+                    if ({bar}.MDCTopAppBar === undefined) {{
+                        window.mdc.autoInit({bar}.parentElement);
+                    }}
+                    {statement}
+                }}",
+                bar = Self::BAR_VAR_NAME,
+                id = id,
+                statement = statement,
+            );
+
+            let Self { html } = self;
+            self = Self {
+                html: html! {
+                    <>
+                        { html }
+                        <script>{ script }</script>
+                    </>
+                },
+            };
+        }
         self
     }
 
