@@ -4,7 +4,7 @@ use yew::{html, Html};
 
 use crate::{
     utils::{MdcWidget, VTagExt},
-    Text,
+    AUTO_INIT_ATTR,
 };
 
 #[derive(Debug, Clone)]
@@ -13,6 +13,7 @@ pub struct Drawer {
 }
 
 impl Drawer {
+    pub const VAR_NAME: &'static str = "drawer";
     pub const APP_CONTENT_CLASS: &'static str = "mdc-drawer-app-content";
     pub const CONTENT_CLASS: &'static str = "mdc-drawer__content";
     pub const DISMISSIBLE_CLASS: &'static str = "mdc-drawer--dismissible";
@@ -21,31 +22,51 @@ impl Drawer {
     pub const SUBTITLE_CLASS: &'static str = "mdc-drawer__subtitle";
     pub const TITLE_CLASS: &'static str = "mdc-drawer__title";
 
-    pub fn get_attaching_script(id: impl AsRef<str>) -> String {
-        format!(
-            "mdc.drawer.MDCDrawer.attachTo(document.getElementById('{}'))",
-            id.as_ref()
-        )
-    }
-
-    pub fn new<'a>(id: impl Into<Text<'a>>) -> Self {
-        let id = id.into();
-        Self {
+    pub fn new() -> Self {
+        let mut drawer = Self {
             html: html! {
-                <aside id = id class = "mdc-drawer">
-                    <script>{ Self::get_attaching_script(id) }</script>
-                </aside>
+                <aside class = "mdc-drawer"></aside>
             },
-        }
+        };
+        drawer.root_tag_mut().set_attr(AUTO_INIT_ATTR, "MDCDrawer");
+        drawer
     }
 
-    pub fn set_app_content<'a>(mut self, id: impl Into<Text<'a>>) -> Self {
-        let statement = format!(
-            "document.getElementById('{}').classList.add('{}');",
-            id.into(),
-            Self::APP_CONTENT_CLASS
-        );
-        self.root_tag_mut().add_child_script_statement(statement);
+    pub fn root_id(&self) -> &str {
+        self.root_tag()
+            .attributes
+            .get("id")
+            .expect("The Drawer widget must have ID")
+    }
+
+    pub fn add_script_statement(mut self, statement: String) -> Self {
+        if self.html.find_child_tag("script").is_some() {
+            self.html.add_child_script_statement(statement);
+        } else {
+            let id = self.root_id();
+            let script = format!(
+                r"{{
+                    const {drawer} = document.getElementById('{id}');
+                    if ({drawer}.MDCDrawer === undefined) {{
+                        window.mdc.autoInit({drawer}.parentElement);
+                    }}
+                    {statement}
+                }}",
+                drawer = Self::VAR_NAME,
+                id = id,
+                statement = statement,
+            );
+
+            let Self { html } = self;
+            self = Self {
+                html: html! {
+                    <>
+                        { html }
+                        <script>{ script }</script>
+                    </>
+                },
+            };
+        }
         self
     }
 
@@ -73,9 +94,12 @@ impl Drawer {
     pub fn header(mut self, header: impl Into<Html>) -> Self {
         let root = self.root_tag_mut();
         root.remove_child_contains_class(Self::HEADER_CLASS);
-        root.insert_child(0, html! {
-            <div class = Self::HEADER_CLASS>{ header }</div>
-        });
+        root.insert_child(
+            0,
+            html! {
+                <div class = Self::HEADER_CLASS>{ header }</div>
+            },
+        );
         self
     }
 
@@ -121,9 +145,12 @@ impl Drawer {
         let root = self.root_tag_mut();
         root.remove_child_contains_class(Self::CONTENT_CLASS);
         let idx = root.children.len().saturating_sub(1);
-        root.insert_child(idx, html! {
-            <div class = Self::CONTENT_CLASS>{ content }</div>
-        });
+        root.insert_child(
+            idx,
+            html! {
+                <div class = Self::CONTENT_CLASS>{ content }</div>
+            },
+        );
         self
     }
 }

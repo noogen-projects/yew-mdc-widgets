@@ -42,18 +42,25 @@ impl Component for Root {
             ListItem::link("#cards").text("Cards"),
         ];
 
-        let drawer = Drawer::new("app-drawer")
+        let drawer_id = "app-drawer";
+        let drawer = Drawer::new()
+            .id(drawer_id)
             .title(html! { <h3 tabindex = 0>{ "Widgets" }</h3> })
             .modal()
             .content(List::nav().items(contents.clone()).markup_only());
-        let attaching_drawer = Drawer::get_attaching_script("app-drawer");
 
         let top_app_bar = TopAppBar::new()
             .id("top-app-bar")
             .title("Yew MDC Widgets")
             .navigation_item(IconButton::new().icon("menu"))
             .enable_shadow_when_scroll_window()
-            .add_navigation_event("drawer.open = !drawer.open;");
+            .add_navigation_event(format!(
+                r"{{
+                    const drawer = document.getElementById('{}').MDCDrawer;
+                    drawer.open = !drawer.open;
+                }}",
+                drawer_id
+            ));
 
         html! {
             <>
@@ -63,12 +70,11 @@ impl Component for Root {
                 <div class = vec!["app-content", Drawer::APP_CONTENT_CLASS]>
                     { top_app_bar }
                     <script>{ format!(r"
-                        const drawer = {};
                         const listEl = document.querySelector('.mdc-drawer .mdc-list');                    
                         listEl.addEventListener('click', (event) => {{
-                            drawer.open = false;
+                            document.getElementById('{}').MDCDrawer.open = false;
                         }});
-                    ", attaching_drawer) }</script>
+                    ", drawer_id) }</script>
 
                     <div class = "mdc-top-app-bar--fixed-adjust">
                         <div class = "demo-content">

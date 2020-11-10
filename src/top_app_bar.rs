@@ -13,7 +13,7 @@ pub struct TopAppBar {
 }
 
 impl TopAppBar {
-    const BAR_VAR_NAME: &'static str = "top_app_bar";
+    pub const VAR_NAME: &'static str = "top_app_bar";
     const SCROLLED_CLASS: &'static str = "mdc-top-app-bar--fixed-scrolled";
 
     /// Class used to style the content below the standard and fixed top app bar to prevent the top app bar from
@@ -152,7 +152,7 @@ impl TopAppBar {
     pub fn add_navigation_event(self, script: impl AsRef<str>) -> Self {
         let statement = format!(
             "{}.MDCTopAppBar.listen('MDCTopAppBar:nav', () => {{ {} }});",
-            Self::BAR_VAR_NAME,
+            Self::VAR_NAME,
             script.as_ref()
         );
         self.add_script_statement(statement)
@@ -171,7 +171,7 @@ impl TopAppBar {
                     }}
                     {statement}
                 }}",
-                bar = Self::BAR_VAR_NAME,
+                bar = Self::VAR_NAME,
                 id = id,
                 statement = statement,
             );
