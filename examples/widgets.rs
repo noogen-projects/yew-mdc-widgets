@@ -777,7 +777,7 @@ impl Root {
                                     .on_click(self.link.callback(|_| Menu::open_existing("simple-menu")))
                             }
                             {
-                                Menu::new("simple-menu").items(vec![
+                                Menu::new().id("simple-menu").items(vec![
                                     ListItem::new().text("Menu Item"),
                                     ListItem::new().text("Menu Item"),
                                     ListItem::new().text("Menu Item"),

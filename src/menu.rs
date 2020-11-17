@@ -4,7 +4,7 @@ use yew::{html, Html};
 
 use crate::{
     utils::{MdcWidget, VTagExt},
-    List, Text,
+    List, AUTO_INIT_ATTR,
 };
 
 #[derive(Debug, Clone)]
@@ -14,43 +14,73 @@ pub struct Menu {
 }
 
 impl Menu {
+    pub const VAR_NAME: &'static str = "menu";
     pub const ANCHOR_CLASS: &'static str = "mdc-menu-surface--anchor";
 
-    pub fn from_list<'a>(id: impl Into<Text<'a>>, list: List) -> Self {
-        let id = id.into();
+    pub fn from_list(list: List) -> Self {
         let list = list.markup_only().attr("role", "menu");
-        Self {
+        let mut menu = Self {
             html: html! {
-                <div id = id class = "mdc-menu mdc-menu-surface">
-                    <script>{ format!("mdc.menu.MDCMenu.attachTo(document.getElementById('{}'));", id) }</script>
-                </div>
+                <div class = "mdc-menu mdc-menu-surface"></div>
             },
             list,
-        }
+        };
+        menu.root_tag_mut().set_attr(AUTO_INIT_ATTR, "MDCMenu");
+        menu
     }
 
-    pub fn new<'a>(id: impl Into<Text<'a>>) -> Self {
-        let id = id.into();
-        let list = List::ul().id(format!("{}-list", id));
-        Self::from_list(id, list)
+    pub fn new() -> Self {
+        Self::from_list(List::ul())
     }
 
     pub fn open_existing(id: impl AsRef<str>) {
         js_sys::eval(&format!(
-            "mdc.menu.MDCMenu.attachTo(document.getElementById('{}')).open = true;",
+            "document.getElementById('{}').MDCMenu.open = true;",
             id.as_ref()
         ))
         .expect("JavaScript evaluation error");
     }
 
-    pub fn open(mut self) -> Self {
-        let root = self.root_tag_mut();
-        if let Some(id) = root.attr("id") {
-            let statement = format!(
-                "mdc.menu.MDCMenu.attachTo(document.getElementById('{}')).open = true;",
-                id
+    pub fn open(self) -> Self {
+        let statement = format!("{}.open = true;", Self::VAR_NAME,);
+        self.add_script_statement(statement)
+    }
+
+    pub fn root_id(&self) -> &str {
+        self.root_tag()
+            .attributes
+            .get("id")
+            .expect("The Menu widget must have ID")
+    }
+
+    pub fn add_script_statement(mut self, statement: String) -> Self {
+        if self.html.find_child_tag("script").is_some() {
+            self.html.add_child_script_statement(statement);
+        } else {
+            let id = self.root_id();
+            let script = format!(
+                r"{{
+                    const {menu} = document.getElementById('{id}');
+                    if ({menu}.MDCMenu === undefined) {{
+                        window.mdc.autoInit({menu}.parentElement);
+                    }}
+                    {statement}
+                }}",
+                menu = Self::VAR_NAME,
+                id = id,
+                statement = statement,
             );
-            root.add_child_script_statement(statement);
+
+            let Self { html, list } = self;
+            self = Self {
+                html: html! {
+                    <>
+                        { html }
+                        <script>{ script }</script>
+                    </>
+                },
+                list,
+            };
         }
         self
     }

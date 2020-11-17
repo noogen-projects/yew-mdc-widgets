@@ -144,13 +144,9 @@ impl Drawer {
     pub fn content(mut self, content: impl Into<Html>) -> Self {
         let root = self.root_tag_mut();
         root.remove_child_contains_class(Self::CONTENT_CLASS);
-        let idx = root.children.len().saturating_sub(1);
-        root.insert_child(
-            idx,
-            html! {
-                <div class = Self::CONTENT_CLASS>{ content }</div>
-            },
-        );
+        root.add_child(html! {
+            <div class = Self::CONTENT_CLASS>{ content }</div>
+        });
         self
     }
 }
