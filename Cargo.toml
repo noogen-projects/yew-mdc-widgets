@@ -15,5 +15,5 @@ yew = { version = "0.17", features = ["web_sys"] }
 js-sys = "0.3"
 
 [dev-dependencies]
-tiny_file_server = { git = "https://github.com/noogen-projects/tiny_file_server", branch = "main" }
+tiny_file_server = "0.1"
 env_logger = "0.8"
