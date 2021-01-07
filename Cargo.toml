@@ -12,6 +12,9 @@ repository = "https://github.com/noogen-projects/yew-mdc-widgets"
 description = "Web MDC widgets for Yew"
 keywords = ["noogen", "web", "mdc", "widgets", "yew"]
 categories = ["web-programming", "wasm", "gui"]
+exclude = [
+    ".git-pre-push.sh",
+]
 
 [dependencies]
 yew = { version = "0.17", features = ["web_sys"] }
