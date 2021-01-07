@@ -1,0 +1,15 @@
+[package]
+name = "example_server"
+version = "0.1.0"
+authors = [
+    "Alexander Mescheryakov <freecoder.xx@gmail.com>",
+    "Noogen Team <info.noogen@gmail.com>",
+]
+edition = "2018"
+license = "MIT"
+repository = "https://github.com/noogen-projects/yew-mdc-widgets"
+description = "Yew MDC widgets example server"
+
+[dependencies]
+tiny_file_server = "0.1"
+env_logger = "0.8"

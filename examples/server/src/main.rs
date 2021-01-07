@@ -1,5 +1,3 @@
-use std::path::Path;
-
 use env_logger::Env;
 use tiny_file_server::FileServer;
 
@@ -8,6 +6,6 @@ fn main() {
 
     FileServer::http("127.0.0.1:9080")
         .expect("Server should be created")
-        .run(Path::new("examples").join("static"))
+        .run("static")
         .expect("Server should start");
 }

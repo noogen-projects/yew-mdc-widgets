@@ -1,5 +1,5 @@
 /target/
-/examples/static/target/
+/static/target/
 
 Cargo.lock
 **/*.rs.bk

@@ -14,13 +14,13 @@ cargo install wasm-bindgen-cli
 Build example wasm client:
 
 ```shell script
-./examples/build.sh release
+./examples/build_client.sh release
 ```
 
 Run example server:
 
 ```shell script
-cargo run -p example_widgets --bin server --release
+cargo run -p example_server --release
 ```
 
 
