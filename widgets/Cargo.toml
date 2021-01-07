@@ -1,0 +1,18 @@
+[package]
+name = "yew-mdc-widgets"
+version = "0.1.0"
+authors = [
+    "Alexander Mescheryakov <freecoder.xx@gmail.com>",
+    "Noogen Team <info.noogen@gmail.com>",
+]
+edition = "2018"
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/noogen-projects/yew-mdc-widgets"
+description = "Yew MDC widgets"
+keywords = ["noogen", "web", "mdc", "widgets", "yew"]
+categories = ["web-programming", "wasm", "gui"]
+
+[dependencies]
+yew = { version = "0.17", features = ["web_sys"] }
+js-sys = "0.3"

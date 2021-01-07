@@ -1,6 +1,6 @@
 # yew-mdc-widgets
 
-Description
+The web MDC widgets for Yew.
 
 
 ## Run example
@@ -11,16 +11,16 @@ Setup dependencies:
 cargo install wasm-bindgen-cli
 ```
 
-Build wasm client example:
+Build example wasm client:
 
 ```shell script
-./examples/build.sh widgets
+./examples/build.sh release
 ```
 
 Run example server:
 
 ```shell script
-cargo run --example server
+cargo run -p example_widgets --bin server --release
 ```
 
 
@@ -29,13 +29,13 @@ cargo run --example server
 To check the project, use the following command:
 
 ```shell script
-cargo check --all-features --all-targets
+cargo check --workspace --all-features --all-targets
 ```
 
 To run all tests, use the following command:
 
 ```shell script
-cargo test --all-features --all-targets
+cargo test --workspace --all-features --all-targets
 ```
 
 To check and perform formatting, use the following commands:
@@ -52,7 +52,7 @@ To enable autoformatting for IntelliJ IDEA with the Rust plugin:
 To run clippy, use the following command:
 
 ```shell script
-cargo clippy --all-targets --all-features -- -D warnings
+cargo clippy --workspace --all-targets --all-features -- -D warnings
 ```
 
 To setup git hook, use the following command:
