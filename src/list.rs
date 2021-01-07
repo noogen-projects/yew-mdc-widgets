@@ -57,27 +57,21 @@ impl ListItem {
             primary.remove_any_class(&[Self::TEXT_ITEM_CLASS]);
             primary.add_class(Self::PRIMARY_TEXT_ITEM_CLASS);
 
-            root.children.insert(
-                idx,
-                html! {
-                    <span class = Self::TEXT_ITEM_CLASS>
-                        { primary }
-                        <span class = Self::SECONDARY_TEXT_ITEM_CLASS>
-                            { text }
-                        </span>
+            root.children.insert(idx, html! {
+                <span class = Self::TEXT_ITEM_CLASS>
+                    { primary }
+                    <span class = Self::SECONDARY_TEXT_ITEM_CLASS>
+                        { text }
                     </span>
-                },
-            );
+                </span>
+            });
         } else {
             let idx = root
                 .find_child_contains_class_idx(Self::LAST_TILE_CLASS)
                 .unwrap_or_else(|| root.children.len());
-            root.children.insert(
-                idx,
-                html! {
-                    <span class = Self::TEXT_ITEM_CLASS>{ text }</span>
-                },
-            );
+            root.children.insert(idx, html! {
+                <span class = Self::TEXT_ITEM_CLASS>{ text }</span>
+            });
         }
         self
     }
@@ -117,12 +111,9 @@ impl ListItem {
                 .unwrap_or(0);
             (idx, Self::FIRST_TILE_CLASS)
         };
-        root.children.insert(
-            idx,
-            html! {
-                <span class = class>{ tile }</span>
-            },
-        );
+        root.children.insert(idx, html! {
+            <span class = class>{ tile }</span>
+        });
         self
     }
 

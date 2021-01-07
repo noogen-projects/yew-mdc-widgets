@@ -438,7 +438,8 @@ fn find_child_contains_class_idx<'a>(children: impl IntoIterator<Item = &'a Html
 }
 
 fn find_child_contains_class_mut<'a>(
-    children: impl IntoIterator<Item = &'a mut Html>, class: &str,
+    children: impl IntoIterator<Item = &'a mut Html>,
+    class: &str,
 ) -> Option<&'a mut VTag> {
     children.into_iter().find_map(|child| match child {
         Html::VTag(child) if child.is_contains_class(class) => Some(child.deref_mut()),
@@ -472,7 +473,8 @@ fn find_child_tag<'a>(children: impl IntoIterator<Item = &'a Html>, child_tag_na
 }
 
 fn find_child_tag_mut<'a>(
-    children: impl IntoIterator<Item = &'a mut Html>, child_tag_name: &str,
+    children: impl IntoIterator<Item = &'a mut Html>,
+    child_tag_name: &str,
 ) -> Option<&'a mut VTag> {
     for child in children {
         if let Html::VTag(child) = child {
@@ -485,7 +487,8 @@ fn find_child_tag_mut<'a>(
 }
 
 fn find_child_tag_recursively<'a>(
-    children: impl IntoIterator<Item = &'a Html>, child_tag_name: &str,
+    children: impl IntoIterator<Item = &'a Html>,
+    child_tag_name: &str,
 ) -> Option<&'a VTag> {
     for child in children {
         let tag = match child {
@@ -502,7 +505,8 @@ fn find_child_tag_recursively<'a>(
 }
 
 fn find_child_tag_recursively_mut<'a>(
-    children: impl IntoIterator<Item = &'a mut Html>, child_tag_name: &str,
+    children: impl IntoIterator<Item = &'a mut Html>,
+    child_tag_name: &str,
 ) -> Option<&'a mut VTag> {
     for child in children {
         let tag = match child {
