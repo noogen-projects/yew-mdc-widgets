@@ -2,7 +2,7 @@
 
 pub use self::{
     button::*, card::*, checkbox::*, data_table::*, drawer::*, fab::*, icon_button::*, list::*, menu::*, radio::*,
-    text_field::*, top_app_bar::*, utils::MdcWidget,
+    switch::*, text_field::*, top_app_bar::*, utils::MdcWidget,
 };
 
 pub mod button;
@@ -16,6 +16,7 @@ pub mod icon_button;
 pub mod list;
 pub mod menu;
 pub mod radio;
+pub mod switch;
 pub mod text_field;
 pub mod top_app_bar;
 pub mod utils;

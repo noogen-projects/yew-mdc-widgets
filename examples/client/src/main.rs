@@ -5,7 +5,7 @@ use std::iter::FromIterator;
 use yew::{html, initialize, run_loop, utils, App, Component, ComponentLink, Html};
 use yew_mdc_widgets::{
     auto_init, Button, ButtonStyle, Card, CardContent, Checkbox, DataTable, Drawer, Fab, IconButton, List, ListItem,
-    MdcWidget, Menu, Radio, TableCell, TextField, TopAppBar,
+    MdcWidget, Menu, Radio, Switch, TableCell, TextField, TopAppBar,
 };
 
 struct Root {
@@ -35,6 +35,7 @@ impl Component for Root {
             ListItem::link("#fabs").text("Floating Action Buttons"),
             ListItem::link("#checkboxes").text("Checkboxes"),
             ListItem::link("#radio_buttons").text("Radio buttons"),
+            ListItem::link("#switch").text("Switch"),
             ListItem::link("#text_fields").text("Text fields"),
             ListItem::link("#lists").text("Lists"),
             ListItem::link("#menu").text("Menu"),
@@ -95,6 +96,9 @@ impl Component for Root {
 
                             <h2 class = "demo-title mdc-typography--headline6"><a name = "radio_buttons"></a>{ "Radio buttons" }</h2>
                             { self.view_radio_buttons() }
+
+                            <h2 class = "demo-title mdc-typography--headline6"><a name = "switch"></a>{ "Switch" }</h2>
+                            { self.view_switch() }
 
                             <h2 class = "demo-title mdc-typography--headline6"><a name = "text_fields"></a>{ "Text fields" }</h2>
                             { self.view_text_fields() }
@@ -465,12 +469,12 @@ impl Root {
                     <h3 class = "mdc-typography--subtitle1">{ "Labeled" }</h3>
                     <span class = "demo-item">
                         <div class = "mdc-form-field">
-                            { Radio::new().id("label-radio-1").name_of_set("label-set").label("Radio 1") }
+                            { Radio::new().id("radio-label-1").name_of_set("label-set").label("Radio 1") }
                         </div>
                     </span>
                     <span class = "demo-item">
                         <div class = "mdc-form-field">
-                            { Radio::new().id("label-radio-2").name_of_set("label-set").checked(true).label("Radio 2") }
+                            { Radio::new().id("radio-label-2").name_of_set("label-set").checked(true).label("Radio 2") }
                         </div>
                     </span>
                     <span class = "demo-item">
@@ -491,6 +495,51 @@ impl Root {
                     <span class = "demo-item">
                         <div class = "mdc-form-field">
                             { Radio::new().id("radio-label-disabled-2").name_of_set("label-disabled-set").disabled(true).checked(true).label("Disabled 2") }
+                        </div>
+                    </span>
+                </div>
+            </div>
+        }
+    }
+
+    fn view_switch(&self) -> Html {
+        html! {
+            <div>
+                <div>
+                    <h3 class = "mdc-typography--subtitle1">{ "Default" }</h3>
+                    <span class = "demo-item">
+                        { Switch::new() }
+                    </span>
+                    <span class = "demo-item">
+                        { Switch::new().on() }
+                    </span>
+                    <span class = "demo-item">
+                        { Switch::new().disabled(true) }
+                    </span>
+                    <span class = "demo-item">
+                        { Switch::new().disabled(true).on() }
+                    </span>
+                </div>
+                <div>
+                    <h3 class = "mdc-typography--subtitle1">{ "Labeled" }</h3>
+                    <span class = "demo-item">
+                        <div class = "mdc-form-field">
+                            { Switch::new().id("switch-label-1").label("Switch 1") }
+                        </div>
+                    </span>
+                    <span class = "demo-item">
+                        <div class = "mdc-form-field">
+                            { Switch::new().id("switch-label-2").on().label("Switch 2") }
+                        </div>
+                    </span>
+                    <span class = "demo-item">
+                        <div class = "mdc-form-field">
+                            { Switch::new().id("switch-label-disabled-1").disabled(true).label("Disabled 1") }
+                        </div>
+                    </span>
+                    <span class = "demo-item">
+                        <div class = "mdc-form-field">
+                            { Switch::new().id("switch-label-disabled-2").disabled(true).on().label("Disabled 2") }
                         </div>
                     </span>
                 </div>

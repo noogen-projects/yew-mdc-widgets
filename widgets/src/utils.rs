@@ -7,8 +7,9 @@ use std::{
 
 use yew::{
     html,
+    html::onclick,
     virtual_dom::{Listener, VTag},
-    Html,
+    Callback, Html, MouseEvent,
 };
 
 use yew::virtual_dom::VNode;
@@ -631,11 +632,20 @@ pub fn root_and_input_child_disabled(widget: &mut impl MdcWidget, disabled_class
         widget.root_tag_mut().remove_any_class(&[disabled_class]);
     }
 
-    if let Some(input) = widget.root_tag_mut().find_child_tag_mut("input") {
+    if let Some(input) = widget.root_tag_mut().find_child_tag_recursively_mut("input") {
         if disabled {
             input.attributes.insert("disabled".into(), "disabled".into());
         } else {
             input.attributes.remove("disabled");
         }
     }
+}
+
+pub fn labeled_on_click<W: MdcWidget>(widget: &mut W, callback: Callback<MouseEvent>) {
+    let listener = Rc::new(onclick::Wrapper::new(callback));
+    let root = widget.root_tag_mut();
+    if let Some(label) = root.find_child_tag_mut("label") {
+        label.add_listener(listener.clone());
+    }
+    root.add_listener(listener);
 }

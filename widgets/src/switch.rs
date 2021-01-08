@@ -3,50 +3,40 @@ use std::ops::{Deref, DerefMut};
 use yew::{html, services::ConsoleService, Callback, Html, MouseEvent};
 
 use crate::{
-    utils::{labeled_on_click, ripple_element, root_and_input_child_disabled, MdcWidget, VTagExt},
+    utils::{labeled_on_click, root_and_input_child_disabled, MdcWidget, VTagExt},
     AUTO_INIT_ATTR,
 };
 
 #[derive(Debug, Clone)]
-pub struct Radio {
+pub struct Switch {
     html: Html,
 }
 
-impl Radio {
-    const RIPPLE_CLASS: &'static str = "mdc-radio__ripple";
-
+impl Switch {
     pub fn simple() -> Self {
         Self {
             html: html! {
-                <div class="mdc-radio">
-                    <input type = "radio" class = "mdc-radio__native-control" />
-                    <div class = "mdc-radio__background">
-                        <div class = "mdc-radio__outer-circle"></div>
-                        <div class = "mdc-radio__inner-circle"></div>
+                <div class = "mdc-switch">
+                    <div class = "mdc-switch__track"></div>
+                    <div class = "mdc-switch__thumb-underlay">
+                        <div class = "mdc-switch__thumb"></div>
+                        <input type = "checkbox" class = "mdc-switch__native-control" role = "switch" aria-checked = "false" />
                     </div>
-                    <div class = Self::RIPPLE_CLASS></div>
                 </div>
             },
         }
     }
 
     pub fn new() -> Self {
-        let mut radio = Self::simple();
-        radio.root_tag_mut().set_attr(AUTO_INIT_ATTR, "MDCRadio");
-        radio
-    }
-
-    pub fn name_of_set(mut self, name: impl Into<String>) -> Self {
-        if let Some(input) = self.root_tag_mut().find_child_tag_mut("input") {
-            input.set_attr("name", name);
-        }
-        self
+        let mut switch = Self::simple();
+        switch.root_tag_mut().set_attr(AUTO_INIT_ATTR, "MDCSwitch");
+        switch
     }
 
     pub fn label(mut self, label: impl Into<Html>) -> Self {
         if let Some(input_id) = self
             .root_tag()
-            .find_child_tag("input")
+            .find_child_tag_recursively("input")
             .and_then(|input| input.attributes.get("id"))
         {
             let label = html! {
@@ -64,19 +54,17 @@ impl Radio {
         self
     }
 
-    pub fn ripple(mut self, enabled: bool) -> Self {
-        ripple_element(&mut self, Self::RIPPLE_CLASS, enabled);
-        self
-    }
-
     pub fn disabled(mut self, disabled: bool) -> Self {
-        root_and_input_child_disabled(&mut self, "mdc-radio--disabled", disabled);
+        root_and_input_child_disabled(&mut self, "mdc-switch--disabled", disabled);
         self
     }
 
-    pub fn checked(mut self, checked: bool) -> Self {
-        if let Some(input) = self.root_tag_mut().find_child_tag_mut("input") {
-            input.checked = checked;
+    pub fn on(mut self) -> Self {
+        let root = self.root_tag_mut();
+        root.add_class("mdc-switch--checked");
+        if let Some(input) = root.find_child_tag_recursively_mut("input") {
+            input.checked = true;
+            input.set_attr("aria-checked", "true");
         }
         self
     }
@@ -87,8 +75,8 @@ impl Radio {
     }
 }
 
-impl MdcWidget for Radio {
-    const NAME: &'static str = "Radio";
+impl MdcWidget for Switch {
+    const NAME: &'static str = "Switch";
 
     fn html(&self) -> &Html {
         &self.html
@@ -104,14 +92,14 @@ impl MdcWidget for Radio {
 
         let root = self.root_tag_mut();
         root.set_attr("id", id);
-        if let Some(input) = root.find_child_tag_mut("input") {
+        if let Some(input) = root.find_child_tag_recursively_mut("input") {
             input.set_attr("id", input_id);
         };
         self
     }
 }
 
-impl Deref for Radio {
+impl Deref for Switch {
     type Target = Html;
 
     fn deref(&self) -> &Self::Target {
@@ -119,14 +107,14 @@ impl Deref for Radio {
     }
 }
 
-impl DerefMut for Radio {
+impl DerefMut for Switch {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.html
     }
 }
 
-impl From<Radio> for Html {
-    fn from(widget: Radio) -> Self {
+impl From<Switch> for Html {
+    fn from(widget: Switch) -> Self {
         widget.html
     }
 }

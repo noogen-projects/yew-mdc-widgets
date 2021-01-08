@@ -1,12 +1,9 @@
-use std::{
-    ops::{Deref, DerefMut},
-    rc::Rc,
-};
+use std::ops::{Deref, DerefMut};
 
-use yew::{html, html::onclick, services::ConsoleService, Callback, Html, MouseEvent};
+use yew::{html, services::ConsoleService, Callback, Html, MouseEvent};
 
 use crate::{
-    utils::{ripple_element, root_and_input_child_disabled, MdcWidget, VTagExt},
+    utils::{labeled_on_click, ripple_element, root_and_input_child_disabled, MdcWidget, VTagExt},
     AUTO_INIT_ATTR,
 };
 
@@ -98,12 +95,7 @@ impl Checkbox {
     }
 
     pub fn on_click(mut self, callback: Callback<MouseEvent>) -> Self {
-        let listener = Rc::new(onclick::Wrapper::new(callback));
-        let root = self.root_tag_mut();
-        if let Some(label) = root.find_child_tag_mut("label") {
-            label.add_listener(listener.clone());
-        }
-        root.add_listener(listener);
+        labeled_on_click(&mut self, callback);
         self
     }
 }
