@@ -3,7 +3,10 @@ use std::ops::{Deref, DerefMut};
 use yew::{html, services::ConsoleService, Callback, Html, MouseEvent};
 
 use crate::{
-    utils::{labeled_on_click, ripple_element, root_and_input_child_disabled, MdcWidget, VTagExt},
+    utils::{
+        add_input_label, labeled_on_click, ripple_element, root_and_input_child_disabled, MdcWidget, ToWidgetWithVList,
+        VTagExt,
+    },
     AUTO_INIT_ATTR,
 };
 
@@ -38,25 +41,11 @@ impl Checkbox {
         checkbox
     }
 
-    pub fn label(mut self, label: impl Into<Html>) -> Self {
-        if let Some(input_id) = self
-            .root_tag()
-            .find_child_tag("input")
-            .and_then(|input| input.attributes.get("id"))
-        {
-            let label = html! {
-                <label for = input_id>{ label }</label>
-            };
-            if let Html::VTag(_) = &self.html {
-                self.html = html! { <>{ self.html }</> }
-            }
-            if let Html::VList(list) = &mut self.html {
-                list.children.insert(1, label);
-            }
-        } else {
-            ConsoleService::error("Could not find input tag's id attribute");
-        }
-        self
+    pub fn label(self, label: impl Into<Html>) -> Self {
+        add_input_label(self, label).unwrap_or_else(|widget| {
+            ConsoleService::error(&format!("Could not find input tag's id attribute for {}", Self::NAME));
+            widget
+        })
     }
 
     pub fn labeled_by(mut self, labeled_by: impl Into<String>) -> Self {
@@ -120,6 +109,15 @@ impl MdcWidget for Checkbox {
         if let Some(input) = root.find_child_tag_mut("input") {
             input.set_attr("id", input_id);
         };
+        self
+    }
+}
+
+impl ToWidgetWithVList for Checkbox {
+    fn to_widget_with_v_list(mut self) -> Self {
+        if !matches!(self.html, Html::VList(_)) {
+            self.html = html! { <>{ self.html }</> }
+        }
         self
     }
 }

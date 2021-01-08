@@ -558,12 +558,14 @@ pub trait MdcWidget {
 
     fn html_mut(&mut self) -> &mut Html;
 
+    #[track_caller]
     fn root_tag(&self) -> &VTag {
         self.html()
             .root_tag()
             .unwrap_or_else(|| panic!("The root element of the {} must be a tag!", Self::NAME))
     }
 
+    #[track_caller]
     fn root_tag_mut(&mut self) -> &mut VTag {
         self.html_mut()
             .root_tag_mut()
@@ -603,6 +605,29 @@ pub trait MdcWidget {
             root.add_class(class);
         }
         self
+    }
+}
+
+pub(crate) trait ToWidgetWithVList: MdcWidget {
+    fn to_widget_with_v_list(self) -> Self;
+}
+
+pub(crate) fn add_input_label<W: ToWidgetWithVList>(mut widget: W, label: impl Into<Html>) -> Result<W, W> {
+    if let Some(input_id) = widget
+        .root_tag()
+        .find_child_tag_recursively("input")
+        .and_then(|input| input.attributes.get("id"))
+    {
+        let label = html! {
+            <label for = input_id>{ label }</label>
+        };
+        widget = widget.to_widget_with_v_list();
+        if let Html::VList(list) = widget.html_mut() {
+            list.children.insert(1, label);
+        }
+        Ok(widget)
+    } else {
+        Err(widget)
     }
 }
 

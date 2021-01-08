@@ -10,7 +10,7 @@ use yew::{
 };
 
 use crate::{
-    utils::{MdcWidget, VTagExt},
+    utils::{MdcWidget, ToWidgetWithVList, VTagExt},
     AUTO_INIT_ATTR,
 };
 
@@ -192,7 +192,7 @@ impl TextField {
                 },
             );
         } else {
-            self = self.into_list();
+            self = self.to_widget_with_v_list();
             self.html_mut().add_child(html! {
                 <div class = "mdc-text-field-helper-line">
                     <div class = "mdc-text-field-helper-text" id = helper_id aria-hidden = "true">{ helper_text }</div>
@@ -216,23 +216,12 @@ impl TextField {
                 <div class = "mdc-text-field-character-counter">{ helper_string }</div>
             });
         } else {
-            self = self.into_list();
+            self = self.to_widget_with_v_list();
             self.html_mut().add_child(html! {
                 <div class="mdc-text-field-helper-line">
                     <div class = "mdc-text-field-character-counter">{ helper_string }</div>
                 </div>
             });
-        }
-        self
-    }
-
-    fn into_list(mut self) -> Self {
-        if !matches!(self.html, Html::VList(_)) {
-            let Self { html, style } = self;
-            self = Self {
-                html: html! { <>{ html }</> },
-                style,
-            };
         }
         self
     }
@@ -265,6 +254,15 @@ impl MdcWidget for TextField {
 
     fn html_mut(&mut self) -> &mut Html {
         &mut self.html
+    }
+}
+
+impl ToWidgetWithVList for TextField {
+    fn to_widget_with_v_list(mut self) -> Self {
+        if !matches!(self.html, Html::VList(_)) {
+            self.html = html! { <>{ self.html }</> }
+        }
+        self
     }
 }
 
