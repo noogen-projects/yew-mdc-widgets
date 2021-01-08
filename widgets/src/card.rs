@@ -130,8 +130,8 @@ impl DerefMut for CardContent {
 }
 
 impl From<CardContent> for Html {
-    fn from(content: CardContent) -> Self {
-        content.html
+    fn from(widget: CardContent) -> Self {
+        widget.html
     }
 }
 
@@ -213,7 +213,7 @@ impl DerefMut for Card {
 }
 
 impl From<Card> for Html {
-    fn from(card: Card) -> Self {
-        card.html
+    fn from(widget: Card) -> Self {
+        widget.html
     }
 }

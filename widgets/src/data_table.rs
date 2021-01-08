@@ -289,7 +289,7 @@ impl DerefMut for DataTable {
 }
 
 impl From<DataTable> for Html {
-    fn from(table: DataTable) -> Self {
-        table.html
+    fn from(widget: DataTable) -> Self {
+        widget.html
     }
 }

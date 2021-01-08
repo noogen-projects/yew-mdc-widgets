@@ -109,7 +109,7 @@ impl DerefMut for Fab {
 }
 
 impl From<Fab> for Html {
-    fn from(icon_button: Fab) -> Self {
-        icon_button.html
+    fn from(widget: Fab) -> Self {
+        widget.html
     }
 }

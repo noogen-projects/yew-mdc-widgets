@@ -156,7 +156,7 @@ impl DerefMut for Button {
 }
 
 impl From<Button> for Html {
-    fn from(button: Button) -> Self {
-        button.html
+    fn from(widget: Button) -> Self {
+        widget.html
     }
 }

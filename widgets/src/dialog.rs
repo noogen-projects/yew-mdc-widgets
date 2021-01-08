@@ -136,7 +136,7 @@ impl Dialog {
 }
 
 impl MdcWidget for Dialog {
-    const NAME: &'static str = "Fab";
+    const NAME: &'static str = "Dialog";
 
     fn html(&self) -> &Html {
         &self.html
@@ -162,7 +162,7 @@ impl DerefMut for Dialog {
 }
 
 impl From<Dialog> for Html {
-    fn from(icon_button: Dialog) -> Self {
-        icon_button.html
+    fn from(widget: Dialog) -> Self {
+        widget.html
     }
 }

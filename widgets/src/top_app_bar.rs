@@ -232,7 +232,7 @@ impl DerefMut for TopAppBar {
 }
 
 impl From<TopAppBar> for Html {
-    fn from(bar: TopAppBar) -> Self {
-        bar.html
+    fn from(widget: TopAppBar) -> Self {
+        widget.html
     }
 }

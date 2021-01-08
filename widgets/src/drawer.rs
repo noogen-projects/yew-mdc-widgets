@@ -94,9 +94,12 @@ impl Drawer {
     pub fn header(mut self, header: impl Into<Html>) -> Self {
         let root = self.root_tag_mut();
         root.remove_child_contains_class(Self::HEADER_CLASS);
-        root.insert_child(0, html! {
-            <div class = Self::HEADER_CLASS>{ header }</div>
-        });
+        root.insert_child(
+            0,
+            html! {
+                <div class = Self::HEADER_CLASS>{ header }</div>
+            },
+        );
         self
     }
 
@@ -175,7 +178,7 @@ impl DerefMut for Drawer {
 }
 
 impl From<Drawer> for Html {
-    fn from(drawer: Drawer) -> Self {
-        drawer.html
+    fn from(widget: Drawer) -> Self {
+        widget.html
     }
 }

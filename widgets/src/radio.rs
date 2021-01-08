@@ -133,7 +133,7 @@ impl DerefMut for Radio {
 }
 
 impl From<Radio> for Html {
-    fn from(radio: Radio) -> Self {
-        radio.html
+    fn from(widget: Radio) -> Self {
+        widget.html
     }
 }

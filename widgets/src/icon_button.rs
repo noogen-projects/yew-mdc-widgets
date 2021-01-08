@@ -129,7 +129,7 @@ impl DerefMut for IconButton {
 }
 
 impl From<IconButton> for Html {
-    fn from(icon_button: IconButton) -> Self {
-        icon_button.html
+    fn from(widget: IconButton) -> Self {
+        widget.html
     }
 }

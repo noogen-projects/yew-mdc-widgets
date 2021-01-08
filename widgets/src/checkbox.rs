@@ -146,7 +146,7 @@ impl DerefMut for Checkbox {
 }
 
 impl From<Checkbox> for Html {
-    fn from(checkbox: Checkbox) -> Self {
-        checkbox.html
+    fn from(widget: Checkbox) -> Self {
+        widget.html
     }
 }
