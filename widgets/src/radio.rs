@@ -7,7 +7,7 @@ use yew::{html, html::onclick, services::ConsoleService, Callback, Html, MouseEv
 
 use crate::{
     utils::{ripple_element, root_and_input_child_disabled, MdcWidget, VTagExt},
-    Text, AUTO_INIT_ATTR,
+    AUTO_INIT_ATTR,
 };
 
 #[derive(Debug, Clone)]
@@ -37,17 +37,6 @@ impl Radio {
         let mut radio = Self::simple();
         radio.root_tag_mut().set_attr(AUTO_INIT_ATTR, "MDCRadio");
         radio
-    }
-
-    pub fn id<'a>(mut self, id: impl Into<Text<'a>>) -> Self {
-        let id = id.into();
-        let input_id = format!("{}-input", id);
-        let root = self.root_tag_mut();
-        root.set_attr("id", id);
-        if let Some(input) = root.find_child_tag_mut("input") {
-            input.set_attr("id", input_id);
-        };
-        self
     }
 
     pub fn name_of_set(mut self, name: impl Into<String>) -> Self {
@@ -115,6 +104,18 @@ impl MdcWidget for Radio {
 
     fn html_mut(&mut self) -> &mut Html {
         &mut self.html
+    }
+
+    fn id(mut self, id: impl Into<String>) -> Self {
+        let id = id.into();
+        let input_id = format!("{}-input", id);
+
+        let root = self.root_tag_mut();
+        root.set_attr("id", id);
+        if let Some(input) = root.find_child_tag_mut("input") {
+            input.set_attr("id", input_id);
+        };
+        self
     }
 }
 

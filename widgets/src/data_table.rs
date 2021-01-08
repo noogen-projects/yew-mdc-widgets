@@ -5,7 +5,7 @@ use std::{
 
 use yew::{html, html::onclick, virtual_dom::VTag, Callback, Html, MouseEvent};
 
-use crate::{utils::VTagExt, Checkbox, MdcWidget, Text};
+use crate::{utils::VTagExt, Checkbox, MdcWidget};
 
 pub enum TableCell {
     Numeric(Html),
@@ -62,7 +62,7 @@ pub struct DataTable {
 }
 
 impl DataTable {
-    pub fn new<'a>(id: impl Into<Text<'a>>) -> Self {
+    pub fn new(id: impl Into<String>) -> Self {
         let id = id.into();
         let init_table = format!("mdc.dataTable.MDCDataTable.attachTo(document.getElementById('{}'))", id);
 

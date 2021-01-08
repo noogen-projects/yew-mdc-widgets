@@ -7,7 +7,7 @@ use yew::{html, html::onclick, services::ConsoleService, Callback, Html, MouseEv
 
 use crate::{
     utils::{ripple_element, root_and_input_child_disabled, MdcWidget, VTagExt},
-    Text, AUTO_INIT_ATTR,
+    AUTO_INIT_ATTR,
 };
 
 #[derive(Debug, Clone)]
@@ -39,17 +39,6 @@ impl Checkbox {
         let mut checkbox = Self::simple();
         checkbox.root_tag_mut().set_attr(AUTO_INIT_ATTR, "MDCCheckbox");
         checkbox
-    }
-
-    pub fn id<'a>(mut self, id: impl Into<Text<'a>>) -> Self {
-        let id = id.into();
-        let input_id = format!("{}-input", id);
-        let root = self.root_tag_mut();
-        root.set_attr("id", id);
-        if let Some(input) = root.find_child_tag_mut("input") {
-            input.set_attr("id", input_id);
-        };
-        self
     }
 
     pub fn label(mut self, label: impl Into<Html>) -> Self {
@@ -128,6 +117,18 @@ impl MdcWidget for Checkbox {
 
     fn html_mut(&mut self) -> &mut Html {
         &mut self.html
+    }
+
+    fn id(mut self, id: impl Into<String>) -> Self {
+        let id = id.into();
+        let input_id = format!("{}-input", id);
+
+        let root = self.root_tag_mut();
+        root.set_attr("id", id);
+        if let Some(input) = root.find_child_tag_mut("input") {
+            input.set_attr("id", input_id);
+        };
+        self
     }
 }
 

@@ -11,7 +11,6 @@ use yew::{
     Html,
 };
 
-use crate::Text;
 use yew::virtual_dom::VNode;
 
 pub trait VTagExt {
@@ -195,7 +194,7 @@ impl VTagExt for Html {
                 if let Some(Html::VTag(tag)) = list.children.first() {
                     return Some(tag);
                 }
-            },
+            }
             _ => (),
         }
         None
@@ -208,7 +207,7 @@ impl VTagExt for Html {
                 if let Some(Html::VTag(tag)) = list.children.first_mut() {
                     return Some(tag);
                 }
-            },
+            }
             _ => (),
         }
         None
@@ -277,7 +276,7 @@ impl VTagExt for Html {
                 } else {
                     false
                 }
-            },
+            }
             _ => false,
         }
     }
@@ -407,7 +406,7 @@ impl VTagExt for Html {
             Html::VTag(tag) => tag.add_child_script_statement(statement),
             Html::VList(list) => {
                 add_child_script_statement(find_child_tag_mut(list.children.iter_mut(), "script"), statement)
-            },
+            }
             _ => (),
         }
     }
@@ -516,7 +515,7 @@ fn find_child_tag_recursively_mut<'a>(
                 } else {
                     find_child_tag_recursively_mut(child.children.iter_mut(), child_tag_name)
                 }
-            },
+            }
             Html::VList(list) => find_child_tag_recursively_mut(list.children.iter_mut(), child_tag_name),
             _ => None,
         };
@@ -570,7 +569,7 @@ pub trait MdcWidget {
             .unwrap_or_else(|| panic!("The root element of the {} must be a tag!", Self::NAME))
     }
 
-    fn id<'a>(mut self, id: impl Into<Text<'a>>) -> Self
+    fn id(mut self, id: impl Into<String>) -> Self
     where
         Self: Sized,
     {
@@ -612,9 +611,12 @@ pub fn ripple_element(widget: &mut impl MdcWidget, ripple_class: impl AsRef<str>
     if enabled {
         if !root.is_some_child_contains_class(ripple_class) {
             let idx = root.children.len().saturating_sub(1);
-            root.children.insert(idx, html! {
-                <div class = ripple_class></div>
-            });
+            root.children.insert(
+                idx,
+                html! {
+                    <div class = ripple_class></div>
+                },
+            );
         }
     } else {
         root.remove_child_contains_class(ripple_class);

@@ -7,7 +7,7 @@ use yew::{html, html::onclick, Callback, Html, MouseEvent};
 
 use crate::{
     utils::{MdcWidget, VTagExt},
-    Text, AUTO_INIT_ATTR,
+    AUTO_INIT_ATTR,
 };
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -118,7 +118,7 @@ impl Button {
         self
     }
 
-    pub fn icon<'a>(self, name: impl Into<Text<'a>>) -> Self {
+    pub fn icon(self, name: impl Into<String>) -> Self {
         self.add_after_label(html! {
             <i class = "material-icons mdc-button__icon" aria-hidden = "true">{ name.into() }</i>
         })

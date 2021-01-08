@@ -7,7 +7,7 @@ use yew::{html, html::onclick, Callback, Html, MouseEvent};
 
 use crate::{
     utils::{MdcWidget, VTagExt},
-    Text, AUTO_INIT_ATTR,
+    AUTO_INIT_ATTR,
 };
 
 #[derive(Debug, Clone)]
@@ -39,7 +39,7 @@ impl Fab {
         icon_button
     }
 
-    pub fn icon<'a>(mut self, name: impl Into<Text<'a>>) -> Self {
+    pub fn icon(mut self, name: impl Into<String>) -> Self {
         self.root_tag_mut().add_child(html! {
             <span class = vec![Self::ICON_CLASS, "material-icons"]>{ name.into() }</span>
         });

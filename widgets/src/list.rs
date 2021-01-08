@@ -7,7 +7,7 @@ use yew::{html, html::onclick, Callback, Html, MouseEvent};
 
 use crate::{
     utils::{MdcWidget, VTagExt},
-    Text, AUTO_INIT_ATTR,
+    AUTO_INIT_ATTR,
 };
 
 #[derive(Debug, Clone)]
@@ -126,7 +126,7 @@ impl ListItem {
         self
     }
 
-    pub fn icon<'a>(mut self, name: impl Into<Text<'a>>) -> Self {
+    pub fn icon(mut self, name: impl Into<String>) -> Self {
         self = self.tile(name.into());
 
         let root_tag = self.root_tag_mut();

@@ -2,10 +2,7 @@ use std::ops::{Deref, DerefMut};
 
 use yew::{html, Html};
 
-use crate::{
-    utils::{MdcWidget, VTagExt},
-    Text,
-};
+use crate::utils::{MdcWidget, VTagExt};
 
 #[derive(Debug, Clone)]
 pub struct CardContent {
@@ -141,7 +138,7 @@ pub struct Card {
 }
 
 impl Card {
-    pub fn new<'a>(id: impl Into<Text<'a>>) -> Self {
+    pub fn new(id: impl Into<String>) -> Self {
         let id = id.into();
         let card = Self {
             html: html! {

@@ -7,7 +7,7 @@ use yew::{html, html::onclick, Callback, Html, MouseEvent};
 
 use crate::{
     utils::{MdcWidget, VTagExt},
-    Text, AUTO_INIT_ATTR,
+    AUTO_INIT_ATTR,
 };
 
 #[derive(Debug, Clone)]
@@ -30,10 +30,10 @@ impl IconButton {
         icon_button
     }
 
-    pub fn icon<'a>(mut self, name: impl Into<Text<'a>>) -> Self {
+    pub fn icon(mut self, name: impl Into<String>) -> Self {
         let root = self.root_tag_mut();
         root.add_class("material-icons");
-        root.add_child(html! { { name.into() } });
+        root.add_child(name.into().into());
         self
     }
 
@@ -41,7 +41,7 @@ impl IconButton {
         self.add_item_with_class(item, "mdc-icon-button__icon")
     }
 
-    pub fn toggle<'a, 'b>(self, icon_on: impl Into<Text<'a>>, icon_off: impl Into<Text<'b>>) -> Self {
+    pub fn toggle(self, icon_on: impl Into<String>, icon_off: impl Into<String>) -> Self {
         self.toggle_on(html! { <i class = "material-icons">{ icon_on.into() }</i> })
             .toggle_off(html! { <i class = "material-icons">{ icon_off.into() }</i> })
     }
