@@ -53,6 +53,18 @@ impl Button {
         button
     }
 
+    pub fn outlined() -> Self {
+        Self::new().style(ButtonStyle::Outlined)
+    }
+
+    pub fn raised() -> Self {
+        Self::new().style(ButtonStyle::Raised)
+    }
+
+    pub fn unelevated() -> Self {
+        Self::new().style(ButtonStyle::Unelevated)
+    }
+
     pub fn label(mut self, label: impl Into<Html>) -> Self {
         self.root_tag_mut().children.push(html! {
             <span class = "mdc-button__label">{ label }</span>
