@@ -18,6 +18,7 @@ pub trait VTagExt {
     fn root_tag(&self) -> Option<&VTag>;
     fn root_tag_mut(&mut self) -> Option<&mut VTag>;
     fn add_class(&mut self, class: impl AsRef<str>);
+    fn add_class_if_needed(&mut self, class: impl AsRef<str>);
     fn remove_any_class(&mut self, classes: &[&str]);
     fn attr<Q>(&self, attr: &Q) -> Option<&String>
     where
@@ -31,6 +32,7 @@ pub trait VTagExt {
     fn is_some_child_contains_class(&self, class: &str) -> bool;
     fn find_child_contains_class_idx(&self, class: &str) -> Option<usize>;
     fn find_child_contains_class_mut(&mut self, class: &str) -> Option<&mut VTag>;
+    fn find_child_contains_class_recursively_mut(&mut self, class: &str) -> Option<&mut VTag>;
     fn remove_child_contains_class(&mut self, class: &str) -> Option<Html>;
     fn is_first_child(&self, child_tag_name: &str) -> bool;
     fn is_last_child(&self, child_tag_name: &str) -> bool;
@@ -63,6 +65,13 @@ impl VTagExt for VTag {
             classes.push_str(class)
         } else {
             self.attributes.insert("class".to_string(), class.to_string());
+        }
+    }
+
+    fn add_class_if_needed(&mut self, class: impl AsRef<str>) {
+        let class = class.as_ref().trim();
+        if !self.is_contains_class(class) {
+            self.add_class(class);
         }
     }
 
@@ -126,6 +135,10 @@ impl VTagExt for VTag {
 
     fn find_child_contains_class_mut(&mut self, class: &str) -> Option<&mut VTag> {
         find_child_contains_class_mut(self.children.iter_mut(), class)
+    }
+
+    fn find_child_contains_class_recursively_mut(&mut self, class: &str) -> Option<&mut VTag> {
+        find_child_contains_class_recursively_mut(self.children.iter_mut(), class)
     }
 
     fn remove_child_contains_class(&mut self, class: &str) -> Option<Html> {
@@ -220,6 +233,12 @@ impl VTagExt for Html {
         }
     }
 
+    fn add_class_if_needed(&mut self, class: impl AsRef<str>) {
+        if let Html::VTag(tag) = self {
+            tag.add_class_if_needed(class);
+        }
+    }
+
     fn remove_any_class(&mut self, classes: &[&str]) {
         if let Html::VTag(tag) = self {
             tag.remove_any_class(classes);
@@ -302,6 +321,14 @@ impl VTagExt for Html {
         match self {
             Html::VTag(tag) => tag.find_child_contains_class_mut(class),
             Html::VList(list) => find_child_contains_class_mut(list.iter_mut(), class),
+            _ => None,
+        }
+    }
+
+    fn find_child_contains_class_recursively_mut(&mut self, class: &str) -> Option<&mut VTag> {
+        match self {
+            Html::VTag(tag) => tag.find_child_contains_class_recursively_mut(class),
+            Html::VList(list) => find_child_contains_class_recursively_mut(list.iter_mut(), class),
             _ => None,
         }
     }
@@ -445,6 +472,29 @@ fn find_child_contains_class_mut<'a>(
         Html::VTag(child) if child.is_contains_class(class) => Some(child.deref_mut()),
         _ => None,
     })
+}
+
+fn find_child_contains_class_recursively_mut<'a>(
+    children: impl IntoIterator<Item = &'a mut Html>,
+    class: &str,
+) -> Option<&'a mut VTag> {
+    for child in children {
+        let tag = match child {
+            Html::VTag(child) => {
+                if child.is_contains_class(class) {
+                    Some(child.deref_mut())
+                } else {
+                    find_child_contains_class_recursively_mut(child.children.iter_mut(), class)
+                }
+            }
+            Html::VList(list) => find_child_contains_class_recursively_mut(list.children.iter_mut(), class),
+            _ => None,
+        };
+        if tag.is_some() {
+            return tag;
+        }
+    }
+    None
 }
 
 fn get_tag<'a>(html: Option<&'a Html>, tag_name: &str) -> Option<&'a VTag> {

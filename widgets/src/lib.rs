@@ -1,13 +1,14 @@
 #![recursion_limit = "256"]
 
 pub use self::{
-    button::*, card::*, checkbox::*, data_table::*, drawer::*, fab::*, icon_button::*, list::*, menu::*, radio::*,
-    switch::*, text_field::*, top_app_bar::*, utils::MdcWidget,
+    button::*, card::*, checkbox::*, chip::*, data_table::*, drawer::*, fab::*, icon_button::*, list::*, menu::*,
+    radio::*, switch::*, text_field::*, top_app_bar::*, utils::MdcWidget,
 };
 
 pub mod button;
 pub mod card;
 pub mod checkbox;
+pub mod chip;
 pub mod data_table;
 pub mod dialog;
 pub mod drawer;

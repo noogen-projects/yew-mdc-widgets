@@ -16,13 +16,13 @@ pub struct ListItem {
 }
 
 impl ListItem {
-    const FIRST_TILE_CLASS: &'static str = "mdc-list-item__graphic";
-    const LAST_TILE_CLASS: &'static str = "mdc-list-item__meta";
-    const PRIMARY_TEXT_ITEM_CLASS: &'static str = "mdc-list-item__primary-text";
-    const RIPPLE_CLASS: &'static str = "mdc-list-item__ripple";
-    const SECONDARY_TEXT_ITEM_CLASS: &'static str = "mdc-list-item__secondary-text";
-    const SELECTION_CLASS: &'static str = "mdc-list-item--selected";
-    const TEXT_ITEM_CLASS: &'static str = "mdc-list-item__text";
+    pub const FIRST_TILE_CLASS: &'static str = "mdc-list-item__graphic";
+    pub const LAST_TILE_CLASS: &'static str = "mdc-list-item__meta";
+    pub const PRIMARY_TEXT_ITEM_CLASS: &'static str = "mdc-list-item__primary-text";
+    pub const RIPPLE_CLASS: &'static str = "mdc-list-item__ripple";
+    pub const SECONDARY_TEXT_ITEM_CLASS: &'static str = "mdc-list-item__secondary-text";
+    pub const SELECTION_CLASS: &'static str = "mdc-list-item--selected";
+    pub const TEXT_ITEM_CLASS: &'static str = "mdc-list-item__text";
 
     pub fn simple() -> Self {
         Self {

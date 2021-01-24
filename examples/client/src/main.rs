@@ -4,8 +4,8 @@ use std::iter::FromIterator;
 
 use yew::{html, initialize, run_loop, utils, App, Component, ComponentLink, Html};
 use yew_mdc_widgets::{
-    auto_init, Button, ButtonStyle, Card, CardContent, Checkbox, DataTable, Drawer, Fab, IconButton, List, ListItem,
-    MdcWidget, Menu, Radio, Switch, TableCell, TextField, TopAppBar,
+    auto_init, Button, ButtonStyle, Card, CardContent, Checkbox, Chip, ChipSet, DataTable, Drawer, Fab, IconButton,
+    List, ListItem, MdcWidget, Menu, Radio, Switch, TableCell, TextField, TopAppBar,
 };
 
 struct Root {
@@ -36,6 +36,7 @@ impl Component for Root {
             ListItem::link("#checkboxes").text("Checkboxes"),
             ListItem::link("#radio_buttons").text("Radio buttons"),
             ListItem::link("#switch").text("Switch"),
+            ListItem::link("#chips").text("Chips"),
             ListItem::link("#text_fields").text("Text fields"),
             ListItem::link("#lists").text("Lists"),
             ListItem::link("#menu").text("Menu"),
@@ -99,6 +100,9 @@ impl Component for Root {
 
                             <h2 class = "demo-title mdc-typography--headline6"><a name = "switch"></a>{ "Switch" }</h2>
                             { self.view_switch() }
+
+                            <h2 class = "demo-title mdc-typography--headline6"><a name = "chips"></a>{ "Chips" }</h2>
+                            { self.view_chips() }
 
                             <h2 class = "demo-title mdc-typography--headline6"><a name = "text_fields"></a>{ "Text fields" }</h2>
                             { self.view_text_fields() }
@@ -541,6 +545,105 @@ impl Root {
                         <div class = "mdc-form-field">
                             { Switch::new().id("switch-label-disabled-2").disabled(true).on().label("Disabled 2") }
                         </div>
+                    </span>
+                </div>
+            </div>
+        }
+    }
+
+    fn view_chips(&self) -> Html {
+        html! {
+            <div>
+                <div>
+                    <h3 class = "mdc-typography--subtitle1">{ "Basic" }</h3>
+                    <span class = "demo-item">
+                        {
+                            ChipSet::new()
+                                .chip(Chip::simple().tab_index(0).text("Chip One"))
+                                .chip(Chip::simple().text("Chip Two"))
+                        }
+                    </span>
+                </div>
+                <div>
+                    <h3 class = "mdc-typography--subtitle1">{ "With icons" }</h3>
+                    <span class = "demo-item">
+                        {
+                            ChipSet::new()
+                                .chip(Chip::simple().tab_index(0).icon("bookmark").text("Chip One"))
+                                .chip(Chip::simple().icon("face").text("Chip Two"))
+                        }
+                    </span>
+                    <span class = "demo-item">
+                        {
+                            ChipSet::new()
+                                .chip(Chip::simple().tab_index(0).text("Chip One").icon("cancel"))
+                                .chip(Chip::simple().text("Chip Two").icon("close"))
+                        }
+                    </span>
+                </div>
+                <div>
+                    <h3 class = "mdc-typography--subtitle1">{ "Choice" }</h3>
+                    <span class = "demo-item">
+                        {
+                            ChipSet::new()
+                                .choice()
+                                .chip(Chip::simple().tab_index(0).text("Chip One"))
+                                .chip(Chip::simple().text("Chip Two"))
+                        }
+                    </span>
+                    <span class = "demo-item">
+                        {
+                            ChipSet::new()
+                                .choice()
+                                .chip(Chip::simple().tab_index(0).icon("event").text("Chip One"))
+                                .chip(Chip::simple().text("Chip Two").icon("cancel"))
+                        }
+                    </span>
+                </div>
+                <div>
+                    <h3 class = "mdc-typography--subtitle1">{ "Filter" }</h3>
+                    <span class = "demo-item">
+                        {
+                            ChipSet::new()
+                                .filter()
+                                .chip(Chip::simple().tab_index(0).checkmark().text("Chip One"))
+                                .chip(Chip::simple().checkmark().text("Chip Two"))
+                        }
+                    </span>
+                    <span class = "demo-item">
+                        {
+                            ChipSet::new()
+                                .filter()
+                                .chip(Chip::simple().tab_index(0).icon("event").checkmark().text("Chip One"))
+                                .chip(Chip::simple().checkmark().text("Chip Two").icon("cancel"))
+                        }
+                    </span>
+                </div>
+                <div>
+                    <h3 class = "mdc-typography--subtitle1">{ "Selected" }</h3>
+                    <span class = "demo-item">
+                        {
+                            ChipSet::new()
+                                .filter()
+                                .chip(Chip::simple().tab_index(0).checkmark().selected().text("Chip One"))
+                                .chip(Chip::simple().checkmark().text("Chip Two"))
+                        }
+                    </span>
+                    <span class = "demo-item">
+                        {
+                            ChipSet::new()
+                                .filter()
+                                .chip(Chip::simple().tab_index(0).selected().icon("event").checkmark().text("Chip One"))
+                                .chip(Chip::simple().icon("face").checkmark().text("Chip Two"))
+                        }
+                    </span>
+                    <span class = "demo-item">
+                        {
+                            ChipSet::new()
+                                .choice()
+                                .chip(Chip::simple().tab_index(0).icon("event").text("Chip One").selected())
+                                .chip(Chip::simple().text("Chip Two").icon("cancel"))
+                        }
                     </span>
                 </div>
             </div>
