@@ -518,10 +518,10 @@ impl Root {
                         { Switch::new().on() }
                     </span>
                     <span class = "demo-item">
-                        { Switch::new().disabled(true) }
+                        { Switch::new().disabled() }
                     </span>
                     <span class = "demo-item">
-                        { Switch::new().disabled(true).on() }
+                        { Switch::new().disabled().on() }
                     </span>
                 </div>
                 <div>
@@ -538,12 +538,12 @@ impl Root {
                     </span>
                     <span class = "demo-item">
                         <div class = "mdc-form-field">
-                            { Switch::new().id("switch-label-disabled-1").disabled(true).label("Disabled 1") }
+                            { Switch::new().id("switch-label-disabled-1").disabled().label("Disabled 1") }
                         </div>
                     </span>
                     <span class = "demo-item">
                         <div class = "mdc-form-field">
-                            { Switch::new().id("switch-label-disabled-2").disabled(true).on().label("Disabled 2") }
+                            { Switch::new().id("switch-label-disabled-2").disabled().on().label("Disabled 2") }
                         </div>
                     </span>
                 </div>

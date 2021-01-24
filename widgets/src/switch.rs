@@ -40,19 +40,17 @@ impl Switch {
         })
     }
 
-    pub fn disabled(mut self, disabled: bool) -> Self {
-        root_and_input_child_disabled(&mut self, "mdc-switch--disabled", disabled);
+    pub fn disabled(self) -> Self {
+        self.disable(true)
+    }
+
+    pub fn disable(mut self, disable: bool) -> Self {
+        root_and_input_child_disabled(&mut self, "mdc-switch--disabled", disable);
         self
     }
 
-    pub fn on(mut self) -> Self {
-        let root = self.root_tag_mut();
-        root.add_class("mdc-switch--checked");
-        if let Some(input) = root.find_child_tag_recursively_mut("input") {
-            input.checked = true;
-            input.set_attr("aria-checked", "true");
-        }
-        self
+    pub fn on(self) -> Self {
+        self.turn(true)
     }
 
     pub fn turn(mut self, on: bool) -> Self {
