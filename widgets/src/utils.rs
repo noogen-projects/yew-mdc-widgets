@@ -650,10 +650,7 @@ pub trait MdcWidget {
     where
         Self: Sized,
     {
-        let root = self.root_tag_mut();
-        if !root.is_contains_class(class.as_ref()) {
-            root.add_class(class);
-        }
+        self.root_tag_mut().add_class_if_needed(class);
         self
     }
 }

@@ -69,14 +69,29 @@ impl Chip {
     }
 
     /// Indicates that the chip is selected.
-    pub fn selected(mut self) -> Self {
+    pub fn selected(self) -> Self {
+        self.select(true)
+    }
+
+    pub fn select(mut self, selected: bool) -> Self {
         let root = self.root_tag_mut();
-        if root.find_child_contains_class_idx(Self::CHECKMARK_CLASS).is_some() {
-            if let Some(icon) = root.find_child_contains_class_mut(Self::ICON_LEADING_CLASS) {
-                icon.add_class(Self::ICON_LEADING_HIDDEN_CLASS);
+        if let Some(icon) = root
+            .find_child_contains_class_idx(Self::CHECKMARK_CLASS)
+            .and_then(|_| root.find_child_contains_class_mut(Self::ICON_LEADING_CLASS))
+        {
+            if selected {
+                icon.add_class_if_needed(Self::ICON_LEADING_HIDDEN_CLASS);
+            } else {
+                icon.remove_any_class(&[Self::ICON_LEADING_HIDDEN_CLASS]);
             }
         }
-        self.class(Self::SELECTED_CLASS)
+
+        if selected {
+            self.class(Self::SELECTED_CLASS)
+        } else {
+            self.remove_any_class(&[Self::SELECTED_CLASS]);
+            self
+        }
     }
 
     pub fn ripple(mut self, enabled: bool) -> Self {
