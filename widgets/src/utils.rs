@@ -19,6 +19,7 @@ pub trait VTagExt {
     fn root_tag_mut(&mut self) -> Option<&mut VTag>;
     fn add_class(&mut self, class: impl AsRef<str>);
     fn add_class_if_needed(&mut self, class: impl AsRef<str>);
+    fn remove_class(&mut self, class: &str);
     fn remove_any_class(&mut self, classes: &[&str]);
     fn attr<Q>(&self, attr: &Q) -> Option<&String>
     where
@@ -72,6 +73,16 @@ impl VTagExt for VTag {
         let class = class.as_ref().trim();
         if !self.is_contains_class(class) {
             self.add_class(class);
+        }
+    }
+
+    fn remove_class(&mut self, class: &str) {
+        if let Some(classes) = self.attributes.get_mut("class") {
+            *classes = classes
+                .split_whitespace()
+                .filter(|item| class != *item)
+                .collect::<Vec<_>>()
+                .join(" ");
         }
     }
 
@@ -242,6 +253,12 @@ impl VTagExt for Html {
     fn remove_any_class(&mut self, classes: &[&str]) {
         if let Html::VTag(tag) = self {
             tag.remove_any_class(classes);
+        }
+    }
+
+    fn remove_class(&mut self, class: &str) {
+        if let Html::VTag(tag) = self {
+            tag.remove_class(class);
         }
     }
 
@@ -701,7 +718,7 @@ pub fn root_and_input_child_disabled(widget: &mut impl MdcWidget, disabled_class
     if disabled {
         widget.root_tag_mut().add_class(disabled_class);
     } else {
-        widget.root_tag_mut().remove_any_class(&[disabled_class]);
+        widget.root_tag_mut().remove_class(disabled_class);
     }
 
     if let Some(input) = widget.root_tag_mut().find_child_tag_recursively_mut("input") {

@@ -54,7 +54,7 @@ impl ListItem {
 
         if let Some(idx) = root.find_child_contains_class_idx(Self::TEXT_ITEM_CLASS) {
             let mut primary = root.children.remove(idx);
-            primary.remove_any_class(&[Self::TEXT_ITEM_CLASS]);
+            primary.remove_class(Self::TEXT_ITEM_CLASS);
             primary.add_class(Self::PRIMARY_TEXT_ITEM_CLASS);
 
             root.children.insert(
@@ -86,7 +86,7 @@ impl ListItem {
         let is_already_selected = self.html.is_contains_class(Self::SELECTION_CLASS);
 
         if is_already_selected && !selected {
-            self.html.remove_any_class(&[Self::SELECTION_CLASS]);
+            self.html.remove_class(Self::SELECTION_CLASS);
         } else if !is_already_selected && selected {
             self.html.add_class(Self::SELECTION_CLASS);
         }

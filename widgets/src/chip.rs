@@ -82,14 +82,14 @@ impl Chip {
             if selected {
                 icon.add_class_if_needed(Self::ICON_LEADING_HIDDEN_CLASS);
             } else {
-                icon.remove_any_class(&[Self::ICON_LEADING_HIDDEN_CLASS]);
+                icon.remove_class(Self::ICON_LEADING_HIDDEN_CLASS);
             }
         }
 
         if selected {
             self.class(Self::SELECTED_CLASS)
         } else {
-            self.remove_any_class(&[Self::SELECTED_CLASS]);
+            self.remove_class(Self::SELECTED_CLASS);
             self
         }
     }

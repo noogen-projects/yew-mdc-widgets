@@ -71,7 +71,7 @@ impl Drawer {
     }
 
     pub fn standard(mut self) -> Self {
-        self.root_tag_mut().remove_any_class(&[Self::MODAL_CLASS]);
+        self.root_tag_mut().remove_class(Self::MODAL_CLASS);
         self
     }
 

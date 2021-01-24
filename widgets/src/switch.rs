@@ -55,6 +55,22 @@ impl Switch {
         self
     }
 
+    pub fn turn(mut self, on: bool) -> Self {
+        let root = self.root_tag_mut();
+
+        if on {
+            root.add_class_if_needed("mdc-switch--checked");
+        } else {
+            root.remove_class("mdc-switch--checked")
+        }
+
+        if let Some(input) = root.find_child_tag_recursively_mut("input") {
+            input.checked = on;
+            input.set_attr("aria-checked", if on { "true" } else { "false" });
+        }
+        self
+    }
+
     pub fn on_click(mut self, callback: Callback<MouseEvent>) -> Self {
         labeled_on_click(&mut self, callback);
         self
