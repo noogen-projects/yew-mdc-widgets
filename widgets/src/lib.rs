@@ -2,6 +2,8 @@
 
 pub use gloo;
 pub use js_sys;
+pub use wasm_bindgen;
+pub use web_sys;
 pub use yew;
 
 pub use self::{
