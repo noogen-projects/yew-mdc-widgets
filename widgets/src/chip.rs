@@ -302,43 +302,6 @@ impl ChipSet {
         self
     }
 
-    pub fn add_selection_event(self, script: impl AsRef<str>) -> Self {
-        let statement = format!(
-            "{}.MDCChipSet.listen('MDCChip:selection', (event) => {{ {} }});",
-            Self::VAR_NAME,
-            script.as_ref()
-        );
-        self.add_script_statement(statement)
-    }
-
-    pub fn add_script_statement(mut self, statement: String) -> Self {
-        if self.html.find_child_tag("script").is_some() {
-            self.html.add_child_script_statement(statement);
-        } else {
-            let id = self.root_id();
-            let script = format!(
-                r"{{
-                    const {chip_set} = document.getElementById('{id}');
-                    if ({chip_set}.MDCChipSet === undefined) {{
-                        window.mdc.autoInit({chip_set}.parentElement);
-                    }}
-                    {statement}
-                }}",
-                chip_set = Self::VAR_NAME,
-                id = id,
-                statement = statement,
-            );
-
-            self.html = html! {
-                <>
-                    { self.html }
-                    <script>{ script }</script>
-                </>
-            };
-        }
-        self
-    }
-
     #[track_caller]
     pub fn root_id(&self) -> &str {
         self.root_tag()
