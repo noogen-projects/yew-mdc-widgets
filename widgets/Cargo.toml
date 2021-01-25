@@ -16,3 +16,4 @@ categories = ["web-programming", "wasm", "gui"]
 [dependencies]
 yew = { version = "0.17", features = ["web_sys"] }
 js-sys = "0.3"
+gloo = "0.2"

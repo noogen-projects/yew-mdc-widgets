@@ -1,5 +1,9 @@
 #![recursion_limit = "256"]
 
+pub use gloo;
+pub use js_sys;
+pub use yew;
+
 pub use self::{
     button::*, card::*, checkbox::*, chip::*, data_table::*, drawer::*, fab::*, icon_button::*, list::*, menu::*,
     radio::*, switch::*, text_field::*, top_app_bar::*, utils::MdcWidget,

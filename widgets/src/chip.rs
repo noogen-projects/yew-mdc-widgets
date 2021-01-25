@@ -3,7 +3,14 @@ use std::{
     rc::Rc,
 };
 
-use yew::{html, html::onclick, Callback, Html, MouseEvent};
+use gloo::events::{EventListener, EventListenerOptions};
+use yew::{
+    html,
+    html::onclick,
+    virtual_dom::Listener,
+    web_sys::{Element, EventTarget},
+    Callback, Event, Html, MouseEvent,
+};
 
 use crate::{
     utils::{MdcWidget, VTagExt},
@@ -346,6 +353,12 @@ impl ChipSet {
             .get("id")
             .expect("The ChipSet widget must have ID")
     }
+
+    pub fn on_selection(mut self, callback: Callback<Event>) -> Self {
+        let listener = Rc::new(SelectionListener::new(callback));
+        self.root_tag_mut().add_listener(listener);
+        self
+    }
 }
 
 impl MdcWidget for ChipSet {
@@ -377,5 +390,33 @@ impl DerefMut for ChipSet {
 impl From<ChipSet> for Html {
     fn from(widget: ChipSet) -> Self {
         widget.html
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct SelectionListener {
+    callback: Callback<Event>,
+}
+
+impl SelectionListener {
+    pub const NAME: &'static str = "MDCChip:selection";
+
+    pub fn new(callback: Callback<Event>) -> Self {
+        Self { callback }
+    }
+}
+
+impl Listener for SelectionListener {
+    fn kind(&self) -> &'static str {
+        Self::NAME
+    }
+
+    fn attach(&self, element: &Element) -> EventListener {
+        let callback = self.callback.clone();
+        let listener = move |event: &Event| {
+            callback.emit(event.clone());
+        };
+        let options = EventListenerOptions::enable_prevent_default();
+        EventListener::new_with_options(&EventTarget::from(element.clone()), Self::NAME, options, listener)
     }
 }
