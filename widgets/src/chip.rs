@@ -3,14 +3,11 @@ use std::{
     rc::Rc,
 };
 
-use gloo::events::{EventListener, EventListenerOptions};
-use wasm_bindgen::JsValue;
-use web_sys::{CustomEvent, Element, EventTarget};
-use yew::{html, html::onclick, virtual_dom::Listener, Callback, Event, Html, MouseEvent};
+use yew::{html, html::onclick, Callback, Html, MouseEvent};
 
 use crate::{
     utils::{MdcWidget, VTagExt},
-    AUTO_INIT_ATTR,
+    CustomEvent, AUTO_INIT_ATTR,
 };
 
 #[derive(Debug, Clone)]
@@ -350,10 +347,34 @@ impl ChipSet {
             .expect("The ChipSet widget must have ID")
     }
 
-    pub fn on_selection(mut self, callback: Callback<CustomEvent>) -> Self {
-        let listener = Rc::new(SelectionListener::new(callback));
-        self.root_tag_mut().add_listener(listener);
-        self
+    /// Indicates the chip was interacted with (via click/tap or Enter key).
+    /// event.detail: `{ chipId: string }`
+    pub fn on_interaction(self, callback: Callback<CustomEvent>) -> Self {
+        self.on_custom_event("MDCChip:interaction", callback)
+    }
+
+    /// Indicates the chip's selection state has changed (for choice/filter chips).
+    /// event.detail: `{chipId: string, selected: boolean}`
+    pub fn on_selection(self, callback: Callback<CustomEvent>) -> Self {
+        self.on_custom_event("MDCChip:selection", callback)
+    }
+
+    /// Indicates the chip is ready to be removed from the DOM.
+    /// event.detail: `{chipId: string, removedAnnouncement: string | null}`
+    pub fn on_removal(self, callback: Callback<CustomEvent>) -> Self {
+        self.on_custom_event("MDCChip:removal", callback)
+    }
+
+    /// Indicates the chip's trailing icon was interacted with (via click/tap or Enter key).
+    /// event.detail: `{chipId: string}`
+    pub fn on_trailing_icon_interaction(self, callback: Callback<CustomEvent>) -> Self {
+        self.on_custom_event("MDCChip:trailingIconInteraction", callback)
+    }
+
+    /// Indicates a navigation event has occurred on a chip.
+    /// event.detail: `{chipId: string, key: string, source: FocusSource}`
+    pub fn on_navigation(self, callback: Callback<CustomEvent>) -> Self {
+        self.on_custom_event("MDCChip:navigation", callback)
     }
 }
 
@@ -386,34 +407,5 @@ impl DerefMut for ChipSet {
 impl From<ChipSet> for Html {
     fn from(widget: ChipSet) -> Self {
         widget.html
-    }
-}
-
-#[derive(Clone, Debug)]
-pub struct SelectionListener {
-    callback: Callback<CustomEvent>,
-}
-
-impl SelectionListener {
-    pub const NAME: &'static str = "MDCChip:selection";
-
-    pub fn new(callback: Callback<CustomEvent>) -> Self {
-        Self { callback }
-    }
-}
-
-impl Listener for SelectionListener {
-    fn kind(&self) -> &'static str {
-        Self::NAME
-    }
-
-    fn attach(&self, element: &Element) -> EventListener {
-        let callback = self.callback.clone();
-        let listener = move |event: &Event| {
-            let event: CustomEvent = JsValue::from(event).into();
-            callback.emit(event);
-        };
-        let options = EventListenerOptions::enable_prevent_default();
-        EventListener::new_with_options(&EventTarget::from(element.clone()), Self::NAME, options, listener)
     }
 }

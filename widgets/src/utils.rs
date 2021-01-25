@@ -8,11 +8,11 @@ use std::{
 use yew::{
     html,
     html::onclick,
-    virtual_dom::{Listener, VTag},
+    virtual_dom::{Listener, VNode, VTag},
     Callback, Html, MouseEvent,
 };
 
-use yew::virtual_dom::VNode;
+use crate::{CustomEvent, CustomEventListener};
 
 pub trait VTagExt {
     fn root_tag(&self) -> Option<&VTag>;
@@ -651,6 +651,15 @@ pub trait MdcWidget {
     where
         Self: Sized,
     {
+        self.root_tag_mut().add_listener(listener);
+        self
+    }
+
+    fn on_custom_event(mut self, event_name: &'static str, callback: Callback<CustomEvent>) -> Self
+    where
+        Self: Sized,
+    {
+        let listener = Rc::new(CustomEventListener::new(event_name, callback));
         self.root_tag_mut().add_listener(listener);
         self
     }

@@ -7,8 +7,8 @@ pub use web_sys;
 pub use yew;
 
 pub use self::{
-    button::*, card::*, checkbox::*, chip::*, data_table::*, drawer::*, fab::*, icon_button::*, list::*, menu::*,
-    radio::*, switch::*, text_field::*, top_app_bar::*, utils::MdcWidget,
+    button::*, card::*, checkbox::*, chip::*, data_table::*, drawer::*, fab::*, icon_button::*, list::*, listeners::*,
+    menu::*, radio::*, switch::*, text_field::*, top_app_bar::*, utils::MdcWidget,
 };
 
 pub mod button;
@@ -21,6 +21,7 @@ pub mod drawer;
 pub mod fab;
 pub mod icon_button;
 pub mod list;
+pub mod listeners;
 pub mod menu;
 pub mod radio;
 pub mod switch;
