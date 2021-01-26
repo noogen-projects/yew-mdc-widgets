@@ -658,13 +658,13 @@ pub trait MdcWidget {
         self
     }
 
-    fn on_event<E, C>(mut self, event_name: &'static str, callback: C) -> Self
+    fn on_event<E, C>(mut self, event_name: &'static str, callback: impl Into<C>) -> Self
     where
         E: From<JsValue> + Clone + 'static,
         C: EventCallback<E>,
         Self: Sized,
     {
-        let listener = Rc::new(EventListener::new(event_name, callback));
+        let listener = Rc::new(EventListener::new(event_name, callback.into()));
         self.root_tag_mut().add_listener(listener);
         self
     }
@@ -744,8 +744,8 @@ pub fn root_and_input_child_disabled(widget: &mut impl MdcWidget, disabled_class
     }
 }
 
-pub fn labeled_on_click<W: MdcWidget>(widget: &mut W, callback: Callback<MouseEvent>) {
-    let listener = Rc::new(onclick::Wrapper::new(callback));
+pub fn labeled_on_click<W: MdcWidget>(widget: &mut W, callback: impl Into<Callback<MouseEvent>>) {
+    let listener = Rc::new(onclick::Wrapper::new(callback.into()));
     let root = widget.root_tag_mut();
     if let Some(label) = root.find_child_tag_mut("label") {
         label.add_listener(listener.clone());

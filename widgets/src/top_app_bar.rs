@@ -195,7 +195,7 @@ impl TopAppBar {
         self.class("mdc-top-app-bar--dense")
     }
 
-    pub fn on_navigation(self, callback: Callback<Event>) -> Self {
+    pub fn on_navigation(self, callback: impl Into<Callback<Event>>) -> Self {
         self.on_event("MDCTopAppBar:nav", callback)
     }
 }

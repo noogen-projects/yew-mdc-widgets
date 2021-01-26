@@ -70,8 +70,8 @@ impl Radio {
         self
     }
 
-    pub fn on_click(mut self, callback: Callback<MouseEvent>) -> Self {
-        labeled_on_click(&mut self, callback);
+    pub fn on_click(mut self, callback: impl Into<Callback<MouseEvent>>) -> Self {
+        labeled_on_click(&mut self, callback.into());
         self
     }
 }

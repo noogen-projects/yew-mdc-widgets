@@ -10,16 +10,14 @@ use yew_mdc_widgets::{
     ListItem, MdcWidget, Menu, Radio, Switch, TableCell, TextField, TopAppBar,
 };
 
-struct Root {
-    link: ComponentLink<Self>,
-}
+struct Root;
 
 impl Component for Root {
     type Message = ();
     type Properties = ();
 
-    fn create(_props: Self::Properties, link: ComponentLink<Self>) -> Self {
-        Self { link }
+    fn create(_props: Self::Properties, _link: ComponentLink<Self>) -> Self {
+        Self
     }
 
     fn update(&mut self, _msg: Self::Message) -> bool {
@@ -53,10 +51,10 @@ impl Component for Root {
             .content(
                 List::nav()
                     .items(contents.clone().into_iter().map(|item| {
-                        item.on_click(self.link.callback(|_| {
+                        item.on_click(|_| {
                             let drawer = select_exist_element::<Element>("#app-drawer").get("MDCDrawer");
                             drawer.set("open", false);
-                        }))
+                        })
                     }))
                     .markup_only(),
             );
@@ -66,11 +64,11 @@ impl Component for Root {
             .title("Yew MDC Widgets")
             .navigation_item(IconButton::new().icon("menu"))
             .enable_shadow_when_scroll_window()
-            .on_navigation(self.link.callback(move |_| {
+            .on_navigation(move |_| {
                 let drawer = select_exist_element::<Element>("#app-drawer").get("MDCDrawer");
                 let opened = drawer.get("open").as_bool().unwrap_or(false);
                 drawer.set("open", !opened);
-            }));
+            });
 
         html! {
             <>
@@ -313,9 +311,9 @@ impl Root {
                         { Fab::new().ripple(false).icon("add") }
                     </span>
                     <span class = "demo-item">
-                        { Fab::new().id("exited_fab").icon("add").on_click(self.link.callback(|_| {
-                            js_sys::eval(&format!("document.getElementById('exited_fab').classList.add('{}')", Fab::EXITED_CLASS)).ok();
-                        })) }
+                        { Fab::new().id("exited_fab").icon("add").on_click(|_| {
+                            select_exist_element::<Element>("#exited_fab").class_list().add_1(Fab::EXITED_CLASS).ok();
+                        }) }
                     </span>
                 </div>
                 <div>
@@ -327,9 +325,9 @@ impl Root {
                         { Fab::new().ripple(false).mini().icon("add") }
                     </span>
                     <span class = "demo-item">
-                        { Fab::new().mini().id("exited_fab_mini").icon("add").on_click(self.link.callback(|_| {
-                            js_sys::eval(&format!("document.getElementById('exited_fab_mini').classList.add('{}')", Fab::EXITED_CLASS)).ok();
-                        })) }
+                        { Fab::new().mini().id("exited_fab_mini").icon("add").on_click(|_| {
+                            select_exist_element::<Element>("#exited_fab_mini").class_list().add_1(Fab::EXITED_CLASS).ok();
+                        }) }
                     </span>
                 </div>
                 <div>
@@ -347,9 +345,9 @@ impl Root {
                         { Fab::new().ripple(false).icon("favorite_border").label("favorite") }
                     </span>
                     <span class = "demo-item">
-                        { Fab::new().id("exited_fab_extended").icon("favorite_border").label("favorite").on_click(self.link.callback(|_| {
-                            js_sys::eval(&format!("document.getElementById('exited_fab_extended').classList.add('{}')", Fab::EXITED_CLASS)).ok();
-                        })) }
+                        { Fab::new().id("exited_fab_extended").icon("favorite_border").label("favorite").on_click(|_| {
+                            select_exist_element::<Element>("#exited_fab_extended").class_list().add_1(Fab::EXITED_CLASS).ok();
+                        }) }
                     </span>
                 </div>
                 <div>
@@ -928,7 +926,7 @@ impl Root {
                             {
                                 Button::new()
                                     .label("Open Menu")
-                                    .on_click(self.link.callback(|_| Menu::open_existing("simple-menu")))
+                                    .on_click(|_| Menu::open_existing("simple-menu"))
                             }
                             {
                                 Menu::new().id("simple-menu").items(vec![

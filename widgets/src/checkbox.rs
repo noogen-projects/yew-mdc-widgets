@@ -83,7 +83,7 @@ impl Checkbox {
         self
     }
 
-    pub fn on_click(mut self, callback: Callback<MouseEvent>) -> Self {
+    pub fn on_click(mut self, callback: impl Into<Callback<MouseEvent>>) -> Self {
         labeled_on_click(&mut self, callback);
         self
     }

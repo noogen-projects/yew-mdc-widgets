@@ -178,8 +178,8 @@ impl Chip {
         self
     }
 
-    pub fn on_click(self, callback: Callback<MouseEvent>) -> Self {
-        self.listener(Rc::new(onclick::Wrapper::new(callback)))
+    pub fn on_click(self, callback: impl Into<Callback<MouseEvent>>) -> Self {
+        self.listener(Rc::new(onclick::Wrapper::new(callback.into())))
     }
 }
 
@@ -312,31 +312,31 @@ impl ChipSet {
 
     /// Indicates the chip was interacted with (via click/tap or Enter key).
     /// event.detail: `{ chipId: string }`
-    pub fn on_interaction(self, callback: Callback<CustomEvent>) -> Self {
+    pub fn on_interaction(self, callback: impl Into<Callback<CustomEvent>>) -> Self {
         self.on_event("MDCChip:interaction", callback)
     }
 
     /// Indicates the chip's selection state has changed (for choice/filter chips).
     /// event.detail: `{chipId: string, selected: boolean}`
-    pub fn on_selection(self, callback: Callback<CustomEvent>) -> Self {
+    pub fn on_selection(self, callback: impl Into<Callback<CustomEvent>>) -> Self {
         self.on_event("MDCChip:selection", callback)
     }
 
     /// Indicates the chip is ready to be removed from the DOM.
     /// event.detail: `{chipId: string, removedAnnouncement: string | null}`
-    pub fn on_removal(self, callback: Callback<CustomEvent>) -> Self {
+    pub fn on_removal(self, callback: impl Into<Callback<CustomEvent>>) -> Self {
         self.on_event("MDCChip:removal", callback)
     }
 
     /// Indicates the chip's trailing icon was interacted with (via click/tap or Enter key).
     /// event.detail: `{chipId: string}`
-    pub fn on_trailing_icon_interaction(self, callback: Callback<CustomEvent>) -> Self {
+    pub fn on_trailing_icon_interaction(self, callback: impl Into<Callback<CustomEvent>>) -> Self {
         self.on_event("MDCChip:trailingIconInteraction", callback)
     }
 
     /// Indicates a navigation event has occurred on a chip.
     /// event.detail: `{chipId: string, key: string, source: FocusSource}`
-    pub fn on_navigation(self, callback: Callback<CustomEvent>) -> Self {
+    pub fn on_navigation(self, callback: impl Into<Callback<CustomEvent>>) -> Self {
         self.on_event("MDCChip:navigation", callback)
     }
 }
