@@ -4,8 +4,10 @@ use std::iter::FromIterator;
 
 use yew::{html, initialize, run_loop, utils, App, Component, ComponentLink, Html};
 use yew_mdc_widgets::{
-    auto_init, Button, ButtonStyle, Card, CardContent, Checkbox, Chip, ChipSet, DataTable, Drawer, Fab, IconButton,
-    List, ListItem, MdcWidget, Menu, Radio, Switch, TableCell, TextField, TopAppBar,
+    auto_init,
+    utils::dom::{select_exist_element, JsObjectAccess},
+    Button, ButtonStyle, Card, CardContent, Checkbox, Chip, ChipSet, DataTable, Drawer, Element, Fab, IconButton, List,
+    ListItem, MdcWidget, Menu, Radio, Switch, TableCell, TextField, TopAppBar,
 };
 
 struct Root {
@@ -44,25 +46,31 @@ impl Component for Root {
             ListItem::link("#cards").text("Cards"),
         ];
 
-        let drawer_id = "app-drawer";
         let drawer = Drawer::new()
-            .id(drawer_id)
+            .id("app-drawer")
             .title(html! { <h3 tabindex = 0>{ "Widgets" }</h3> })
             .modal()
-            .content(List::nav().items(contents.clone()).markup_only());
+            .content(
+                List::nav()
+                    .items(contents.clone().into_iter().map(|item| {
+                        item.on_click(self.link.callback(|_| {
+                            let drawer = select_exist_element::<Element>("#app-drawer").get("MDCDrawer");
+                            drawer.set("open", false);
+                        }))
+                    }))
+                    .markup_only(),
+            );
 
         let top_app_bar = TopAppBar::new()
             .id("top-app-bar")
             .title("Yew MDC Widgets")
             .navigation_item(IconButton::new().icon("menu"))
             .enable_shadow_when_scroll_window()
-            .add_navigation_event(format!(
-                r"{{
-                    const drawer = document.getElementById('{}').MDCDrawer;
-                    drawer.open = !drawer.open;
-                }}",
-                drawer_id
-            ));
+            .on_navigation(self.link.callback(move |_| {
+                let drawer = select_exist_element::<Element>("#app-drawer").get("MDCDrawer");
+                let opened = drawer.get("open").as_bool().unwrap_or(false);
+                drawer.set("open", !opened);
+            }));
 
         html! {
             <>
@@ -71,12 +79,6 @@ impl Component for Root {
 
                 <div class = vec!["app-content", Drawer::APP_CONTENT_CLASS]>
                     { top_app_bar }
-                    <script>{ format!(r"
-                        const listEl = document.querySelector('.mdc-drawer .mdc-list');                    
-                        listEl.addEventListener('click', (event) => {{
-                            document.getElementById('{}').MDCDrawer.open = false;
-                        }});
-                    ", drawer_id) }</script>
 
                     <div class = "mdc-top-app-bar--fixed-adjust">
                         <div class = "demo-content">

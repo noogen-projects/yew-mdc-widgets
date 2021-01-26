@@ -5,6 +5,7 @@ use std::{
     rc::Rc,
 };
 
+use wasm_bindgen::JsValue;
 use yew::{
     html,
     html::onclick,
@@ -12,7 +13,9 @@ use yew::{
     Callback, Html, MouseEvent,
 };
 
-use crate::{CustomEvent, CustomEventListener};
+use crate::{EventCallback, EventListener};
+
+pub mod dom;
 
 pub trait VTagExt {
     fn root_tag(&self) -> Option<&VTag>;
@@ -250,15 +253,15 @@ impl VTagExt for Html {
         }
     }
 
-    fn remove_any_class(&mut self, classes: &[&str]) {
-        if let Html::VTag(tag) = self {
-            tag.remove_any_class(classes);
-        }
-    }
-
     fn remove_class(&mut self, class: &str) {
         if let Html::VTag(tag) = self {
             tag.remove_class(class);
+        }
+    }
+
+    fn remove_any_class(&mut self, classes: &[&str]) {
+        if let Html::VTag(tag) = self {
+            tag.remove_any_class(classes);
         }
     }
 
@@ -655,11 +658,13 @@ pub trait MdcWidget {
         self
     }
 
-    fn on_custom_event(mut self, event_name: &'static str, callback: Callback<CustomEvent>) -> Self
+    fn on_event<E, C>(mut self, event_name: &'static str, callback: C) -> Self
     where
+        E: From<JsValue> + Clone + 'static,
+        C: EventCallback<E>,
         Self: Sized,
     {
-        let listener = Rc::new(CustomEventListener::new(event_name, callback));
+        let listener = Rc::new(EventListener::new(event_name, callback));
         self.root_tag_mut().add_listener(listener);
         self
     }

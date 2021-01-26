@@ -1,6 +1,6 @@
 use std::ops::{Deref, DerefMut};
 
-use yew::{html, Html};
+use yew::{html, Callback, Event, Html};
 
 use crate::{
     utils::{MdcWidget, VTagExt},
@@ -149,15 +149,6 @@ impl TopAppBar {
         }
     }
 
-    pub fn add_navigation_event(self, script: impl AsRef<str>) -> Self {
-        let statement = format!(
-            "{}.MDCTopAppBar.listen('MDCTopAppBar:nav', () => {{ {} }});",
-            Self::VAR_NAME,
-            script.as_ref()
-        );
-        self.add_script_statement(statement)
-    }
-
     pub fn add_script_statement(mut self, statement: String) -> Self {
         if self.html.find_child_tag("script").is_some() {
             self.html.add_child_script_statement(statement);
@@ -202,6 +193,10 @@ impl TopAppBar {
     /// Style the top app bar as a dense top app bar
     pub fn dense(self) -> Self {
         self.class("mdc-top-app-bar--dense")
+    }
+
+    pub fn on_navigation(self, callback: Callback<Event>) -> Self {
+        self.on_event("MDCTopAppBar:nav", callback)
     }
 }
 
