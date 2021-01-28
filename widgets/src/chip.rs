@@ -5,10 +5,7 @@ use std::{
 
 use yew::{html, html::onclick, Callback, Html, MouseEvent};
 
-use crate::{
-    utils::{MdcWidget, VTagExt},
-    CustomEvent, AUTO_INIT_ATTR,
-};
+use crate::{utils::VTagExt, CustomEvent, MdcWidget, AUTO_INIT_ATTR};
 
 #[derive(Debug, Clone)]
 pub struct Chip {

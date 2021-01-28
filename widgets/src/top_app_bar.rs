@@ -2,10 +2,7 @@ use std::ops::{Deref, DerefMut};
 
 use yew::{html, Callback, Event, Html};
 
-use crate::{
-    utils::{MdcWidget, VTagExt},
-    AUTO_INIT_ATTR,
-};
+use crate::{utils::VTagExt, MdcWidget, AUTO_INIT_ATTR};
 
 #[derive(Debug, Clone)]
 pub struct TopAppBar {

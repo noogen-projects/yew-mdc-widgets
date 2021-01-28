@@ -10,8 +10,8 @@ use yew::{
 };
 
 use crate::{
-    utils::{MdcWidget, ToWidgetWithVList, VTagExt},
-    AUTO_INIT_ATTR,
+    utils::{ToWidgetWithVList, VTagExt},
+    MdcWidget, AUTO_INIT_ATTR,
 };
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]

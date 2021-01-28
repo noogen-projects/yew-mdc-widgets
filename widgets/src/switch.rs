@@ -3,8 +3,8 @@ use std::ops::{Deref, DerefMut};
 use yew::{html, services::ConsoleService, Callback, Html, MouseEvent};
 
 use crate::{
-    utils::{add_input_label, labeled_on_click, root_and_input_child_disabled, MdcWidget, ToWidgetWithVList, VTagExt},
-    AUTO_INIT_ATTR,
+    utils::{add_input_label, labeled_on_click, root_and_input_child_disabled, ToWidgetWithVList, VTagExt},
+    MdcWidget, AUTO_INIT_ATTR,
 };
 
 #[derive(Debug, Clone)]

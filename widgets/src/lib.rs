@@ -8,7 +8,7 @@ pub use yew;
 
 pub use self::{
     button::*, card::*, checkbox::*, chip::*, data_table::*, drawer::*, fab::*, icon_button::*, list::*, listeners::*,
-    menu::*, radio::*, switch::*, text_field::*, top_app_bar::*, utils::MdcWidget,
+    menu::*, radio::*, switch::*, text_field::*, top_app_bar::*, widget::MdcWidget,
 };
 
 pub mod button;
@@ -28,6 +28,7 @@ pub mod switch;
 pub mod text_field;
 pub mod top_app_bar;
 pub mod utils;
+pub mod widget;
 
 const AUTO_INIT_ATTR: &str = "data-mdc-auto-init";
 

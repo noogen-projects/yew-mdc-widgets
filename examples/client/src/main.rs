@@ -64,7 +64,7 @@ impl Component for Root {
             .title("Yew MDC Widgets")
             .navigation_item(IconButton::new().icon("menu"))
             .enable_shadow_when_scroll_window()
-            .on_navigation(move |_| {
+            .on_navigation(|_| {
                 let drawer = select_exist_element::<Element>("#app-drawer").get("MDCDrawer");
                 let opened = drawer.get("open").as_bool().unwrap_or(false);
                 drawer.set("open", !opened);
