@@ -5,7 +5,7 @@ use std::{
 
 use yew::{html, html::onclick, Callback, Html, MouseEvent};
 
-use crate::{utils::VTagExt, MdcWidget, AUTO_INIT_ATTR};
+use crate::{ripple, utils::VTagExt, MdcWidget, AUTO_INIT_ATTR};
 
 #[derive(Debug, Clone)]
 pub struct IconButton {
@@ -23,7 +23,9 @@ impl IconButton {
 
     pub fn new() -> Self {
         let mut icon_button = Self::simple();
-        icon_button.root_tag_mut().set_attr(AUTO_INIT_ATTR, "MDCRipple");
+        icon_button
+            .root_tag_mut()
+            .set_attr(AUTO_INIT_ATTR, ripple::MDC_TYPE_NAME);
         icon_button
     }
 
@@ -57,7 +59,7 @@ impl IconButton {
         if !self.is_toggle {
             let root = self.root_tag_mut();
             if enabled {
-                root.set_attr(AUTO_INIT_ATTR, "MDCRipple");
+                root.set_attr(AUTO_INIT_ATTR, ripple::MDC_TYPE_NAME);
             } else {
                 root.remove_attr(AUTO_INIT_ATTR);
             }

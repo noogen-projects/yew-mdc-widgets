@@ -24,6 +24,7 @@ pub mod list;
 pub mod listeners;
 pub mod menu;
 pub mod radio;
+pub mod ripple;
 pub mod switch;
 pub mod text_field;
 pub mod top_app_bar;

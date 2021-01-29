@@ -5,7 +5,7 @@ use std::iter::FromIterator;
 use yew::{html, initialize, run_loop, utils, App, Component, ComponentLink, Html};
 use yew_mdc_widgets::{
     auto_init,
-    utils::dom::{select_exist_element, JsObjectAccess},
+    utils::dom::{get_exist_element_by_id, JsObjectAccess},
     Button, ButtonStyle, Card, CardContent, Checkbox, Chip, ChipSet, DataTable, Drawer, Element, Fab, IconButton, List,
     ListItem, MdcWidget, Menu, Radio, Switch, TableCell, TextField, TopAppBar,
 };
@@ -52,7 +52,7 @@ impl Component for Root {
                 List::nav()
                     .items(contents.clone().into_iter().map(|item| {
                         item.on_click(|_| {
-                            let drawer = select_exist_element::<Element>("#app-drawer").get("MDCDrawer");
+                            let drawer = get_exist_element_by_id::<Element>("app-drawer").get(Drawer::MDC_TYPE_NAME);
                             drawer.set("open", false);
                         })
                     }))
@@ -65,7 +65,7 @@ impl Component for Root {
             .navigation_item(IconButton::new().icon("menu"))
             .enable_shadow_when_scroll_window()
             .on_navigation(|_| {
-                let drawer = select_exist_element::<Element>("#app-drawer").get("MDCDrawer");
+                let drawer = get_exist_element_by_id::<Element>("app-drawer").get(Drawer::MDC_TYPE_NAME);
                 let opened = drawer.get("open").as_bool().unwrap_or(false);
                 drawer.set("open", !opened);
             });
@@ -312,7 +312,7 @@ impl Root {
                     </span>
                     <span class = "demo-item">
                         { Fab::new().id("exited_fab").icon("add").on_click(|_| {
-                            select_exist_element::<Element>("#exited_fab").class_list().add_1(Fab::EXITED_CLASS).ok();
+                            get_exist_element_by_id::<Element>("exited_fab").class_list().add_1(Fab::EXITED_CLASS).ok();
                         }) }
                     </span>
                 </div>
@@ -326,7 +326,7 @@ impl Root {
                     </span>
                     <span class = "demo-item">
                         { Fab::new().mini().id("exited_fab_mini").icon("add").on_click(|_| {
-                            select_exist_element::<Element>("#exited_fab_mini").class_list().add_1(Fab::EXITED_CLASS).ok();
+                            get_exist_element_by_id::<Element>("exited_fab_mini").class_list().add_1(Fab::EXITED_CLASS).ok();
                         }) }
                     </span>
                 </div>
@@ -346,7 +346,7 @@ impl Root {
                     </span>
                     <span class = "demo-item">
                         { Fab::new().id("exited_fab_extended").icon("favorite_border").label("favorite").on_click(|_| {
-                            select_exist_element::<Element>("#exited_fab_extended").class_list().add_1(Fab::EXITED_CLASS).ok();
+                            get_exist_element_by_id::<Element>("exited_fab_extended").class_list().add_1(Fab::EXITED_CLASS).ok();
                         }) }
                     </span>
                 </div>

@@ -301,10 +301,7 @@ impl ChipSet {
 
     #[track_caller]
     pub fn root_id(&self) -> &str {
-        self.root_tag()
-            .attributes
-            .get("id")
-            .expect("The ChipSet widget must have ID")
+        self.root_tag().attr("id").expect("The ChipSet widget must have ID")
     }
 
     /// Indicates the chip was interacted with (via click/tap or Enter key).

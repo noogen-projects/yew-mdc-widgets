@@ -10,6 +10,7 @@ pub struct Drawer {
 }
 
 impl Drawer {
+    pub const MDC_TYPE_NAME: &'static str = "MDCDrawer";
     pub const VAR_NAME: &'static str = "drawer";
     pub const APP_CONTENT_CLASS: &'static str = "mdc-drawer-app-content";
     pub const CONTENT_CLASS: &'static str = "mdc-drawer__content";
@@ -25,7 +26,7 @@ impl Drawer {
                 <aside class = "mdc-drawer"></aside>
             },
         };
-        drawer.root_tag_mut().set_attr(AUTO_INIT_ATTR, "MDCDrawer");
+        drawer.root_tag_mut().set_attr(AUTO_INIT_ATTR, Self::MDC_TYPE_NAME);
         drawer
     }
 
@@ -44,12 +45,13 @@ impl Drawer {
             let script = format!(
                 r"{{
                     const {drawer} = document.getElementById('{id}');
-                    if ({drawer}.MDCDrawer === undefined) {{
+                    if ({drawer}.{mdc_type} === undefined) {{
                         window.mdc.autoInit({drawer}.parentElement);
                     }}
                     {statement}
                 }}",
                 drawer = Self::VAR_NAME,
+                mdc_type = Self::MDC_TYPE_NAME,
                 id = id,
                 statement = statement,
             );

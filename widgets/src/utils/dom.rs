@@ -13,6 +13,18 @@ pub fn document() -> Document {
 }
 
 #[track_caller]
+pub fn get_element_by_id<T: JsCast>(id: &str) -> Option<T> {
+    document()
+        .get_element_by_id(id)
+        .map(|element| element.dyn_into::<T>().expect("Can't cast to element"))
+}
+
+#[track_caller]
+pub fn get_exist_element_by_id<T: JsCast>(id: &str) -> T {
+    get_element_by_id(id).unwrap_or_else(|| panic!("Element not found by id {:?}", id))
+}
+
+#[track_caller]
 pub fn select_element<T: JsCast>(selector: &str) -> Option<T> {
     document()
         .query_selector(selector)
