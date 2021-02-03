@@ -63,7 +63,7 @@ impl Dialog {
 
     pub fn new() -> Self {
         let mut dialog = Self::simple();
-        dialog.root_tag_mut().set_attr(AUTO_INIT_ATTR, "MDCDialog");
+        dialog.root_tag_mut().set_attr(AUTO_INIT_ATTR, Self::MDC_TYPE_NAME);
         dialog
     }
 
