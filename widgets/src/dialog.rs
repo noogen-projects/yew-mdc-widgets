@@ -5,7 +5,14 @@ use std::{
 
 use yew::{html, html::onclick, virtual_dom::VTag, Callback, Html, MouseEvent};
 
-use crate::{utils::VTagExt, MdcWidget, AUTO_INIT_ATTR};
+use crate::{
+    bind::mdc,
+    utils::{
+        dom::{self, JsCast, JsObjectAccess},
+        VTagExt,
+    },
+    Element, MdcWidget, AUTO_INIT_ATTR,
+};
 
 #[derive(Debug, Clone)]
 pub struct Dialog {
@@ -13,6 +20,8 @@ pub struct Dialog {
 }
 
 impl Dialog {
+    pub const MDC_TYPE_NAME: &'static str = "MDCDialog";
+
     /// The bounding box for the dialog's content.
     pub const SURFACE_CLASS: &'static str = "mdc-dialog__surface";
 
@@ -132,16 +141,17 @@ impl Dialog {
     }
 
     pub fn open_existing(id: impl AsRef<str>) {
-        js_sys::eval(&format!("document.getElementById('{}').MDCDialog.open();", id.as_ref()))
-            .expect("JavaScript evaluation error");
+        let dialog = dom::get_exist_element_by_id::<Element>(id.as_ref())
+            .get(Self::MDC_TYPE_NAME)
+            .unchecked_into::<mdc::Dialog>();
+        dialog.open();
     }
 
     pub fn close_existing(id: impl AsRef<str>) {
-        js_sys::eval(&format!(
-            "document.getElementById('{}').MDCDialog.close();",
-            id.as_ref()
-        ))
-        .expect("JavaScript evaluation error");
+        let dialog = dom::get_exist_element_by_id::<Element>(id.as_ref())
+            .get(Self::MDC_TYPE_NAME)
+            .unchecked_into::<mdc::Dialog>();
+        dialog.();
     }
 }
 

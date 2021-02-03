@@ -6,8 +6,8 @@ use yew::{html, initialize, run_loop, utils, App, Component, ComponentLink, Html
 use yew_mdc_widgets::{
     auto_init,
     utils::dom::{get_exist_element_by_id, JsObjectAccess},
-    Button, ButtonStyle, Card, CardContent, Checkbox, Chip, ChipSet, DataTable, Drawer, Element, Fab, IconButton, List,
-    ListItem, MdcWidget, Menu, Radio, Switch, TableCell, TextField, TopAppBar,
+    Button, ButtonStyle, Card, CardContent, Checkbox, Chip, ChipSet, DataTable, Dialog, Drawer, Element, Fab,
+    IconButton, List, ListItem, MdcWidget, Menu, Radio, Switch, TableCell, TextField, TopAppBar,
 };
 
 struct Root;
@@ -1024,7 +1024,7 @@ impl Root {
                             {
                                  Button::new()
                                     .label("Open Simple Dialog")
-                                    .on_click(self.link.callback(|_| Dialog::open_existing("simple-dialog")))
+                                    .on_click(|_| Dialog::open_existing("simple-dialog"))
                             }
                             {
                                 Dialog::new()
@@ -1033,12 +1033,12 @@ impl Root {
                                     .action(
                                         Button::new()
                                             .label("Cancel")
-                                            .on_click(self.link.callback(|_| Dialog::close_existing("simple-dialog"))),
+                                            .on_click(|_| Dialog::close_existing("simple-dialog")),
                                     )
                                     .action(
                                         Button::new()
                                             .label("Discard")
-                                            .on_click(self.link.callback(|_| Dialog::close_existing("simple-dialog"))),
+                                            .on_click(|_| Dialog::close_existing("simple-dialog")),
                                     )
                             }
                         </div>
