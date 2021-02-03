@@ -4,8 +4,8 @@ use std::iter::FromIterator;
 
 use yew::{html, initialize, run_loop, utils, App, Component, ComponentLink, Html};
 use yew_mdc_widgets::{
-    auto_init, Button, ButtonStyle, Card, CardContent, Checkbox, DataTable, Drawer, Fab, IconButton, List, ListItem,
-    MdcWidget, Menu, Radio, Switch, TableCell, TextField, TopAppBar,
+    auto_init, Button, ButtonStyle, Card, CardContent, Checkbox, DataTable, Dialog, Drawer, Fab, IconButton, List,
+    ListItem, MdcWidget, Menu, Radio, Switch, TableCell, TextField, TopAppBar,
 };
 
 struct Root {
@@ -40,6 +40,7 @@ impl Component for Root {
             ListItem::link("#lists").text("Lists"),
             ListItem::link("#menu").text("Menu"),
             ListItem::link("#data_tables").text("Data tables"),
+            ListItem::link("#dialog").text("Dialog"),
             ListItem::link("#cards").text("Cards"),
         ];
 
@@ -111,6 +112,9 @@ impl Component for Root {
 
                             <h2 class = "demo-title mdc-typography--headline6"><a name = "data_tables"></a>{ "Data tables" }</h2>
                             { self.view_data_tables() }
+
+                            <h2 class = "demo-title mdc-typography--headline6"><a name = "dialog"></a>{ "Dialog" }</h2>
+                            { self.view_dialog() }
 
                             <h2 class = "demo-title mdc-typography--headline6"><a name = "cards"></a>{ "Cards" }</h2>
                             { self.view_cards() }
@@ -902,6 +906,40 @@ impl Root {
                                 TableCell::text("New filing flavor"),
                             ])
                     }</div>
+                </div>
+            </div>
+        }
+    }
+
+    fn view_dialog(&self) -> Html {
+        html! {
+            <div>
+                <div>
+                    <h3 class = "mdc-typography--subtitle1">{ "Simple" }</h3>
+                    <span class = "demo-item demo-list">
+                        <div id = "demo-menu" class = Menu::ANCHOR_CLASS>
+                            {
+                                 Button::new()
+                                    .label("Open Simple Dialog")
+                                    .on_click(self.link.callback(|_| Dialog::open_existing("simple-dialog")))
+                            }
+                            {
+                                Dialog::new()
+                                    .id("simple-dialog")
+                                    .content_item("Discard draft?")
+                                    .action(
+                                        Button::new()
+                                            .label("Cancel")
+                                            .on_click(self.link.callback(|_| Dialog::close_existing("simple-dialog"))),
+                                    )
+                                    .action(
+                                        Button::new()
+                                            .label("Discard")
+                                            .on_click(self.link.callback(|_| Dialog::close_existing("simple-dialog"))),
+                                    )
+                            }
+                        </div>
+                    </span>
                 </div>
             </div>
         }

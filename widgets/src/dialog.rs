@@ -61,7 +61,7 @@ impl Dialog {
         dialog
     }
 
-    pub fn open(self) -> Self {
+    pub fn opened(self) -> Self {
         self.class(Self::OPEN_CLASS)
     }
 
@@ -93,12 +93,12 @@ impl Dialog {
         let content_idx = if let Some(idx) = self.surface_mut().find_child_contains_class_idx(Self::CONTENT_CLASS) {
             idx
         } else {
-            self = self.content(html! { <div class = Self::CONTENT_CLASS></div> });
+            self = self.content(html! { <div></div> });
             self.surface_mut()
                 .find_child_contains_class_idx(Self::CONTENT_CLASS)
                 .unwrap()
         };
-        self.surface_mut().insert_child(content_idx, item.into());
+        self.surface_mut().children[content_idx].add_child(item.into());
         self
     }
 
@@ -120,7 +120,7 @@ impl Dialog {
                 surface.add_child(html! { <div class = Self::ACTIONS_CLASS></div> });
                 surface.children.len() - 1
             });
-        surface.insert_child(actions_idx, action.into());
+        surface.children[actions_idx].add_child(action.into());
         self
     }
 
@@ -132,6 +132,19 @@ impl Dialog {
         self.root_tag_mut().children.children[0]
             .find_child_contains_class_mut(Self::SURFACE_CLASS)
             .expect("Can't get dialog surface")
+    }
+
+    pub fn open_existing(id: impl AsRef<str>) {
+        js_sys::eval(&format!("document.getElementById('{}').MDCDialog.open();", id.as_ref()))
+            .expect("JavaScript evaluation error");
+    }
+
+    pub fn close_existing(id: impl AsRef<str>) {
+        js_sys::eval(&format!(
+            "document.getElementById('{}').MDCDialog.close();",
+            id.as_ref()
+        ))
+        .expect("JavaScript evaluation error");
     }
 }
 
