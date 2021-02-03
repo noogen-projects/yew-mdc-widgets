@@ -5,10 +5,7 @@ use std::{
 
 use yew::{html, html::onclick, virtual_dom::VTag, Callback, Html, MouseEvent};
 
-use crate::{
-    utils::{MdcWidget, VTagExt},
-    AUTO_INIT_ATTR,
-};
+use crate::{utils::VTagExt, MdcWidget, AUTO_INIT_ATTR};
 
 #[derive(Debug, Clone)]
 pub struct Dialog {
@@ -124,8 +121,8 @@ impl Dialog {
         self
     }
 
-    pub fn on_click(self, callback: Callback<MouseEvent>) -> Self {
-        self.listener(Rc::new(onclick::Wrapper::new(callback)))
+    pub fn on_click(self, callback: impl Into<Callback<MouseEvent>>) -> Self {
+        self.listener(Rc::new(onclick::Wrapper::new(callback.into())))
     }
 
     fn surface_mut(&mut self) -> &mut VTag {

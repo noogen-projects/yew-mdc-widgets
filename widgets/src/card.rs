@@ -2,7 +2,7 @@ use std::ops::{Deref, DerefMut};
 
 use yew::{html, Html};
 
-use crate::utils::{MdcWidget, VTagExt};
+use crate::{utils::VTagExt, MdcWidget};
 
 #[derive(Debug, Clone)]
 pub struct CardContent {

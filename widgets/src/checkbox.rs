@@ -4,10 +4,9 @@ use yew::{html, services::ConsoleService, Callback, Html, MouseEvent};
 
 use crate::{
     utils::{
-        add_input_label, labeled_on_click, ripple_element, root_and_input_child_disabled, MdcWidget, ToWidgetWithVList,
-        VTagExt,
+        add_input_label, labeled_on_click, ripple_element, root_and_input_child_disabled, ToWidgetWithVList, VTagExt,
     },
-    AUTO_INIT_ATTR,
+    MdcWidget, AUTO_INIT_ATTR,
 };
 
 #[derive(Debug, Clone)]
@@ -83,7 +82,7 @@ impl Checkbox {
         self
     }
 
-    pub fn on_click(mut self, callback: Callback<MouseEvent>) -> Self {
+    pub fn on_click(mut self, callback: impl Into<Callback<MouseEvent>>) -> Self {
         labeled_on_click(&mut self, callback);
         self
     }

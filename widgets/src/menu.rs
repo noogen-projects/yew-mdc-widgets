@@ -3,8 +3,11 @@ use std::ops::{Deref, DerefMut};
 use yew::{html, Html};
 
 use crate::{
-    utils::{MdcWidget, VTagExt},
-    List, AUTO_INIT_ATTR,
+    utils::{
+        dom::{self, JsObjectAccess},
+        VTagExt,
+    },
+    Element, List, MdcWidget, AUTO_INIT_ATTR,
 };
 
 #[derive(Debug, Clone)]
@@ -14,6 +17,7 @@ pub struct Menu {
 }
 
 impl Menu {
+    pub const MDC_TYPE_NAME: &'static str = "MDCMenu";
     pub const VAR_NAME: &'static str = "menu";
     pub const ANCHOR_CLASS: &'static str = "mdc-menu-surface--anchor";
 
@@ -25,7 +29,7 @@ impl Menu {
             },
             list,
         };
-        menu.root_tag_mut().set_attr(AUTO_INIT_ATTR, "MDCMenu");
+        menu.root_tag_mut().set_attr(AUTO_INIT_ATTR, Self::MDC_TYPE_NAME);
         menu
     }
 
@@ -34,15 +38,12 @@ impl Menu {
     }
 
     pub fn open_existing(id: impl AsRef<str>) {
-        js_sys::eval(&format!(
-            "document.getElementById('{}').MDCMenu.open = true;",
-            id.as_ref()
-        ))
-        .expect("JavaScript evaluation error");
+        let menu = dom::get_exist_element_by_id::<Element>(id.as_ref()).get(Self::MDC_TYPE_NAME);
+        menu.set("open", true);
     }
 
     pub fn open(self) -> Self {
-        let statement = format!("{}.open = true;", Self::VAR_NAME,);
+        let statement = format!("{}.open = true;", Self::VAR_NAME);
         self.add_script_statement(statement)
     }
 
@@ -61,12 +62,13 @@ impl Menu {
             let script = format!(
                 r"{{
                     const {menu} = document.getElementById('{id}');
-                    if ({menu}.MDCMenu === undefined) {{
+                    if ({menu}.{mdc_type} === undefined) {{
                         window.mdc.autoInit({menu}.parentElement);
                     }}
                     {statement}
                 }}",
                 menu = Self::VAR_NAME,
+                mdc_type = Self::MDC_TYPE_NAME,
                 id = id,
                 statement = statement,
             );

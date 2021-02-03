@@ -3,8 +3,8 @@ use std::ops::{Deref, DerefMut};
 use yew::{html, services::ConsoleService, Callback, Html, MouseEvent};
 
 use crate::{
-    utils::{add_input_label, labeled_on_click, root_and_input_child_disabled, MdcWidget, ToWidgetWithVList, VTagExt},
-    AUTO_INIT_ATTR,
+    utils::{add_input_label, labeled_on_click, root_and_input_child_disabled, ToWidgetWithVList, VTagExt},
+    MdcWidget, AUTO_INIT_ATTR,
 };
 
 #[derive(Debug, Clone)]
@@ -40,23 +40,37 @@ impl Switch {
         })
     }
 
-    pub fn disabled(mut self, disabled: bool) -> Self {
-        root_and_input_child_disabled(&mut self, "mdc-switch--disabled", disabled);
+    pub fn disabled(self) -> Self {
+        self.disable(true)
+    }
+
+    pub fn disable(mut self, disable: bool) -> Self {
+        root_and_input_child_disabled(&mut self, "mdc-switch--disabled", disable);
         self
     }
 
-    pub fn on(mut self) -> Self {
+    pub fn on(self) -> Self {
+        self.turn(true)
+    }
+
+    pub fn turn(mut self, on: bool) -> Self {
         let root = self.root_tag_mut();
-        root.add_class("mdc-switch--checked");
+
+        if on {
+            root.add_class_if_needed("mdc-switch--checked");
+        } else {
+            root.remove_class("mdc-switch--checked")
+        }
+
         if let Some(input) = root.find_child_tag_recursively_mut("input") {
-            input.checked = true;
-            input.set_attr("aria-checked", "true");
+            input.checked = on;
+            input.set_attr("aria-checked", if on { "true" } else { "false" });
         }
         self
     }
 
-    pub fn on_click(mut self, callback: Callback<MouseEvent>) -> Self {
-        labeled_on_click(&mut self, callback);
+    pub fn on_click(mut self, callback: impl Into<Callback<MouseEvent>>) -> Self {
+        labeled_on_click(&mut self, callback.into());
         self
     }
 }

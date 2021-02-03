@@ -5,10 +5,7 @@ use std::{
 
 use yew::{html, html::onclick, Callback, Html, MouseEvent};
 
-use crate::{
-    utils::{MdcWidget, VTagExt},
-    AUTO_INIT_ATTR,
-};
+use crate::{ripple, utils::VTagExt, MdcWidget, AUTO_INIT_ATTR};
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum ButtonStyle {
@@ -49,8 +46,20 @@ impl Button {
 
     pub fn new() -> Self {
         let mut button = Self::simple();
-        button.root_tag_mut().set_attr(AUTO_INIT_ATTR, "MDCRipple");
+        button.root_tag_mut().set_attr(AUTO_INIT_ATTR, ripple::MDC_TYPE_NAME);
         button
+    }
+
+    pub fn outlined() -> Self {
+        Self::new().style(ButtonStyle::Outlined)
+    }
+
+    pub fn raised() -> Self {
+        Self::new().style(ButtonStyle::Raised)
+    }
+
+    pub fn unelevated() -> Self {
+        Self::new().style(ButtonStyle::Unelevated)
     }
 
     pub fn label(mut self, label: impl Into<Html>) -> Self {
@@ -71,7 +80,7 @@ impl Button {
         let root = self.root_tag_mut();
 
         if enabled {
-            root.set_attr(AUTO_INIT_ATTR, "MDCRipple");
+            root.set_attr(AUTO_INIT_ATTR, ripple::MDC_TYPE_NAME);
         } else {
             root.remove_attr(AUTO_INIT_ATTR);
         }
@@ -124,8 +133,8 @@ impl Button {
         })
     }
 
-    pub fn on_click(self, callback: Callback<MouseEvent>) -> Self {
-        self.listener(Rc::new(onclick::Wrapper::new(callback)))
+    pub fn on_click(self, callback: impl Into<Callback<MouseEvent>>) -> Self {
+        self.listener(Rc::new(onclick::Wrapper::new(callback.into())))
     }
 }
 

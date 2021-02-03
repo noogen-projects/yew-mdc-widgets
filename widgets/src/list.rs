@@ -5,10 +5,7 @@ use std::{
 
 use yew::{html, html::onclick, Callback, Html, MouseEvent};
 
-use crate::{
-    utils::{MdcWidget, VTagExt},
-    AUTO_INIT_ATTR,
-};
+use crate::{ripple, utils::VTagExt, MdcWidget, AUTO_INIT_ATTR};
 
 #[derive(Debug, Clone)]
 pub struct ListItem {
@@ -16,13 +13,13 @@ pub struct ListItem {
 }
 
 impl ListItem {
-    const FIRST_TILE_CLASS: &'static str = "mdc-list-item__graphic";
-    const LAST_TILE_CLASS: &'static str = "mdc-list-item__meta";
-    const PRIMARY_TEXT_ITEM_CLASS: &'static str = "mdc-list-item__primary-text";
-    const RIPPLE_CLASS: &'static str = "mdc-list-item__ripple";
-    const SECONDARY_TEXT_ITEM_CLASS: &'static str = "mdc-list-item__secondary-text";
-    const SELECTION_CLASS: &'static str = "mdc-list-item--selected";
-    const TEXT_ITEM_CLASS: &'static str = "mdc-list-item__text";
+    pub const FIRST_TILE_CLASS: &'static str = "mdc-list-item__graphic";
+    pub const LAST_TILE_CLASS: &'static str = "mdc-list-item__meta";
+    pub const PRIMARY_TEXT_ITEM_CLASS: &'static str = "mdc-list-item__primary-text";
+    pub const RIPPLE_CLASS: &'static str = "mdc-list-item__ripple";
+    pub const SECONDARY_TEXT_ITEM_CLASS: &'static str = "mdc-list-item__secondary-text";
+    pub const SELECTION_CLASS: &'static str = "mdc-list-item--selected";
+    pub const TEXT_ITEM_CLASS: &'static str = "mdc-list-item__text";
 
     pub fn simple() -> Self {
         Self {
@@ -54,7 +51,7 @@ impl ListItem {
 
         if let Some(idx) = root.find_child_contains_class_idx(Self::TEXT_ITEM_CLASS) {
             let mut primary = root.children.remove(idx);
-            primary.remove_any_class(&[Self::TEXT_ITEM_CLASS]);
+            primary.remove_class(Self::TEXT_ITEM_CLASS);
             primary.add_class(Self::PRIMARY_TEXT_ITEM_CLASS);
 
             root.children.insert(
@@ -86,7 +83,7 @@ impl ListItem {
         let is_already_selected = self.html.is_contains_class(Self::SELECTION_CLASS);
 
         if is_already_selected && !selected {
-            self.html.remove_any_class(&[Self::SELECTION_CLASS]);
+            self.html.remove_class(Self::SELECTION_CLASS);
         } else if !is_already_selected && selected {
             self.html.add_class(Self::SELECTION_CLASS);
         }
@@ -97,7 +94,7 @@ impl ListItem {
         let root = self.root_tag_mut();
 
         if enabled {
-            root.set_attr(AUTO_INIT_ATTR, "MDCRipple");
+            root.set_attr(AUTO_INIT_ATTR, ripple::MDC_TYPE_NAME);
         } else {
             root.remove_attr(AUTO_INIT_ATTR);
         }
@@ -161,8 +158,8 @@ impl ListItem {
         self
     }
 
-    pub fn on_click(self, callback: Callback<MouseEvent>) -> Self {
-        self.listener(Rc::new(onclick::Wrapper::new(callback)))
+    pub fn on_click(self, callback: impl Into<Callback<MouseEvent>>) -> Self {
+        self.listener(Rc::new(onclick::Wrapper::new(callback.into())))
     }
 }
 

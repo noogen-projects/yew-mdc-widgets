@@ -2,10 +2,7 @@ use std::ops::{Deref, DerefMut};
 
 use yew::{html, Html};
 
-use crate::{
-    utils::{MdcWidget, VTagExt},
-    AUTO_INIT_ATTR,
-};
+use crate::{utils::VTagExt, MdcWidget, AUTO_INIT_ATTR};
 
 #[derive(Debug, Clone)]
 pub struct Drawer {
@@ -13,6 +10,7 @@ pub struct Drawer {
 }
 
 impl Drawer {
+    pub const MDC_TYPE_NAME: &'static str = "MDCDrawer";
     pub const VAR_NAME: &'static str = "drawer";
     pub const APP_CONTENT_CLASS: &'static str = "mdc-drawer-app-content";
     pub const CONTENT_CLASS: &'static str = "mdc-drawer__content";
@@ -28,7 +26,7 @@ impl Drawer {
                 <aside class = "mdc-drawer"></aside>
             },
         };
-        drawer.root_tag_mut().set_attr(AUTO_INIT_ATTR, "MDCDrawer");
+        drawer.root_tag_mut().set_attr(AUTO_INIT_ATTR, Self::MDC_TYPE_NAME);
         drawer
     }
 
@@ -47,12 +45,13 @@ impl Drawer {
             let script = format!(
                 r"{{
                     const {drawer} = document.getElementById('{id}');
-                    if ({drawer}.MDCDrawer === undefined) {{
+                    if ({drawer}.{mdc_type} === undefined) {{
                         window.mdc.autoInit({drawer}.parentElement);
                     }}
                     {statement}
                 }}",
                 drawer = Self::VAR_NAME,
+                mdc_type = Self::MDC_TYPE_NAME,
                 id = id,
                 statement = statement,
             );
@@ -71,7 +70,7 @@ impl Drawer {
     }
 
     pub fn standard(mut self) -> Self {
-        self.root_tag_mut().remove_any_class(&[Self::MODAL_CLASS]);
+        self.root_tag_mut().remove_class(Self::MODAL_CLASS);
         self
     }
 

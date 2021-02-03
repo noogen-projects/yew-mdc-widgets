@@ -4,20 +4,20 @@ use std::iter::FromIterator;
 
 use yew::{html, initialize, run_loop, utils, App, Component, ComponentLink, Html};
 use yew_mdc_widgets::{
-    auto_init, Button, ButtonStyle, Card, CardContent, Checkbox, DataTable, Dialog, Drawer, Fab, IconButton, List,
+    auto_init,
+    utils::dom::{get_exist_element_by_id, JsObjectAccess},
+    Button, ButtonStyle, Card, CardContent, Checkbox, Chip, ChipSet, DataTable, Drawer, Element, Fab, IconButton, List,
     ListItem, MdcWidget, Menu, Radio, Switch, TableCell, TextField, TopAppBar,
 };
 
-struct Root {
-    link: ComponentLink<Self>,
-}
+struct Root;
 
 impl Component for Root {
     type Message = ();
     type Properties = ();
 
-    fn create(_props: Self::Properties, link: ComponentLink<Self>) -> Self {
-        Self { link }
+    fn create(_props: Self::Properties, _link: ComponentLink<Self>) -> Self {
+        Self
     }
 
     fn update(&mut self, _msg: Self::Message) -> bool {
@@ -36,6 +36,7 @@ impl Component for Root {
             ListItem::link("#checkboxes").text("Checkboxes"),
             ListItem::link("#radio_buttons").text("Radio buttons"),
             ListItem::link("#switch").text("Switch"),
+            ListItem::link("#chips").text("Chips"),
             ListItem::link("#text_fields").text("Text fields"),
             ListItem::link("#lists").text("Lists"),
             ListItem::link("#menu").text("Menu"),
@@ -44,25 +45,31 @@ impl Component for Root {
             ListItem::link("#cards").text("Cards"),
         ];
 
-        let drawer_id = "app-drawer";
         let drawer = Drawer::new()
-            .id(drawer_id)
+            .id("app-drawer")
             .title(html! { <h3 tabindex = 0>{ "Widgets" }</h3> })
             .modal()
-            .content(List::nav().items(contents.clone()).markup_only());
+            .content(
+                List::nav()
+                    .items(contents.clone().into_iter().map(|item| {
+                        item.on_click(|_| {
+                            let drawer = get_exist_element_by_id::<Element>("app-drawer").get(Drawer::MDC_TYPE_NAME);
+                            drawer.set("open", false);
+                        })
+                    }))
+                    .markup_only(),
+            );
 
         let top_app_bar = TopAppBar::new()
             .id("top-app-bar")
             .title("Yew MDC Widgets")
             .navigation_item(IconButton::new().icon("menu"))
             .enable_shadow_when_scroll_window()
-            .add_navigation_event(format!(
-                r"{{
-                    const drawer = document.getElementById('{}').MDCDrawer;
-                    drawer.open = !drawer.open;
-                }}",
-                drawer_id
-            ));
+            .on_navigation(|_| {
+                let drawer = get_exist_element_by_id::<Element>("app-drawer").get(Drawer::MDC_TYPE_NAME);
+                let opened = drawer.get("open").as_bool().unwrap_or(false);
+                drawer.set("open", !opened);
+            });
 
         html! {
             <>
@@ -71,12 +78,6 @@ impl Component for Root {
 
                 <div class = vec!["app-content", Drawer::APP_CONTENT_CLASS]>
                     { top_app_bar }
-                    <script>{ format!(r"
-                        const listEl = document.querySelector('.mdc-drawer .mdc-list');                    
-                        listEl.addEventListener('click', (event) => {{
-                            document.getElementById('{}').MDCDrawer.open = false;
-                        }});
-                    ", drawer_id) }</script>
 
                     <div class = "mdc-top-app-bar--fixed-adjust">
                         <div class = "demo-content">
@@ -100,6 +101,9 @@ impl Component for Root {
 
                             <h2 class = "demo-title mdc-typography--headline6"><a name = "switch"></a>{ "Switch" }</h2>
                             { self.view_switch() }
+
+                            <h2 class = "demo-title mdc-typography--headline6"><a name = "chips"></a>{ "Chips" }</h2>
+                            { self.view_chips() }
 
                             <h2 class = "demo-title mdc-typography--headline6"><a name = "text_fields"></a>{ "Text fields" }</h2>
                             { self.view_text_fields() }
@@ -155,64 +159,64 @@ impl Root {
                 <div>
                     <h3 class = "mdc-typography--subtitle1">{ "Outlined Button" }</h3>
                     <span class = "demo-item">
-                        { Button::new().style(ButtonStyle::Outlined).label("Default") }
+                        { Button::outlined().label("Default") }
                     </span>
                     <span class = "demo-item">
                         { Button::simple().style(ButtonStyle::Outlined).label("No ripple") }
                     </span>
                     <span class = "demo-item">
-                        { Button::new().style(ButtonStyle::Outlined).disabled(true).label("Disabled") }
+                        { Button::outlined().disabled(true).label("Disabled") }
                     </span>
                     <span class = "demo-item">
-                        { Button::new().style(ButtonStyle::Outlined).icon("favorite").label("Icon") }
+                        { Button::outlined().icon("favorite").label("Icon") }
                     </span>
                     <span class = "demo-item">
-                        { Button::new().style(ButtonStyle::Outlined).label("Trailing icon").icon("favorite") }
+                        { Button::outlined().label("Trailing icon").icon("favorite") }
                     </span>
                 </div>
                 <div>
                     <h3 class = "mdc-typography--subtitle1">{ "Raised Button" }</h3>
                     <span class = "demo-item">
-                        { Button::new().style(ButtonStyle::Raised).label("Default") }
+                        { Button::raised().label("Default") }
                     </span>
                     <span class = "demo-item">
                         { Button::simple().style(ButtonStyle::Raised).label("No ripple") }
                     </span>
                     <span class = "demo-item">
-                        { Button::new().style(ButtonStyle::Raised).disabled(true).label("Disabled") }
+                        { Button::raised().disabled(true).label("Disabled") }
                     </span>
                     <span class = "demo-item">
-                        { Button::new().style(ButtonStyle::Raised).icon("favorite").label("Icon") }
+                        { Button::raised().icon("favorite").label("Icon") }
                     </span>
                     <span class = "demo-item">
-                        { Button::new().style(ButtonStyle::Raised).label("Trailing icon").icon("favorite") }
+                        { Button::raised().label("Trailing icon").icon("favorite") }
                     </span>
                 </div>
                 <div>
                     <h3 class = "mdc-typography--subtitle1">{ "Unelevated Button" }</h3>
                     <span class = "demo-item">
-                        { Button::new().style(ButtonStyle::Unelevated).label("Default") }
+                        { Button::unelevated().label("Default") }
                     </span>
                     <span class = "demo-item">
                         { Button::simple().style(ButtonStyle::Unelevated).label("No ripple") }
                     </span>
                     <span class = "demo-item">
-                        { Button::new().style(ButtonStyle::Unelevated).disabled(true).label("Disabled") }
+                        { Button::unelevated().disabled(true).label("Disabled") }
                     </span>
                     <span class = "demo-item">
-                        { Button::new().style(ButtonStyle::Unelevated).icon("favorite").label("Icon") }
+                        { Button::unelevated().icon("favorite").label("Icon") }
                     </span>
                     <span class = "demo-item">
-                        { Button::new().style(ButtonStyle::Unelevated).label("Trailing icon").icon("favorite") }
+                        { Button::unelevated().label("Trailing icon").icon("favorite") }
                     </span>
                 </div>
                 <div>
                     <h3 class = "mdc-typography--subtitle1">{ "Stylized Button" }</h3>
                     <span class = "demo-item">
-                        { Button::new().style(ButtonStyle::Raised).class("rounded-button").label("Rounded") }
+                        { Button::raised().class("rounded-button").label("Rounded") }
                     </span>
                     <span class = "demo-item">
-                        { Button::new().style(ButtonStyle::Outlined).class("rounded-button").label("Rounded").icon("favorite") }
+                        { Button::outlined().class("rounded-button").label("Rounded").icon("favorite") }
                     </span>
                 </div>
             </div>
@@ -311,9 +315,9 @@ impl Root {
                         { Fab::new().ripple(false).icon("add") }
                     </span>
                     <span class = "demo-item">
-                        { Fab::new().id("exited_fab").icon("add").on_click(self.link.callback(|_| {
-                            js_sys::eval(&format!("document.getElementById('exited_fab').classList.add('{}')", Fab::EXITED_CLASS)).ok();
-                        })) }
+                        { Fab::new().id("exited_fab").icon("add").on_click(|_| {
+                            get_exist_element_by_id::<Element>("exited_fab").class_list().add_1(Fab::EXITED_CLASS).ok();
+                        }) }
                     </span>
                 </div>
                 <div>
@@ -325,9 +329,9 @@ impl Root {
                         { Fab::new().ripple(false).mini().icon("add") }
                     </span>
                     <span class = "demo-item">
-                        { Fab::new().mini().id("exited_fab_mini").icon("add").on_click(self.link.callback(|_| {
-                            js_sys::eval(&format!("document.getElementById('exited_fab_mini').classList.add('{}')", Fab::EXITED_CLASS)).ok();
-                        })) }
+                        { Fab::new().mini().id("exited_fab_mini").icon("add").on_click(|_| {
+                            get_exist_element_by_id::<Element>("exited_fab_mini").class_list().add_1(Fab::EXITED_CLASS).ok();
+                        }) }
                     </span>
                 </div>
                 <div>
@@ -345,9 +349,9 @@ impl Root {
                         { Fab::new().ripple(false).icon("favorite_border").label("favorite") }
                     </span>
                     <span class = "demo-item">
-                        { Fab::new().id("exited_fab_extended").icon("favorite_border").label("favorite").on_click(self.link.callback(|_| {
-                            js_sys::eval(&format!("document.getElementById('exited_fab_extended').classList.add('{}')", Fab::EXITED_CLASS)).ok();
-                        })) }
+                        { Fab::new().id("exited_fab_extended").icon("favorite_border").label("favorite").on_click(|_| {
+                            get_exist_element_by_id::<Element>("exited_fab_extended").class_list().add_1(Fab::EXITED_CLASS).ok();
+                        }) }
                     </span>
                 </div>
                 <div>
@@ -518,10 +522,10 @@ impl Root {
                         { Switch::new().on() }
                     </span>
                     <span class = "demo-item">
-                        { Switch::new().disabled(true) }
+                        { Switch::new().disabled() }
                     </span>
                     <span class = "demo-item">
-                        { Switch::new().disabled(true).on() }
+                        { Switch::new().disabled().on() }
                     </span>
                 </div>
                 <div>
@@ -538,13 +542,112 @@ impl Root {
                     </span>
                     <span class = "demo-item">
                         <div class = "mdc-form-field">
-                            { Switch::new().id("switch-label-disabled-1").disabled(true).label("Disabled 1") }
+                            { Switch::new().id("switch-label-disabled-1").disabled().label("Disabled 1") }
                         </div>
                     </span>
                     <span class = "demo-item">
                         <div class = "mdc-form-field">
-                            { Switch::new().id("switch-label-disabled-2").disabled(true).on().label("Disabled 2") }
+                            { Switch::new().id("switch-label-disabled-2").disabled().on().label("Disabled 2") }
                         </div>
+                    </span>
+                </div>
+            </div>
+        }
+    }
+
+    fn view_chips(&self) -> Html {
+        html! {
+            <div>
+                <div>
+                    <h3 class = "mdc-typography--subtitle1">{ "Basic" }</h3>
+                    <span class = "demo-item">
+                        {
+                            ChipSet::new()
+                                .chip(Chip::simple().tab_index(0).text("Chip One"))
+                                .chip(Chip::simple().text("Chip Two"))
+                        }
+                    </span>
+                </div>
+                <div>
+                    <h3 class = "mdc-typography--subtitle1">{ "With icons" }</h3>
+                    <span class = "demo-item">
+                        {
+                            ChipSet::new()
+                                .chip(Chip::simple().tab_index(0).icon("bookmark").text("Chip One"))
+                                .chip(Chip::simple().icon("face").text("Chip Two"))
+                        }
+                    </span>
+                    <span class = "demo-item">
+                        {
+                            ChipSet::new()
+                                .chip(Chip::simple().tab_index(0).text("Chip One").icon("cancel"))
+                                .chip(Chip::simple().text("Chip Two").icon("close"))
+                        }
+                    </span>
+                </div>
+                <div>
+                    <h3 class = "mdc-typography--subtitle1">{ "Choice" }</h3>
+                    <span class = "demo-item">
+                        {
+                            ChipSet::new()
+                                .choice()
+                                .chip(Chip::simple().tab_index(0).text("Chip One"))
+                                .chip(Chip::simple().text("Chip Two"))
+                        }
+                    </span>
+                    <span class = "demo-item">
+                        {
+                            ChipSet::new()
+                                .choice()
+                                .chip(Chip::simple().tab_index(0).icon("event").text("Chip One"))
+                                .chip(Chip::simple().text("Chip Two").icon("cancel"))
+                        }
+                    </span>
+                </div>
+                <div>
+                    <h3 class = "mdc-typography--subtitle1">{ "Filter" }</h3>
+                    <span class = "demo-item">
+                        {
+                            ChipSet::new()
+                                .filter()
+                                .chip(Chip::simple().tab_index(0).checkmark().text("Chip One"))
+                                .chip(Chip::simple().checkmark().text("Chip Two"))
+                        }
+                    </span>
+                    <span class = "demo-item">
+                        {
+                            ChipSet::new()
+                                .filter()
+                                .chip(Chip::simple().tab_index(0).icon("event").checkmark().text("Chip One"))
+                                .chip(Chip::simple().checkmark().text("Chip Two").icon("cancel"))
+                        }
+                    </span>
+                </div>
+                <div>
+                    <h3 class = "mdc-typography--subtitle1">{ "Selected" }</h3>
+                    <span class = "demo-item">
+                        {
+                            ChipSet::new()
+                                .filter()
+                                .chip(Chip::simple().tab_index(0).checkmark().selected().text("Chip One"))
+                                .chip(Chip::simple().checkmark().text("Chip Two"))
+                        }
+                    </span>
+                    <span class = "demo-item">
+                        {
+                            ChipSet::new()
+                                .filter()
+                                .chip(Chip::simple().tab_index(0).selected().icon("event").checkmark().text("Chip One"))
+                                .chip(Chip::simple().icon("face").checkmark().text("Chip Two"))
+                        }
+                    </span>
+                    <span class = "demo-item">
+                        {
+                            ChipSet::new()
+                                .choice()
+                                .chip(Chip::simple().tab_index(0).icon("event").text("Chip One").selected())
+                                .chip(Chip::simple().text("Chip Two").icon("cancel"))
+                        }
                     </span>
                 </div>
             </div>
@@ -827,7 +930,7 @@ impl Root {
                             {
                                 Button::new()
                                     .label("Open Menu")
-                                    .on_click(self.link.callback(|_| Menu::open_existing("simple-menu")))
+                                    .on_click(|_| Menu::open_existing("simple-menu"))
                             }
                             {
                                 Menu::new().id("simple-menu").items(vec![

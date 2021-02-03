@@ -10,8 +10,8 @@ use yew::{
 };
 
 use crate::{
-    utils::{MdcWidget, ToWidgetWithVList, VTagExt},
-    AUTO_INIT_ATTR,
+    utils::{ToWidgetWithVList, VTagExt},
+    MdcWidget, AUTO_INIT_ATTR,
 };
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -233,13 +233,13 @@ impl TextField {
             .expect("The TextField widget must have ID")
     }
 
-    pub fn on_click(self, callback: Callback<MouseEvent>) -> Self {
-        self.listener(Rc::new(onclick::Wrapper::new(callback)))
+    pub fn on_click(self, callback: impl Into<Callback<MouseEvent>>) -> Self {
+        self.listener(Rc::new(onclick::Wrapper::new(callback.into())))
     }
 
-    pub fn on_input(mut self, callback: Callback<InputData>) -> Self {
+    pub fn on_input(mut self, callback: impl Into<Callback<InputData>>) -> Self {
         if let Some(input) = self.root_tag_mut().find_child_tag_recursively_mut("input") {
-            input.add_listener(Rc::new(oninput::Wrapper::new(callback)));
+            input.add_listener(Rc::new(oninput::Wrapper::new(callback.into())));
         }
         self
     }

@@ -5,10 +5,7 @@ use std::{
 
 use yew::{html, html::onclick, Callback, Html, MouseEvent};
 
-use crate::{
-    utils::{MdcWidget, VTagExt},
-    AUTO_INIT_ATTR,
-};
+use crate::{ripple, utils::VTagExt, MdcWidget, AUTO_INIT_ATTR};
 
 #[derive(Debug, Clone)]
 pub struct Fab {
@@ -35,7 +32,9 @@ impl Fab {
 
     pub fn new() -> Self {
         let mut icon_button = Self::simple();
-        icon_button.root_tag_mut().set_attr(AUTO_INIT_ATTR, "MDCRipple");
+        icon_button
+            .root_tag_mut()
+            .set_attr(AUTO_INIT_ATTR, ripple::MDC_TYPE_NAME);
         icon_button
     }
 
@@ -56,7 +55,7 @@ impl Fab {
 
     pub fn ripple(mut self, enabled: bool) -> Self {
         if enabled {
-            self.root_tag_mut().set_attr(AUTO_INIT_ATTR, "MDCRipple");
+            self.root_tag_mut().set_attr(AUTO_INIT_ATTR, ripple::MDC_TYPE_NAME);
         } else {
             self.root_tag_mut().remove_attr(AUTO_INIT_ATTR);
         }
@@ -77,8 +76,8 @@ impl Fab {
         self
     }
 
-    pub fn on_click(self, callback: Callback<MouseEvent>) -> Self {
-        self.listener(Rc::new(onclick::Wrapper::new(callback)))
+    pub fn on_click(self, callback: impl Into<Callback<MouseEvent>>) -> Self {
+        self.listener(Rc::new(onclick::Wrapper::new(callback.into())))
     }
 }
 
