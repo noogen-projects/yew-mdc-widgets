@@ -151,7 +151,7 @@ impl Dialog {
         let dialog = dom::get_exist_element_by_id::<Element>(id.as_ref())
             .get(Self::MDC_TYPE_NAME)
             .unchecked_into::<mdc::Dialog>();
-        dialog.();
+        dialog.close();
     }
 }
 
