@@ -130,10 +130,6 @@ impl Dialog {
         self
     }
 
-    pub fn on_click(self, callback: impl Into<Callback<MouseEvent>>) -> Self {
-        self.listener(Rc::new(onclick::Wrapper::new(callback.into())))
-    }
-
     fn surface_mut(&mut self) -> &mut VTag {
         self.root_tag_mut().children.children[0]
             .find_child_contains_class_mut(Self::SURFACE_CLASS)
@@ -152,6 +148,10 @@ impl Dialog {
             .get(Self::MDC_TYPE_NAME)
             .unchecked_into::<mdc::Dialog>();
         dialog.close();
+    }
+
+    pub fn on_click(self, callback: impl Into<Callback<MouseEvent>>) -> Self {
+        self.listener(Rc::new(onclick::Wrapper::new(callback.into())))
     }
 }
 
