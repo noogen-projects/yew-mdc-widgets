@@ -153,6 +153,30 @@ impl Dialog {
     pub fn on_click(self, callback: impl Into<Callback<MouseEvent>>) -> Self {
         self.listener(Rc::new(onclick::Wrapper::new(callback.into())))
     }
+
+    /// Indicates when the dialog begins its opening animation.
+    /// event.detail: `{}`
+    pub fn on_opening(self, callback: impl Into<Callback<MouseEvent>>) -> Self {
+        self.on_event("MDCDialog:opening", callback)
+    }
+
+    /// Indicates when the dialog finishes its opening animation.
+    /// event.detail: `{}`
+    pub fn on_opened(self, callback: impl Into<Callback<MouseEvent>>) -> Self {
+        self.on_event("MDCDialog:opened", callback)
+    }
+
+    /// Indicates when the dialog begins its closing animation. action represents the action which closed the dialog.
+    /// event.detail: `{action: string?}`
+    pub fn on_closing(self, callback: impl Into<Callback<MouseEvent>>) -> Self {
+        self.on_event("MDCDialog:closing", callback)
+    }
+
+    /// Indicates when the dialog finishes its closing animation. action represents the action which closed the dialog.
+    /// event.detail: `{action: string?}`
+    pub fn on_closed(self, callback: impl Into<Callback<MouseEvent>>) -> Self {
+        self.on_event("MDCDialog:closed", callback)
+    }
 }
 
 impl MdcWidget for Dialog {
