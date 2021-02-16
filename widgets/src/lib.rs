@@ -8,7 +8,7 @@ pub use yew;
 
 pub use self::{
     bind::mdc::auto_init, button::*, card::*, checkbox::*, chip::*, data_table::*, dialog::*, drawer::*, fab::*,
-    icon_button::*, list::*, listeners::*, menu::*, radio::*, switch::*, text_field::*, top_app_bar::*,
+    icon_button::*, list::*, listeners::*, menu::*, radio::*, switch::*, tab::*, text_field::*, top_app_bar::*,
     widget::MdcWidget,
 };
 
@@ -27,6 +27,7 @@ pub mod menu;
 pub mod radio;
 pub mod ripple;
 pub mod switch;
+pub mod tab;
 pub mod text_field;
 pub mod top_app_bar;
 pub mod utils;

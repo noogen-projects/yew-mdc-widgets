@@ -6,8 +6,9 @@ use yew::{html, initialize, run_loop, utils, App, Component, ComponentLink, Html
 use yew_mdc_widgets::{
     auto_init,
     utils::dom::{get_exist_element_by_id, JsObjectAccess},
-    Button, ButtonStyle, Card, CardContent, Checkbox, Chip, ChipSet, DataTable, Dialog, Drawer, Element, Fab,
-    IconButton, List, ListItem, MdcWidget, Menu, Radio, Switch, TableCell, TextField, TopAppBar,
+    Button, ButtonStyle, Card, CardContent, Checkbox, Chip, ChipSet, DataTable, Dialog, Drawer,
+    Element, Fab, IconButton, List, ListItem, MdcWidget, Menu, Radio, Switch, Tab, TabBar,
+    TableCell, TextField, TopAppBar,
 };
 
 struct Root;
@@ -30,7 +31,9 @@ impl Component for Root {
 
     fn view(&self) -> Html {
         let contents = vec![
-            ListItem::link("#buttons").text("Buttons").attr("tabindex", "0"),
+            ListItem::link("#buttons")
+                .text("Buttons")
+                .attr("tabindex", "0"),
             ListItem::link("#icon_buttons").text("Icon buttons"),
             ListItem::link("#fabs").text("Floating Action Buttons"),
             ListItem::link("#checkboxes").text("Checkboxes"),
@@ -42,6 +45,7 @@ impl Component for Root {
             ListItem::link("#menu").text("Menu"),
             ListItem::link("#data_tables").text("Data tables"),
             ListItem::link("#dialog").text("Dialog"),
+            ListItem::link("#tabs").text("Tabs"),
             ListItem::link("#cards").text("Cards"),
         ];
 
@@ -53,7 +57,8 @@ impl Component for Root {
                 List::nav()
                     .items(contents.clone().into_iter().map(|item| {
                         item.on_click(|_| {
-                            let drawer = get_exist_element_by_id::<Element>("app-drawer").get(Drawer::MDC_TYPE_NAME);
+                            let drawer = get_exist_element_by_id::<Element>("app-drawer")
+                                .get(Drawer::MDC_TYPE_NAME);
                             drawer.set("open", false);
                         })
                     }))
@@ -66,7 +71,8 @@ impl Component for Root {
             .navigation_item(IconButton::new().icon("menu"))
             .enable_shadow_when_scroll_window()
             .on_navigation(|_| {
-                let drawer = get_exist_element_by_id::<Element>("app-drawer").get(Drawer::MDC_TYPE_NAME);
+                let drawer =
+                    get_exist_element_by_id::<Element>("app-drawer").get(Drawer::MDC_TYPE_NAME);
                 let opened = drawer.get("open").as_bool().unwrap_or(false);
                 drawer.set("open", !opened);
             });
@@ -119,6 +125,9 @@ impl Component for Root {
 
                             <h2 class = "demo-title mdc-typography--headline6"><a name = "dialog"></a>{ "Dialog" }</h2>
                             { self.view_dialog() }
+
+                            <h2 class = "demo-title mdc-typography--headline6"><a name = "tabs"></a>{ "Tabs" }</h2>
+                            { self.view_tabs() }
 
                             <h2 class = "demo-title mdc-typography--headline6"><a name = "cards"></a>{ "Cards" }</h2>
                             { self.view_cards() }
@@ -1118,6 +1127,52 @@ impl Root {
                                     )
                             }
                         </div>
+                    </span>
+                </div>
+            </div>
+        }
+    }
+
+    fn view_tabs(&self) -> Html {
+        html! {
+            <div>
+                <div>
+                    <h3 class = "mdc-typography--subtitle1">{ "Basic" }</h3>
+                    <span class = "demo-item">
+                        {
+                            TabBar::new().id("tab-bar-basic")
+                                .tab(Tab::new().label("Tab One").tab_index(0))
+                                .tab(Tab::new().label("Tab Two"))
+                        }
+                    </span>
+                </div>
+                <div>
+                    <h3 class = "mdc-typography--subtitle1">{ "Leading Icon" }</h3>
+                    <span class = "demo-item" style = "width:800px">
+                        {
+                            TabBar::new().id("tab-bar-icons")
+                                .tab(Tab::new().icon("star").label("Tab One").tab_index(0))
+                                .tab(Tab::new().icon("favorite").label("Tab Two"))
+                                .tab(Tab::new().icon("bookmark").label("Tab Three"))
+                                .tab(Tab::new().icon("near_me").label("Tab Four"))
+                                .tab(Tab::new().icon("free_breakfast").label("Tab Five"))
+                                .tab(Tab::new().icon("watch_later").label("Tab Six"))
+                                .tab(Tab::new().icon("event").label("Tab Seven"))
+                        }
+                    </span>
+                </div>
+                <div>
+                    <h3 class = "mdc-typography--subtitle1">{ "Stacked Icon" }</h3>
+                    <span class = "demo-item">
+                        {
+                            TabBar::new().id("tab-bar-stacked")
+                                .tab(Tab::new().icon("star").label("Tab One").stacked().tab_index(0))
+                                .tab(Tab::new().icon("favorite").label("Tab Two").stacked())
+                                .tab(Tab::new().icon("bookmark").label("Tab Three").stacked())
+                                .tab(Tab::new().icon("near_me").label("Tab Four").stacked())
+                                .tab(Tab::new().icon("free_breakfast").label("Tab Five").stacked())
+                                .tab(Tab::new().icon("watch_later").label("Tab Six").stacked())
+                        }
                     </span>
                 </div>
             </div>
