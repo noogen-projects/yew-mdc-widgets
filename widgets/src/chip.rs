@@ -302,7 +302,7 @@ impl ChipSet {
     }
 
     pub fn chips(mut self, chips: impl IntoIterator<Item = impl Into<Html>>) -> Self {
-        for chip in chips.into_iter() {
+        for chip in chips {
             self = self.chip(chip);
         }
         self

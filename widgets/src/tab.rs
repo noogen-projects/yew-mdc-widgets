@@ -75,7 +75,6 @@ impl Tab {
         self
     }
 
-    //?
     pub fn tab_index(mut self, index: isize) -> Self {
         self.set_attr("tabindex", format!("{}", index));
         self
@@ -178,10 +177,10 @@ impl TabBar {
     pub fn simple() -> Self {
         Self {
             html: html! {
-                <div class=Self::CLASS role="tablist">
-                    <div class=Self::SCROLLER_CLASS>
-                        <div class=Self::SCROLL_AREA_CLASS>
-                            <div class=Self::SCROLL_CONTENT_CLASS></div>
+                <div class = Self::CLASS role = "tablist">
+                    <div class = Self::SCROLLER_CLASS>
+                        <div class = Self::SCROLL_AREA_CLASS>
+                            <div class = Self::SCROLL_CONTENT_CLASS></div>
                         </div>
                     </div>
                 </div>
@@ -196,25 +195,14 @@ impl TabBar {
     }
 
     pub fn tab(mut self, tab: impl Into<Html>) -> Self {
-        let mut tab = tab.into();
-        let content = if let Some(content) = self.find_child_contains_class_recursively_mut(Self::SCROLL_CONTENT_CLASS)
-        {
-            content
-        } else {
-            self.root_tag_mut()
-        };
-        let tab_number = content.children.len();
-        if tab.attr("id").is_none() && tab.is_some_child_contains_class(Tab::RIPPLE_CLASS) {
-            if let (Some(id), Some(tab)) = (content.attr("id"), tab.root_tag_mut()) {
-                tab.set_attr("id", format!("{}-tab-{}", id, tab_number));
-            }
-        }
-        content.add_child(tab);
+        self.find_child_contains_class_recursively_mut(Self::SCROLL_CONTENT_CLASS)
+            .expect("Tab should contains the scroll content")
+            .add_child(tab.into());
         self
     }
 
     pub fn tabs(mut self, tabs: impl IntoIterator<Item = impl Into<Html>>) -> Self {
-        for tab in tabs.into_iter() {
+        for tab in tabs {
             self = self.tab(tab);
         }
         self

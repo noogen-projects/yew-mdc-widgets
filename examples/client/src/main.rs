@@ -30,7 +30,7 @@ impl Component for Root {
 
     fn view(&self) -> Html {
         let contents = vec![
-            ListItem::link("#buttons").text("Buttons").attr("tabindex", "0"),
+            ListItem::link("#buttons").text("Buttons").tab_index(0),
             ListItem::link("#icon_buttons").text("Icon buttons"),
             ListItem::link("#fabs").text("Floating Action Buttons"),
             ListItem::link("#checkboxes").text("Checkboxes"),

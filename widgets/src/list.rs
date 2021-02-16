@@ -46,6 +46,10 @@ impl ListItem {
         item.ripple(true)
     }
 
+    pub fn tab_index(self, index: isize) -> Self {
+        self.attr("tabindex", format!("{}", index))
+    }
+
     pub fn text(mut self, text: impl Into<Html>) -> Self {
         let root = self.root_tag_mut();
 
