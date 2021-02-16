@@ -4,7 +4,7 @@ use yew::{html, services::ConsoleService, Callback, Html, MouseEvent};
 
 use crate::{
     utils::{
-        add_input_label, labeled_on_click, ripple_element, root_and_input_child_disabled, ToWidgetWithVList, VTagExt,
+        add_input_label, labeled_on_click, ripple_element, root_and_input_child_disabled, IntoWidgetWithVList, VTagExt,
     },
     MdcWidget, AUTO_INIT_ATTR,
 };
@@ -99,8 +99,8 @@ impl MdcWidget for Radio {
     }
 }
 
-impl ToWidgetWithVList for Radio {
-    fn to_widget_with_v_list(mut self) -> Self {
+impl IntoWidgetWithVList for Radio {
+    fn into_widget_with_v_list(mut self) -> Self {
         if !matches!(self.html, Html::VList(_)) {
             self.html = html! { <>{ self.html }</> }
         }

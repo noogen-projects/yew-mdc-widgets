@@ -166,14 +166,14 @@ impl Dialog {
         self.on_event("MDCDialog:opened", callback)
     }
 
-    /// Indicates when the dialog begins its closing animation. action represents the action which closed the dialog.
-    /// event.detail: `{action: string?}`
+    /// Indicates when the dialog begins its closing animation. action represents the action which
+    /// closed the dialog. event.detail: `{action: string?}`
     pub fn on_closing(self, callback: impl Into<Callback<MouseEvent>>) -> Self {
         self.on_event("MDCDialog:closing", callback)
     }
 
-    /// Indicates when the dialog finishes its closing animation. action represents the action which closed the dialog.
-    /// event.detail: `{action: string?}`
+    /// Indicates when the dialog finishes its closing animation. action represents the action which
+    /// closed the dialog. event.detail: `{action: string?}`
     pub fn on_closed(self, callback: impl Into<Callback<MouseEvent>>) -> Self {
         self.on_event("MDCDialog:closed", callback)
     }

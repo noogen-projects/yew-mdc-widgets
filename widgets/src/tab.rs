@@ -32,7 +32,8 @@ impl Tab {
     /// Indicates that the tab icon and label should flow vertically instead of horizontally.
     pub const STACKED_CLASS: &'static str = "mdc-tab--stacked";
 
-    /// Indicates that the tab should shrink in size to be as narrow as possible without causing text to wrap.
+    /// Indicates that the tab should shrink in size to be as narrow as possible without causing
+    /// text to wrap.
     pub const MIN_WIDTH_CLASS: &'static str = "mdc-tab--min-width";
 
     /// Indicates the text label of the tab.
@@ -57,13 +58,10 @@ impl Tab {
     }
 
     pub fn indicator(mut self) -> Self {
-        self.insert_child(
-            1,
-            html! {
-            <span class = Self::INDICATOR_CLASS>
-                <span class = "mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
-            </span>},
-        );
+        self.insert_child(1, html! {
+        <span class = Self::INDICATOR_CLASS>
+            <span class = "mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+        </span>});
         self
     }
 
@@ -199,8 +197,7 @@ impl TabBar {
 
     pub fn tab(mut self, tab: impl Into<Html>) -> Self {
         let mut tab = tab.into();
-        let content = if let Some(content) =
-            self.find_child_contains_class_recursively_mut(Self::SCROLL_CONTENT_CLASS)
+        let content = if let Some(content) = self.find_child_contains_class_recursively_mut(Self::SCROLL_CONTENT_CLASS)
         {
             content
         } else {
@@ -225,9 +222,7 @@ impl TabBar {
 
     #[track_caller]
     pub fn root_id(&self) -> &str {
-        self.root_tag()
-            .attr("id")
-            .expect("The TabBar widget must have ID")
+        self.root_tag().attr("id").expect("The TabBar widget must have ID")
     }
 }
 

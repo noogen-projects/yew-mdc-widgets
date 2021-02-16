@@ -4,7 +4,7 @@ use yew::{html, services::ConsoleService, Callback, Html, MouseEvent};
 
 use crate::{
     utils::{
-        add_input_label, labeled_on_click, ripple_element, root_and_input_child_disabled, ToWidgetWithVList, VTagExt,
+        add_input_label, labeled_on_click, ripple_element, root_and_input_child_disabled, IntoWidgetWithVList, VTagExt,
     },
     MdcWidget, AUTO_INIT_ATTR,
 };
@@ -24,7 +24,8 @@ impl Checkbox {
                     <input type = "checkbox" class = "mdc-checkbox__native-control" />
                     <div class = "mdc-checkbox__background">
                         <svg class = "mdc-checkbox__checkmark" viewBox = "0 0 24 24">
-                            <path class = "mdc-checkbox__checkmark-path" fill = "none" d = "M1.73,12.91 8.1,19.28 22.79,4.59" />
+                            <path class = "mdc-checkbox__checkmark-path" fill = "none"
+                                    d = "M1.73,12.91 8.1,19.28 22.79,4.59" />
                         </svg>
                         <div class = "mdc-checkbox__mixedmark"></div>
                     </div>
@@ -112,8 +113,8 @@ impl MdcWidget for Checkbox {
     }
 }
 
-impl ToWidgetWithVList for Checkbox {
-    fn to_widget_with_v_list(mut self) -> Self {
+impl IntoWidgetWithVList for Checkbox {
+    fn into_widget_with_v_list(mut self) -> Self {
         if !matches!(self.html, Html::VList(_)) {
             self.html = html! { <>{ self.html }</> }
         }

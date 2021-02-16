@@ -44,10 +44,12 @@ impl Chip {
     /// Indicates the checkmark in a filter chip.
     pub const CHECKMARK_CLASS: &'static str = "mdc-chip__checkmark";
 
-    /// Mandatory with the use of [`Chip::CHECKMARK_CLASS`]. Indicates the checkmark SVG element in a filter chip.
+    /// Mandatory with the use of [`Chip::CHECKMARK_CLASS`]. Indicates the checkmark SVG element in
+    /// a filter chip.
     pub const CHECKMARK_SVG_CLASS: &'static str = "mdc-chip__checkmark-svg";
 
-    /// Mandatory with the use of [`Chip::CHECKMARK_CLASS`]. Indicates the checkmark SVG path in a filter chip.
+    /// Mandatory with the use of [`Chip::CHECKMARK_CLASS`]. Indicates the checkmark SVG path in a
+    /// filter chip.
     pub const CHECKMARK_SVG_PATH_CLASS: &'static str = "mdc-chip__checkmark-path";
 
     pub fn simple() -> Self {
@@ -111,7 +113,11 @@ impl Chip {
         } else {
             root.add_child(html! {
                 <span role = "gridcell">
-                    <i class = vec!["material-icons", Self::ICON_CLASS, Self::ICON_TRAILING_CLASS] tabindex = "-1" role = "button">{ name.into() }</i>
+                    <i class = vec![
+                            "material-icons",
+                            Self::ICON_CLASS,
+                            Self::ICON_TRAILING_CLASS
+                        ] tabindex = "-1" role = "button">{ name.into() }</i>
                 </span>
             });
         }
@@ -189,12 +195,12 @@ fn mark_svg_path(parent: &mut Html) {
             for child in parent.children.iter_mut() {
                 mark_svg_path(child);
             }
-        }
+        },
         Html::VList(list) => {
             for item in list.iter_mut() {
                 mark_svg_path(item);
             }
-        }
+        },
         _ => (),
     }
 }
@@ -263,17 +269,20 @@ impl ChipSet {
         chip_set
     }
 
-    /// Indicates that the chips in the set are input chips, which enable user input by converting text into chips.
+    /// Indicates that the chips in the set are input chips, which enable user input by converting
+    /// text into chips.
     pub fn input(self) -> Self {
         self.class(Self::INPUT_CLASS)
     }
 
-    /// Indicates that the chips in the set are choice chips, which allow a single selection from a set of options.
+    /// Indicates that the chips in the set are choice chips, which allow a single selection from a
+    /// set of options.
     pub fn choice(self) -> Self {
         self.class(Self::CHOICE_CLASS)
     }
 
-    /// Indicates that the chips in the set are filter chips, which allow multiple selection from a set of options.
+    /// Indicates that the chips in the set are filter chips, which allow multiple selection from a
+    /// set of options.
     pub fn filter(self) -> Self {
         self.class(Self::FILTER_CLASS)
     }

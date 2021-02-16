@@ -8,11 +8,11 @@ use crate::MdcWidget;
 pub mod dom;
 pub mod ext;
 
-pub(crate) trait ToWidgetWithVList: MdcWidget {
-    fn to_widget_with_v_list(self) -> Self;
+pub(crate) trait IntoWidgetWithVList: MdcWidget {
+    fn into_widget_with_v_list(self) -> Self;
 }
 
-pub(crate) fn add_input_label<W: ToWidgetWithVList>(mut widget: W, label: impl Into<Html>) -> Result<W, W> {
+pub(crate) fn add_input_label<W: IntoWidgetWithVList>(mut widget: W, label: impl Into<Html>) -> Result<W, W> {
     if let Some(input_id) = widget
         .root_tag()
         .find_child_tag_recursively("input")
@@ -21,7 +21,7 @@ pub(crate) fn add_input_label<W: ToWidgetWithVList>(mut widget: W, label: impl I
         let label = html! {
             <label for = input_id>{ label }</label>
         };
-        widget = widget.to_widget_with_v_list();
+        widget = widget.into_widget_with_v_list();
         if let Html::VList(list) = widget.html_mut() {
             list.children.insert(1, label);
         }
@@ -37,12 +37,9 @@ pub(crate) fn ripple_element(widget: &mut impl MdcWidget, ripple_class: impl AsR
     if enabled {
         if !root.is_some_child_contains_class(ripple_class) {
             let idx = root.children.len().saturating_sub(1);
-            root.children.insert(
-                idx,
-                html! {
-                    <div class = ripple_class></div>
-                },
-            );
+            root.children.insert(idx, html! {
+                <div class = ripple_class></div>
+            });
         }
     } else {
         root.remove_child_contains_class(ripple_class);

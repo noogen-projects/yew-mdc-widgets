@@ -6,9 +6,8 @@ use yew::{html, initialize, run_loop, utils, App, Component, ComponentLink, Html
 use yew_mdc_widgets::{
     auto_init,
     utils::dom::{get_exist_element_by_id, JsObjectAccess},
-    Button, ButtonStyle, Card, CardContent, Checkbox, Chip, ChipSet, DataTable, Dialog, Drawer,
-    Element, Fab, IconButton, List, ListItem, MdcWidget, Menu, Radio, Switch, Tab, TabBar,
-    TableCell, TextField, TopAppBar,
+    Button, ButtonStyle, Card, CardContent, Checkbox, Chip, ChipSet, DataTable, Dialog, Drawer, Element, Fab,
+    IconButton, List, ListItem, MdcWidget, Menu, Radio, Switch, Tab, TabBar, TableCell, TextField, TopAppBar,
 };
 
 struct Root;
@@ -31,9 +30,7 @@ impl Component for Root {
 
     fn view(&self) -> Html {
         let contents = vec![
-            ListItem::link("#buttons")
-                .text("Buttons")
-                .attr("tabindex", "0"),
+            ListItem::link("#buttons").text("Buttons").attr("tabindex", "0"),
             ListItem::link("#icon_buttons").text("Icon buttons"),
             ListItem::link("#fabs").text("Floating Action Buttons"),
             ListItem::link("#checkboxes").text("Checkboxes"),
@@ -57,8 +54,7 @@ impl Component for Root {
                 List::nav()
                     .items(contents.clone().into_iter().map(|item| {
                         item.on_click(|_| {
-                            let drawer = get_exist_element_by_id::<Element>("app-drawer")
-                                .get(Drawer::MDC_TYPE_NAME);
+                            let drawer = get_exist_element_by_id::<Element>("app-drawer").get(Drawer::MDC_TYPE_NAME);
                             drawer.set("open", false);
                         })
                     }))
@@ -71,8 +67,7 @@ impl Component for Root {
             .navigation_item(IconButton::new().icon("menu"))
             .enable_shadow_when_scroll_window()
             .on_navigation(|_| {
-                let drawer =
-                    get_exist_element_by_id::<Element>("app-drawer").get(Drawer::MDC_TYPE_NAME);
+                let drawer = get_exist_element_by_id::<Element>("app-drawer").get(Drawer::MDC_TYPE_NAME);
                 let opened = drawer.get("open").as_bool().unwrap_or(false);
                 drawer.set("open", !opened);
             });

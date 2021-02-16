@@ -13,18 +13,20 @@ impl TopAppBar {
     pub const VAR_NAME: &'static str = "top_app_bar";
     const SCROLLED_CLASS: &'static str = "mdc-top-app-bar--fixed-scrolled";
 
-    /// Class used to style the content below the standard and fixed top app bar to prevent the top app bar from
-    /// covering it
+    /// Class used to style the content below the standard and fixed top app bar to prevent the top
+    /// app bar from covering it
     pub const FIXED_ADJUST_CLASS: &'static str = "mdc-top-app-bar--fixed-adjust";
 
-    /// Class used to style the content below the prominent top app bar to prevent the top app bar from covering it
+    /// Class used to style the content below the prominent top app bar to prevent the top app bar
+    /// from covering it
     pub const PROMINENT_FIXED_ADJUST_CLASS: &'static str = "mdc-top-app-bar--prominent-fixed-adjust";
 
-    /// Class used to style the content below the dense top app bar to prevent the top app bar from covering it
+    /// Class used to style the content below the dense top app bar to prevent the top app bar from
+    /// covering it
     pub const DENSE_FIXED_ADJUST_CLASS: &'static str = "mdc-top-app-bar--dense-fixed-adjust";
 
-    /// Class used to style the content below the top app bar when styled as both dense and prominent, to prevent the
-    /// top app bar from covering it
+    /// Class used to style the content below the top app bar when styled as both dense and
+    /// prominent, to prevent the top app bar from covering it
     pub const DENSE_PROMINENT_FIXED_ADJUST_CLASS: &'static str = "mdc-top-app-bar--dense-prominent-fixed-adjust";
 
     pub fn new() -> Self {

@@ -3,7 +3,7 @@ use std::ops::{Deref, DerefMut};
 use yew::{html, services::ConsoleService, Callback, Html, MouseEvent};
 
 use crate::{
-    utils::{add_input_label, labeled_on_click, root_and_input_child_disabled, ToWidgetWithVList, VTagExt},
+    utils::{add_input_label, labeled_on_click, root_and_input_child_disabled, IntoWidgetWithVList, VTagExt},
     MdcWidget, AUTO_INIT_ATTR,
 };
 
@@ -99,8 +99,8 @@ impl MdcWidget for Switch {
     }
 }
 
-impl ToWidgetWithVList for Switch {
-    fn to_widget_with_v_list(mut self) -> Self {
+impl IntoWidgetWithVList for Switch {
+    fn into_widget_with_v_list(mut self) -> Self {
         if !matches!(self.html, Html::VList(_)) {
             self.html = html! { <>{ self.html }</> }
         }
