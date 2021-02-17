@@ -8,13 +8,13 @@ The web MDC widgets for Yew.
 Setup dependencies:
 
 ```shell script
-cargo install wasm-bindgen-cli
+cargo install wasm-bindgen-cli cargo-make
 ```
 
 Build example wasm client:
 
 ```shell script
-./examples/build_client.sh release
+cargo make example_client
 ```
 
 Run example server:
