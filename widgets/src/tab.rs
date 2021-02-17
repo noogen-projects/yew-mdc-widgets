@@ -61,9 +61,10 @@ impl Tab {
         self.insert_child(
             1,
             html! {
-            <span class = Self::INDICATOR_CLASS>
-                <span class = "mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
-            </span>},
+                <span class = Self::INDICATOR_CLASS>
+                    <span class = "mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                </span>
+            },
         );
         self
     }
@@ -71,9 +72,10 @@ impl Tab {
     pub fn content_indicator(mut self) -> Self {
         if let Some(content) = self.find_child_tag_mut(Self::CONTENT_CLASS) {
             content.add_child(html! {
-            <span class = Self::INDICATOR_CLASS>
-                <span class = "mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
-            </span>});
+                <span class = Self::INDICATOR_CLASS>
+                    <span class = "mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                </span>
+            });
         }
         self
     }
@@ -124,7 +126,7 @@ impl Tab {
 
     /// Emitted when the Tab is interacted with, regardless of its active state.
     /// Used by parent components to know which Tab to activate.
-    /// event.detail: `{"detail": {"tabId": string}}`
+    /// event.detail: `{"tabId": string}`
     pub fn on_interaction(self, callback: impl Into<Callback<CustomEvent>>) -> Self {
         self.on_event("MDCTab:interacted", callback)
     }
@@ -217,7 +219,7 @@ impl TabBar {
 
     /// Emitted when a Tab is activated with the index of the activated Tab.
     /// Listen for this to update content when a Tab becomes active.
-    /// event.detail: '{"detail": {"index": number}}'
+    /// event.detail: '{"index": number}'
     pub fn on_activated(self, callback: impl Into<Callback<CustomEvent>>) -> Self {
         self.on_event("MDCTabBar:activated", callback)
     }
