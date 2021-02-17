@@ -1,0 +1,35 @@
+[config]
+default_to_workspace = false
+additional_profiles = ["debug"]
+
+[tasks.set_vars.env]
+RUSTFLAGS = "-Copt-level=s"
+MODE = "release"
+ADDITIONAL = "--release"
+
+[tasks.set_vars.env.debug]
+RUSTFLAGS = ""
+MODE = "debug"
+ADDITIONAL = "--color=auto" # it's a stub
+
+[tasks.build_example_client]
+command = "cargo"
+args = ["build", "-p", "example_client", "--target", "wasm32-unknown-unknown", "${ADDITIONAL}"]
+dependencies = ["set_vars"]
+
+[tasks.deploy_example_client]
+command = "wasm-bindgen"
+args = [
+    "--target",
+    "web",
+    "--no-typescript",
+    "--out-dir",
+    "static/target",
+    "--out-name",
+    "example_client",
+    "target/wasm32-unknown-unknown/${MODE}/example_client.wasm",
+]
+dependencies = ["set_vars"]
+
+[tasks.example_client]
+dependencies = ["build_example_client", "deploy_example_client"]
