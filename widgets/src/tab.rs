@@ -6,20 +6,22 @@ use std::{
 use yew::{html, html::onclick, Callback, Html, MouseEvent};
 
 use crate::{
-    utils::{
-        dom::{self, JsCast, JsObjectAccess},
-        VTagExt,
-    },
+    utils::{dom, VTagExt},
     CustomEvent, Element, MdcWidget, AUTO_INIT_ATTR,
 };
 
 pub mod mdc {
     use wasm_bindgen::prelude::*;
 
+    use crate::Element;
+
     #[wasm_bindgen]
     extern "C" {
-        #[wasm_bindgen(js_name = MDCTab)]
+        #[wasm_bindgen(js_name = MDCTab, js_namespace = ["mdc", "tab"])]
         pub type Tab;
+
+        #[wasm_bindgen(constructor, js_class = MDCTab, js_namespace = ["mdc", "tab"])]
+        pub fn new(element: Element) -> Tab;
 
         #[wasm_bindgen(method)]
         pub fn activate(this: &Tab);
@@ -79,9 +81,7 @@ impl Tab {
     }
 
     pub fn activate_existing(id: impl AsRef<str>) {
-        let tab = dom::get_exist_element_by_id::<Element>(id.as_ref())
-            .get(Self::MDC_TYPE_NAME)
-            .unchecked_into::<mdc::Tab>();
+        let tab = mdc::Tab::new(dom::get_exist_element_by_id::<Element>(id.as_ref()));
         tab.activate();
     }
 
