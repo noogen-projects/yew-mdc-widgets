@@ -6,13 +6,31 @@ use std::{
 use yew::{html, html::onclick, virtual_dom::VTag, Callback, Html, MouseEvent};
 
 use crate::{
-    bind::mdc,
     utils::{
         dom::{self, JsCast, JsObjectAccess},
         VTagExt,
     },
     Element, MdcWidget, AUTO_INIT_ATTR,
 };
+
+pub mod mdc {
+    use wasm_bindgen::prelude::*;
+
+    #[wasm_bindgen]
+    extern "C" {
+        #[wasm_bindgen(js_name = MDCDialog)]
+        pub type Dialog;
+
+        #[wasm_bindgen(method)]
+        pub fn open(this: &Dialog);
+
+        #[wasm_bindgen(method)]
+        pub fn close(this: &Dialog);
+
+        #[wasm_bindgen(method)]
+        pub fn layout(this: &Dialog);
+    }
+}
 
 #[derive(Debug, Clone)]
 pub struct Dialog {

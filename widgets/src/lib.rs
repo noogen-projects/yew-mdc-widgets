@@ -7,8 +7,8 @@ pub use web_sys;
 pub use yew;
 
 pub use self::{
-    bind::mdc::auto_init, button::*, card::*, checkbox::*, chip::*, data_table::*, dialog::*, drawer::*, fab::*,
-    icon_button::*, list::*, listeners::*, menu::*, radio::*, switch::*, tab::*, text_field::*, top_app_bar::*,
+    button::*, card::*, checkbox::*, chip::*, data_table::*, dialog::*, drawer::*, fab::*, icon_button::*, list::*,
+    listeners::*, mdc::auto_init, menu::*, radio::*, switch::*, tab::*, text_field::*, top_app_bar::*,
     widget::MdcWidget,
 };
 
@@ -32,8 +32,14 @@ pub mod text_field;
 pub mod top_app_bar;
 pub mod utils;
 pub mod widget;
-pub mod bind {
-    pub mod mdc;
+pub mod mdc {
+    use wasm_bindgen::prelude::*;
+
+    #[wasm_bindgen]
+    extern "C" {
+        #[wasm_bindgen(js_namespace = mdc, js_name = autoInit)]
+        pub fn auto_init();
+    }
 }
 
 pub const AUTO_INIT_ATTR: &str = "data-mdc-auto-init";
