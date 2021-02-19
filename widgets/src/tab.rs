@@ -25,6 +25,9 @@ pub mod mdc {
 
         #[wasm_bindgen(method)]
         pub fn activate(this: &Tab);
+
+        #[wasm_bindgen(method)]
+        pub fn deactivate(this: &Tab);
     }
 }
 
@@ -80,9 +83,14 @@ impl Tab {
         Self::simple().indicator()
     }
 
-    pub fn activate_existing(id: impl AsRef<str>) {
+    pub fn activate(id: impl AsRef<str>) {
         let tab = mdc::Tab::new(dom::get_exist_element_by_id::<Element>(id.as_ref()));
         tab.activate();
+    }
+
+    pub fn deactivate(id: impl AsRef<str>) {
+        let tab = mdc::Tab::new(dom::get_exist_element_by_id::<Element>(id.as_ref()));
+        tab.deactivate();
     }
 
     pub fn indicator(mut self) -> Self {
