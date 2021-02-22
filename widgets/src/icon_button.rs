@@ -5,7 +5,30 @@ use std::{
 
 use yew::{html, html::onclick, Callback, Html, MouseEvent};
 
-use crate::{ripple, utils::VTagExt, CustomEvent, MdcWidget, AUTO_INIT_ATTR};
+use crate::{
+    ripple,
+    utils::{
+        dom::{self, JsCast, JsObjectAccess},
+        VTagExt,
+    },
+    CustomEvent, Element, MdcWidget, AUTO_INIT_ATTR,
+};
+
+pub mod mdc {
+    use wasm_bindgen::prelude::*;
+
+    #[wasm_bindgen]
+    extern "C" {
+        #[wasm_bindgen(js_name = MDCIconButtonToggle)]
+        pub type IconButtonToggle;
+
+        #[wasm_bindgen(method, getter)]
+        pub fn on(this: &IconButtonToggle) -> bool;
+
+        #[wasm_bindgen(method, setter)]
+        pub fn set_on(this: &IconButtonToggle, is_on: bool);
+    }
+}
 
 #[derive(Debug, Clone)]
 pub struct IconButton {
@@ -78,6 +101,13 @@ impl IconButton {
             self.root_tag_mut().remove_attr("disabled");
         }
         self
+    }
+
+    pub fn set_on_by_id(id: impl AsRef<str>, is_on: bool) {
+        let toggle_button = dom::get_exist_element_by_id::<Element>(id.as_ref())
+            .get("MDCIconButtonToggle")
+            .unchecked_into::<mdc::IconButtonToggle>();
+        toggle_button.set_on(is_on);
     }
 
     /// Emits when the icon is toggled
