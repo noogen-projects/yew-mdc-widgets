@@ -5,7 +5,7 @@ use std::{
 
 use yew::{html, html::onclick, Callback, Html, MouseEvent};
 
-use crate::{ripple, utils::VTagExt, MdcWidget, AUTO_INIT_ATTR};
+use crate::{ripple, utils::VTagExt, CustomEvent, MdcWidget, AUTO_INIT_ATTR};
 
 #[derive(Debug, Clone)]
 pub struct IconButton {
@@ -78,6 +78,12 @@ impl IconButton {
             self.root_tag_mut().remove_attr("disabled");
         }
         self
+    }
+
+    /// Emits when the icon is toggled
+    /// event.detail: `{"isOn": boolean}`
+    pub fn on_change(self, callback: impl Into<Callback<CustomEvent>>) -> Self {
+        self.on_event("MDCIconButtonToggle:change", callback)
     }
 
     pub fn on_click(self, callback: impl Into<Callback<MouseEvent>>) -> Self {
