@@ -71,4 +71,12 @@ pub trait MdcWidget {
         self.root_tag_mut().add_class_if_needed(class);
         self
     }
+
+    fn child(mut self, child: impl Into<Html>) -> Self
+    where
+        Self: Sized,
+    {
+        self.root_tag_mut().add_child(child.into());
+        self
+    }
 }
