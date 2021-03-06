@@ -42,6 +42,14 @@ pub mod mdc {
         /// Updates the input's disabled state.
         #[wasm_bindgen(method, setter)]
         pub fn set_disabled(this: &TextField, disabled: bool);
+
+        /// Focuses the `input` or `textarea` element.
+        #[wasm_bindgen(method)]
+        pub fn focus(this: &TextField);
+
+        /// Adjusts the dimensions and positions for all sub-elements.
+        #[wasm_bindgen(method)]
+        pub fn layout(this: &TextField);
     }
 }
 
@@ -121,28 +129,33 @@ impl TextField {
         text_field.ripple(true).class(TextFieldStyle::FilledFullWidth.class())
     }
 
+    pub fn mdc_object(id: impl AsRef<str>) -> mdc::TextField {
+        mdc::TextField::new(dom::get_exist_element_by_id::<Element>(id.as_ref()))
+    }
+
     /// Returns the input's value.
     pub fn value(id: impl AsRef<str>) -> String {
-        let text_field = mdc::TextField::new(dom::get_exist_element_by_id::<Element>(id.as_ref()));
-        text_field.value()
+        Self::mdc_object(id).value()
     }
 
     /// Sets the input's value.
     pub fn set_value(id: impl AsRef<str>, value: impl AsRef<str>) {
-        let text_field = mdc::TextField::new(dom::get_exist_element_by_id::<Element>(id.as_ref()));
-        text_field.set_value(value.as_ref());
+        Self::mdc_object(id).set_value(value.as_ref());
     }
 
     /// Returns whether or not the input is disabled.
     pub fn is_disabled(id: impl AsRef<str>) -> bool {
-        let text_field = mdc::TextField::new(dom::get_exist_element_by_id::<Element>(id.as_ref()));
-        text_field.disabled()
+        Self::mdc_object(id).disabled()
     }
 
     /// Updates the input's disabled state.
     pub fn set_disabled(id: impl AsRef<str>, disabled: bool) {
-        let text_field = mdc::TextField::new(dom::get_exist_element_by_id::<Element>(id.as_ref()));
-        text_field.set_disabled(disabled);
+        Self::mdc_object(id).set_disabled(disabled);
+    }
+
+    /// Focuses the `input` or `textarea` element.
+    pub fn focus(id: impl AsRef<str>) {
+        Self::mdc_object(id).focus();
     }
 
     pub fn ripple(mut self, enabled: bool) -> Self {
