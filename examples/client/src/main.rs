@@ -151,7 +151,7 @@ impl Root {
                         { Button::simple().label("No ripple") }
                     </span>
                     <span class = "demo-item">
-                        { Button::new().disabled(true).label("Disabled") }
+                        { Button::new().disabled().label("Disabled") }
                     </span>
                     <span class = "demo-item">
                         { Button::new().icon("favorite").label("Icon") }
@@ -169,7 +169,7 @@ impl Root {
                         { Button::simple().style(ButtonStyle::Outlined).label("No ripple") }
                     </span>
                     <span class = "demo-item">
-                        { Button::outlined().disabled(true).label("Disabled") }
+                        { Button::outlined().disabled().label("Disabled") }
                     </span>
                     <span class = "demo-item">
                         { Button::outlined().icon("favorite").label("Icon") }
@@ -187,7 +187,7 @@ impl Root {
                         { Button::simple().style(ButtonStyle::Raised).label("No ripple") }
                     </span>
                     <span class = "demo-item">
-                        { Button::raised().disabled(true).label("Disabled") }
+                        { Button::raised().disabled().label("Disabled") }
                     </span>
                     <span class = "demo-item">
                         { Button::raised().icon("favorite").label("Icon") }
@@ -205,7 +205,7 @@ impl Root {
                         { Button::simple().style(ButtonStyle::Unelevated).label("No ripple") }
                     </span>
                     <span class = "demo-item">
-                        { Button::unelevated().disabled(true).label("Disabled") }
+                        { Button::unelevated().disabled().label("Disabled") }
                     </span>
                     <span class = "demo-item">
                         { Button::unelevated().icon("favorite").label("Icon") }

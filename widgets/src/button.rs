@@ -87,13 +87,17 @@ impl Button {
         self
     }
 
-    pub fn disabled(mut self, disabled: bool) -> Self {
+    pub fn disable(mut self, disabled: bool) -> Self {
         if disabled {
             self.root_tag_mut().set_attr("disabled", "");
         } else {
             self.root_tag_mut().remove_attr("disabled");
         }
         self
+    }
+
+    pub fn disabled(self) -> Self {
+        self.disable(true)
     }
 
     pub fn add_before_label(mut self, item: impl Into<Html>) -> Self {
