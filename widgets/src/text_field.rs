@@ -27,11 +27,21 @@ pub mod mdc {
         #[wasm_bindgen(constructor, js_class = MDCTextField, js_namespace = ["mdc", "textField"])]
         pub fn new(element: Element) -> TextField;
 
+        /// Returns the input's value.
         #[wasm_bindgen(method, getter)]
         pub fn value(this: &TextField) -> String;
 
+        /// Sets the input's value.
         #[wasm_bindgen(method, setter)]
         pub fn set_value(this: &TextField, value: &str);
+
+        /// Returns whether or not the input is disabled.
+        #[wasm_bindgen(method, getter)]
+        pub fn disabled(this: &TextField) -> bool;
+
+        /// Updates the input's disabled state.
+        #[wasm_bindgen(method, setter)]
+        pub fn set_disabled(this: &TextField, disabled: bool);
     }
 }
 
@@ -111,14 +121,28 @@ impl TextField {
         text_field.ripple(true).class(TextFieldStyle::FilledFullWidth.class())
     }
 
+    /// Returns the input's value.
     pub fn value(id: impl AsRef<str>) -> String {
         let text_field = mdc::TextField::new(dom::get_exist_element_by_id::<Element>(id.as_ref()));
         text_field.value()
     }
 
+    /// Sets the input's value.
     pub fn set_value(id: impl AsRef<str>, value: impl AsRef<str>) {
         let text_field = mdc::TextField::new(dom::get_exist_element_by_id::<Element>(id.as_ref()));
         text_field.set_value(value.as_ref());
+    }
+
+    /// Returns whether or not the input is disabled.
+    pub fn is_disabled(id: impl AsRef<str>) -> bool {
+        let text_field = mdc::TextField::new(dom::get_exist_element_by_id::<Element>(id.as_ref()));
+        text_field.disabled()
+    }
+
+    /// Updates the input's disabled state.
+    pub fn set_disabled(id: impl AsRef<str>, disabled: bool) {
+        let text_field = mdc::TextField::new(dom::get_exist_element_by_id::<Element>(id.as_ref()));
+        text_field.set_disabled(disabled);
     }
 
     pub fn ripple(mut self, enabled: bool) -> Self {
