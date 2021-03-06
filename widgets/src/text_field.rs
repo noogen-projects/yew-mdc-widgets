@@ -10,9 +10,30 @@ use yew::{
 };
 
 use crate::{
-    utils::{IntoWidgetWithVList, VTagExt},
-    MdcWidget, AUTO_INIT_ATTR,
+    utils::{dom, IntoWidgetWithVList, VTagExt},
+    Element, MdcWidget, AUTO_INIT_ATTR,
 };
+
+pub mod mdc {
+    use wasm_bindgen::prelude::*;
+
+    use crate::Element;
+
+    #[wasm_bindgen]
+    extern "C" {
+        #[wasm_bindgen(js_name = MDCTextField, js_namespace = ["mdc", "textField"])]
+        pub type TextField;
+
+        #[wasm_bindgen(constructor, js_class = MDCTextField, js_namespace = ["mdc", "textField"])]
+        pub fn new(element: Element) -> TextField;
+
+        #[wasm_bindgen(method, getter)]
+        pub fn value(this: &TextField) -> String;
+
+        #[wasm_bindgen(method, setter)]
+        pub fn set_value(this: &TextField, value: &str);
+    }
+}
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum TextFieldStyle {
@@ -69,13 +90,16 @@ impl TextField {
             html: Self::base_html(),
             style: TextFieldStyle::Outlined,
         };
-        text_field.root_tag_mut().children.insert(1, html! {
-            <span class="mdc-notched-outline">
-                <span class="mdc-notched-outline__leading"></span>
-                <span class="mdc-notched-outline__notch"></span>
-                <span class="mdc-notched-outline__trailing"></span>
-            </span>
-        });
+        text_field.root_tag_mut().children.insert(
+            1,
+            html! {
+                <span class="mdc-notched-outline">
+                    <span class="mdc-notched-outline__leading"></span>
+                    <span class="mdc-notched-outline__notch"></span>
+                    <span class="mdc-notched-outline__trailing"></span>
+                </span>
+            },
+        );
         text_field.class(TextFieldStyle::Outlined.class())
     }
 
@@ -87,13 +111,26 @@ impl TextField {
         text_field.ripple(true).class(TextFieldStyle::FilledFullWidth.class())
     }
 
+    pub fn value(id: impl AsRef<str>) -> String {
+        let text_field = mdc::TextField::new(dom::get_exist_element_by_id::<Element>(id.as_ref()));
+        text_field.value()
+    }
+
+    pub fn set_value(id: impl AsRef<str>, value: impl AsRef<str>) {
+        let text_field = mdc::TextField::new(dom::get_exist_element_by_id::<Element>(id.as_ref()));
+        text_field.set_value(value.as_ref());
+    }
+
     pub fn ripple(mut self, enabled: bool) -> Self {
         if self.style != TextFieldStyle::Outlined {
             if enabled {
                 if !self.root_tag().is_some_child_contains_class("mdc-text-field__ripple") {
-                    self.root_tag_mut().children.insert(0, html! {
-                        <span class = "mdc-text-field__ripple"></span>
-                    });
+                    self.root_tag_mut().children.insert(
+                        0,
+                        html! {
+                            <span class = "mdc-text-field__ripple"></span>
+                        },
+                    );
                 }
                 if !self.root_tag().is_some_child_contains_class("mdc-line-ripple") {
                     self.root_tag_mut().children.push(html! {
@@ -123,13 +160,16 @@ impl TextField {
                     .find_child_tag_idx("input")
                     .map(|idx| idx + 1)
                     .unwrap_or(0);
-                self.root_tag_mut().children.insert(idx, html! {
-                    <span class = "mdc-floating-label" id = label_id>{ label }</span>
-                });
+                self.root_tag_mut().children.insert(
+                    idx,
+                    html! {
+                        <span class = "mdc-floating-label" id = label_id>{ label }</span>
+                    },
+                );
                 if let Some(input_tag) = self.root_tag_mut().find_child_tag_mut("input") {
                     input_tag.set_attr("aria-labelledby", label_id);
                 }
-            },
+            }
             TextFieldStyle::Outlined => {
                 if let Some(tag) = self.root_tag_mut().find_child_contains_class_mut("mdc-notched-outline") {
                     if let Some(notch) = tag.find_child_contains_class_mut("mdc-notched-outline__notch") {
@@ -142,7 +182,7 @@ impl TextField {
                 if let Some(input_tag) = self.root_tag_mut().find_child_tag_mut("input") {
                     input_tag.set_attr("aria-labelledby", label_id);
                 }
-            },
+            }
             TextFieldStyle::FilledFullWidth => {
                 if let Some(input_tag) = self.root_tag_mut().find_child_tag_mut("input") {
                     if let Html::VText(label) = label.into() {
@@ -150,7 +190,7 @@ impl TextField {
                         input_tag.set_attr("aria-label", label.text);
                     }
                 }
-            },
+            }
         }
         self
     }
@@ -176,9 +216,12 @@ impl TextField {
             .html_mut()
             .find_child_contains_class_mut("mdc-text-field-helper-line")
         {
-            helper_line_div.children.insert(0, html! {
-                <div class = "mdc-text-field-helper-text" id = helper_id aria-hidden = "true">{ helper_text }</div>
-            });
+            helper_line_div.children.insert(
+                0,
+                html! {
+                    <div class = "mdc-text-field-helper-text" id = helper_id aria-hidden = "true">{ helper_text }</div>
+                },
+            );
         } else {
             self = self.into_widget_with_v_list();
             self.html_mut().add_child(html! {

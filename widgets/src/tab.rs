@@ -20,11 +20,11 @@ pub mod mdc {
         #[wasm_bindgen(js_name = MDCTab, js_namespace = ["mdc", "tab"])]
         pub type Tab;
 
-        #[wasm_bindgen(method, setter)]
-        pub fn set_focus_on_activate(this: &Tab, focus: bool);
-
         #[wasm_bindgen(constructor, js_class = MDCTab, js_namespace = ["mdc", "tab"])]
         pub fn new(element: Element) -> Tab;
+
+        #[wasm_bindgen(method, setter)]
+        pub fn set_focus_on_activate(this: &Tab, focus: bool);
 
         #[wasm_bindgen(method)]
         pub fn activate(this: &Tab);
