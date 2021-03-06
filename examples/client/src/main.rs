@@ -790,9 +790,18 @@ impl Root {
                     <span class = "demo-item demo-list">
                         {
                             List::ul().items(vec![
-                                ListItem::simple().text("No ripple"),
-                                ListItem::simple().text("No ripple"),
-                                ListItem::simple().text("No ripple"),
+                                ListItem::simple().interactive().text("No ripple"),
+                                ListItem::simple().interactive().text("No ripple"),
+                                ListItem::simple().interactive().text("No ripple"),
+                            ])
+                        }
+                    </span>
+                    <span class = "demo-item demo-list">
+                        {
+                            List::simple_ul().items(vec![
+                                ListItem::simple().text("Fixed"),
+                                ListItem::simple().text("Fixed"),
+                                ListItem::simple().text("Fixed"),
                             ])
                         }
                     </span>
@@ -865,9 +874,9 @@ impl Root {
                     <span class = "demo-item demo-list">
                         {
                             List::ul().two_line().items(vec![
-                                ListItem::simple().text("No ripple").text("Secondary text"),
-                                ListItem::simple().text("No ripple").text("Secondary text"),
-                                ListItem::simple().text("No ripple").text("Secondary text"),
+                                ListItem::simple().interactive().text("No ripple").text("Secondary text"),
+                                ListItem::simple().interactive().text("No ripple").text("Secondary text"),
+                                ListItem::simple().interactive().text("No ripple").text("Secondary text"),
                             ])
                         }
                     </span>

@@ -13,6 +13,7 @@ pub struct ListItem {
 }
 
 impl ListItem {
+    pub const CLASS: &'static str = "mdc-list-item";
     pub const FIRST_TILE_CLASS: &'static str = "mdc-list-item__graphic";
     pub const LAST_TILE_CLASS: &'static str = "mdc-list-item__meta";
     pub const PRIMARY_TEXT_ITEM_CLASS: &'static str = "mdc-list-item__primary-text";
@@ -24,26 +25,44 @@ impl ListItem {
     pub fn simple() -> Self {
         Self {
             html: html! {
-                <li class = "mdc-list-item">
-                    <span class = Self::RIPPLE_CLASS></span>
-                </li>
+                <li class = Self::CLASS />
+            },
+        }
+    }
+
+    pub fn simple_link(href: impl AsRef<str>) -> Self {
+        Self {
+            html: html! {
+                <a class = Self::CLASS href = href.as_ref() />
             },
         }
     }
 
     pub fn new() -> Self {
-        Self::simple().ripple(true)
+        Self::simple().interactive().ripple(true)
     }
 
     pub fn link(href: impl AsRef<str>) -> Self {
-        let item = Self {
-            html: html! {
-                <a class = "mdc-list-item" href = href.as_ref()>
-                    <span class = Self::RIPPLE_CLASS></span>
-                </a>
-            },
-        };
-        item.ripple(true)
+        Self::simple_link(href).interactive().ripple(true)
+    }
+
+    pub fn interactive(mut self) -> Self {
+        let root = self.root_tag_mut();
+        if root.find_child_contains_class_idx(Self::RIPPLE_CLASS).is_none() {
+            root.add_child(html! { <span class = Self::RIPPLE_CLASS></span> })
+        }
+        self
+    }
+
+    pub fn ripple(mut self, enabled: bool) -> Self {
+        let root = self.root_tag_mut();
+
+        if enabled {
+            root.set_attr(AUTO_INIT_ATTR, ripple::MDC_TYPE_NAME);
+        } else {
+            root.remove_attr(AUTO_INIT_ATTR);
+        }
+        self
     }
 
     pub fn tab_index(self, index: isize) -> Self {
@@ -58,21 +77,27 @@ impl ListItem {
             primary.remove_class(Self::TEXT_ITEM_CLASS);
             primary.add_class(Self::PRIMARY_TEXT_ITEM_CLASS);
 
-            root.children.insert(idx, html! {
-                <span class = Self::TEXT_ITEM_CLASS>
-                    { primary }
-                    <span class = Self::SECONDARY_TEXT_ITEM_CLASS>
-                        { text }
+            root.children.insert(
+                idx,
+                html! {
+                    <span class = Self::TEXT_ITEM_CLASS>
+                        { primary }
+                        <span class = Self::SECONDARY_TEXT_ITEM_CLASS>
+                            { text }
+                        </span>
                     </span>
-                </span>
-            });
+                },
+            );
         } else {
             let idx = root
                 .find_child_contains_class_idx(Self::LAST_TILE_CLASS)
                 .unwrap_or_else(|| root.children.len());
-            root.children.insert(idx, html! {
-                <span class = Self::TEXT_ITEM_CLASS>{ text }</span>
-            });
+            root.children.insert(
+                idx,
+                html! {
+                    <span class = Self::TEXT_ITEM_CLASS>{ text }</span>
+                },
+            );
         }
         self
     }
@@ -84,17 +109,6 @@ impl ListItem {
             self.html.remove_class(Self::SELECTION_CLASS);
         } else if !is_already_selected && selected {
             self.html.add_class(Self::SELECTION_CLASS);
-        }
-        self
-    }
-
-    pub fn ripple(mut self, enabled: bool) -> Self {
-        let root = self.root_tag_mut();
-
-        if enabled {
-            root.set_attr(AUTO_INIT_ATTR, ripple::MDC_TYPE_NAME);
-        } else {
-            root.remove_attr(AUTO_INIT_ATTR);
         }
         self
     }
@@ -112,9 +126,12 @@ impl ListItem {
                 .unwrap_or(0);
             (idx, Self::FIRST_TILE_CLASS)
         };
-        root.children.insert(idx, html! {
-            <span class = class>{ tile }</span>
-        });
+        root.children.insert(
+            idx,
+            html! {
+                <span class = class>{ tile }</span>
+            },
+        );
         self
     }
 
@@ -182,22 +199,28 @@ pub struct List {
 }
 
 impl List {
+    pub const MDC_TYPE_NAME: &'static str = "MDCList";
+    pub const CLASS: &'static str = "mdc-list";
     const LIST_VAR_NAME: &'static str = "list";
 
+    pub fn simple_ul() -> Self {
+        Self {
+            html: html! { <ul class = Self::CLASS></ul> },
+        }
+    }
+
+    pub fn simple_nav() -> Self {
+        Self {
+            html: html! { <nav class = Self::CLASS></nav> },
+        }
+    }
+
     pub fn ul() -> Self {
-        let mut list = Self {
-            html: html! { <ul class = "mdc-list"></ul> },
-        };
-        list.root_tag_mut().set_attr(AUTO_INIT_ATTR, "MDCList");
-        list
+        Self::simple_ul().attr(AUTO_INIT_ATTR, Self::MDC_TYPE_NAME)
     }
 
     pub fn nav() -> Self {
-        let mut list = Self {
-            html: html! { <nav class = "mdc-list"></nav> },
-        };
-        list.root_tag_mut().set_attr(AUTO_INIT_ATTR, "MDCList");
-        list
+        Self::simple_nav().attr(AUTO_INIT_ATTR, Self::MDC_TYPE_NAME)
     }
 
     pub fn root_id(&self) -> &str {
@@ -208,12 +231,16 @@ impl List {
     }
 
     pub fn single_selection(self) -> Self {
-        let statement = format!("{}.MDCList.singleSelection = true;", Self::LIST_VAR_NAME);
+        let statement = format!(
+            "{}.{}.singleSelection = true;",
+            Self::LIST_VAR_NAME,
+            Self::MDC_TYPE_NAME
+        );
         self.add_script_statement(statement)
     }
 
     pub fn wrap_focus(self) -> Self {
-        let statement = format!("{}.MDCList.wrapFocus = true;", Self::LIST_VAR_NAME);
+        let statement = format!("{}.{}.wrapFocus = true;", Self::LIST_VAR_NAME, Self::MDC_TYPE_NAME);
         self.add_script_statement(statement)
     }
 
@@ -225,12 +252,13 @@ impl List {
             let script = format!(
                 r"{{
                     const {list} = document.getElementById('{id}');
-                    if ({list}.MDCList === undefined) {{
+                    if ({list}.{mdc_type} === undefined) {{
                         window.mdc.autoInit({list}.parentElement);
                     }}
                     {statement}
                 }}",
                 list = Self::LIST_VAR_NAME,
+                mdc_type = Self::MDC_TYPE_NAME,
                 id = id,
                 statement = statement,
             );
