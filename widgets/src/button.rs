@@ -143,7 +143,7 @@ impl Button {
 }
 
 impl MdcWidget for Button {
-    const NAME: &'static str = "Button";
+    const NAME: &'static str = stringify!(Button);
 
     fn html(&self) -> &Html {
         &self.html

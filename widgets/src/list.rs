@@ -77,27 +77,21 @@ impl ListItem {
             primary.remove_class(Self::TEXT_ITEM_CLASS);
             primary.add_class(Self::PRIMARY_TEXT_ITEM_CLASS);
 
-            root.children.insert(
-                idx,
-                html! {
-                    <span class = Self::TEXT_ITEM_CLASS>
-                        { primary }
-                        <span class = Self::SECONDARY_TEXT_ITEM_CLASS>
-                            { text }
-                        </span>
+            root.children.insert(idx, html! {
+                <span class = Self::TEXT_ITEM_CLASS>
+                    { primary }
+                    <span class = Self::SECONDARY_TEXT_ITEM_CLASS>
+                        { text }
                     </span>
-                },
-            );
+                </span>
+            });
         } else {
             let idx = root
                 .find_child_contains_class_idx(Self::LAST_TILE_CLASS)
                 .unwrap_or_else(|| root.children.len());
-            root.children.insert(
-                idx,
-                html! {
-                    <span class = Self::TEXT_ITEM_CLASS>{ text }</span>
-                },
-            );
+            root.children.insert(idx, html! {
+                <span class = Self::TEXT_ITEM_CLASS>{ text }</span>
+            });
         }
         self
     }
@@ -126,12 +120,9 @@ impl ListItem {
                 .unwrap_or(0);
             (idx, Self::FIRST_TILE_CLASS)
         };
-        root.children.insert(
-            idx,
-            html! {
-                <span class = class>{ tile }</span>
-            },
-        );
+        root.children.insert(idx, html! {
+            <span class = class>{ tile }</span>
+        });
         self
     }
 
@@ -176,7 +167,7 @@ impl ListItem {
 }
 
 impl MdcWidget for ListItem {
-    const NAME: &'static str = "ListItem";
+    const NAME: &'static str = stringify!(ListItem);
 
     fn html(&self) -> &Html {
         &self.html
@@ -193,13 +184,16 @@ impl From<ListItem> for Html {
     }
 }
 
+pub mod mdc {
+    pub const TYPE_NAME: &str = "MDCList";
+}
+
 #[derive(Debug, Clone)]
 pub struct List {
     html: Html,
 }
 
 impl List {
-    pub const MDC_TYPE_NAME: &'static str = "MDCList";
     pub const CLASS: &'static str = "mdc-list";
     const LIST_VAR_NAME: &'static str = "list";
 
@@ -216,11 +210,11 @@ impl List {
     }
 
     pub fn ul() -> Self {
-        Self::simple_ul().attr(AUTO_INIT_ATTR, Self::MDC_TYPE_NAME)
+        Self::simple_ul().attr(AUTO_INIT_ATTR, mdc::TYPE_NAME)
     }
 
     pub fn nav() -> Self {
-        Self::simple_nav().attr(AUTO_INIT_ATTR, Self::MDC_TYPE_NAME)
+        Self::simple_nav().attr(AUTO_INIT_ATTR, mdc::TYPE_NAME)
     }
 
     pub fn root_id(&self) -> &str {
@@ -231,16 +225,12 @@ impl List {
     }
 
     pub fn single_selection(self) -> Self {
-        let statement = format!(
-            "{}.{}.singleSelection = true;",
-            Self::LIST_VAR_NAME,
-            Self::MDC_TYPE_NAME
-        );
+        let statement = format!("{}.{}.singleSelection = true;", Self::LIST_VAR_NAME, mdc::TYPE_NAME);
         self.add_script_statement(statement)
     }
 
     pub fn wrap_focus(self) -> Self {
-        let statement = format!("{}.{}.wrapFocus = true;", Self::LIST_VAR_NAME, Self::MDC_TYPE_NAME);
+        let statement = format!("{}.{}.wrapFocus = true;", Self::LIST_VAR_NAME, mdc::TYPE_NAME);
         self.add_script_statement(statement)
     }
 
@@ -258,7 +248,7 @@ impl List {
                     {statement}
                 }}",
                 list = Self::LIST_VAR_NAME,
-                mdc_type = Self::MDC_TYPE_NAME,
+                mdc_type = mdc::TYPE_NAME,
                 id = id,
                 statement = statement,
             );
@@ -389,7 +379,7 @@ impl List {
 }
 
 impl MdcWidget for List {
-    const NAME: &'static str = "List";
+    const NAME: &'static str = stringify!(List);
 
     fn html(&self) -> &Html {
         &self.html

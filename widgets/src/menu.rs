@@ -10,6 +10,10 @@ use crate::{
     Element, List, MdcWidget, AUTO_INIT_ATTR,
 };
 
+pub mod mdc {
+    pub const TYPE_NAME: &str = "MDCMenu";
+}
+
 #[derive(Debug, Clone)]
 pub struct Menu {
     html: Html,
@@ -17,7 +21,6 @@ pub struct Menu {
 }
 
 impl Menu {
-    pub const MDC_TYPE_NAME: &'static str = "MDCMenu";
     pub const VAR_NAME: &'static str = "menu";
     pub const ANCHOR_CLASS: &'static str = "mdc-menu-surface--anchor";
 
@@ -29,7 +32,7 @@ impl Menu {
             },
             list,
         };
-        menu.root_tag_mut().set_attr(AUTO_INIT_ATTR, Self::MDC_TYPE_NAME);
+        menu.root_tag_mut().set_attr(AUTO_INIT_ATTR, mdc::TYPE_NAME);
         menu
     }
 
@@ -38,7 +41,7 @@ impl Menu {
     }
 
     pub fn open_existing(id: impl AsRef<str>) {
-        let menu = dom::get_exist_element_by_id::<Element>(id.as_ref()).get(Self::MDC_TYPE_NAME);
+        let menu = dom::get_exist_element_by_id::<Element>(id.as_ref()).get(mdc::TYPE_NAME);
         menu.set("open", true);
     }
 
@@ -68,7 +71,7 @@ impl Menu {
                     {statement}
                 }}",
                 menu = Self::VAR_NAME,
-                mdc_type = Self::MDC_TYPE_NAME,
+                mdc_type = mdc::TYPE_NAME,
                 id = id,
                 statement = statement,
             );
@@ -125,7 +128,7 @@ impl Menu {
 }
 
 impl MdcWidget for Menu {
-    const NAME: &'static str = "Menu";
+    const NAME: &'static str = stringify!(Menu);
 
     fn html(&self) -> &Html {
         &self.html

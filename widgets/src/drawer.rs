@@ -4,13 +4,16 @@ use yew::{html, Html};
 
 use crate::{utils::VTagExt, MdcWidget, AUTO_INIT_ATTR};
 
+pub mod mdc {
+    pub const TYPE_NAME: &str = "MDCDrawer";
+}
+
 #[derive(Debug, Clone)]
 pub struct Drawer {
     html: Html,
 }
 
 impl Drawer {
-    pub const MDC_TYPE_NAME: &'static str = "MDCDrawer";
     pub const VAR_NAME: &'static str = "drawer";
     pub const APP_CONTENT_CLASS: &'static str = "mdc-drawer-app-content";
     pub const CONTENT_CLASS: &'static str = "mdc-drawer__content";
@@ -26,7 +29,7 @@ impl Drawer {
                 <aside class = "mdc-drawer"></aside>
             },
         };
-        drawer.root_tag_mut().set_attr(AUTO_INIT_ATTR, Self::MDC_TYPE_NAME);
+        drawer.root_tag_mut().set_attr(AUTO_INIT_ATTR, mdc::TYPE_NAME);
         drawer
     }
 
@@ -51,7 +54,7 @@ impl Drawer {
                     {statement}
                 }}",
                 drawer = Self::VAR_NAME,
-                mdc_type = Self::MDC_TYPE_NAME,
+                mdc_type = mdc::TYPE_NAME,
                 id = id,
                 statement = statement,
             );
@@ -148,7 +151,7 @@ impl Drawer {
 }
 
 impl MdcWidget for Drawer {
-    const NAME: &'static str = "Drawer";
+    const NAME: &'static str = stringify!(Drawer);
 
     fn html(&self) -> &Html {
         &self.html

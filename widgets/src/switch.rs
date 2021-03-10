@@ -7,6 +7,10 @@ use crate::{
     MdcWidget, AUTO_INIT_ATTR,
 };
 
+pub mod mdc {
+    pub const TYPE_NAME: &str = "MDCSwitch";
+}
+
 #[derive(Debug, Clone)]
 pub struct Switch {
     html: Html,
@@ -29,7 +33,7 @@ impl Switch {
 
     pub fn new() -> Self {
         let mut switch = Self::simple();
-        switch.root_tag_mut().set_attr(AUTO_INIT_ATTR, "MDCSwitch");
+        switch.root_tag_mut().set_attr(AUTO_INIT_ATTR, mdc::TYPE_NAME);
         switch
     }
 
@@ -76,7 +80,7 @@ impl Switch {
 }
 
 impl MdcWidget for Switch {
-    const NAME: &'static str = "Switch";
+    const NAME: &'static str = stringify!(Switch);
 
     fn html(&self) -> &Html {
         &self.html

@@ -184,7 +184,7 @@ impl Card {
 }
 
 impl MdcWidget for Card {
-    const NAME: &'static str = "Card";
+    const NAME: &'static str = stringify!(Card);
 
     fn html(&self) -> &Html {
         &self.html

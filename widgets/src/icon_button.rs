@@ -17,6 +17,8 @@ use crate::{
 pub mod mdc {
     use wasm_bindgen::prelude::*;
 
+    pub const TYPE_NAME: &str = "MDCIconButtonToggle";
+
     #[wasm_bindgen]
     extern "C" {
         #[wasm_bindgen(js_name = MDCIconButtonToggle)]
@@ -105,7 +107,7 @@ impl IconButton {
 
     pub fn set_on_by_id(id: impl AsRef<str>, is_on: bool) {
         let toggle_button = dom::get_exist_element_by_id::<Element>(id.as_ref())
-            .get("MDCIconButtonToggle")
+            .get(mdc::TYPE_NAME)
             .unchecked_into::<mdc::IconButtonToggle>();
         toggle_button.set_on(is_on);
     }
@@ -123,7 +125,7 @@ impl IconButton {
     fn enable_toggle(&mut self) {
         if !self.is_toggle {
             let root = self.root_tag_mut();
-            root.set_attr(AUTO_INIT_ATTR, "MDCIconButtonToggle");
+            root.set_attr(AUTO_INIT_ATTR, mdc::TYPE_NAME);
             self.is_toggle = true;
         }
     }
@@ -138,7 +140,7 @@ impl IconButton {
 }
 
 impl MdcWidget for IconButton {
-    const NAME: &'static str = "IconButton";
+    const NAME: &'static str = stringify!(IconButton);
 
     fn html(&self) -> &Html {
         &self.html

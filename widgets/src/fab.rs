@@ -82,7 +82,7 @@ impl Fab {
 }
 
 impl MdcWidget for Fab {
-    const NAME: &'static str = "Fab";
+    const NAME: &'static str = stringify!(Fab);
 
     fn html(&self) -> &Html {
         &self.html

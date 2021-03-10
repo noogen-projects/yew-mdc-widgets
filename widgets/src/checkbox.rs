@@ -9,6 +9,10 @@ use crate::{
     MdcWidget, AUTO_INIT_ATTR,
 };
 
+pub mod mdc {
+    pub const TYPE_NAME: &str = "MDCCheckbox";
+}
+
 #[derive(Debug, Clone)]
 pub struct Checkbox {
     html: Html,
@@ -37,7 +41,7 @@ impl Checkbox {
 
     pub fn new() -> Self {
         let mut checkbox = Self::simple();
-        checkbox.root_tag_mut().set_attr(AUTO_INIT_ATTR, "MDCCheckbox");
+        checkbox.root_tag_mut().set_attr(AUTO_INIT_ATTR, mdc::TYPE_NAME);
         checkbox
     }
 
@@ -90,7 +94,7 @@ impl Checkbox {
 }
 
 impl MdcWidget for Checkbox {
-    const NAME: &'static str = "Checkbox";
+    const NAME: &'static str = stringify!(Checkbox);
 
     fn html(&self) -> &Html {
         &self.html

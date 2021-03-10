@@ -4,6 +4,10 @@ use yew::{html, Callback, Event, Html};
 
 use crate::{utils::VTagExt, MdcWidget, AUTO_INIT_ATTR};
 
+pub mod mdc {
+    pub const TYPE_NAME: &str = "MDCTopAppBar";
+}
+
 #[derive(Debug, Clone)]
 pub struct TopAppBar {
     html: Html,
@@ -43,7 +47,7 @@ impl TopAppBar {
                 </header>
             },
         };
-        topappbar.root_tag_mut().set_attr(AUTO_INIT_ATTR, "MDCTopAppBar");
+        topappbar.root_tag_mut().set_attr(AUTO_INIT_ATTR, mdc::TYPE_NAME);
         topappbar
     }
 
@@ -200,7 +204,7 @@ impl TopAppBar {
 }
 
 impl MdcWidget for TopAppBar {
-    const NAME: &'static str = "TopAppBar";
+    const NAME: &'static str = stringify!(TopAppBar);
 
     fn html(&self) -> &Html {
         &self.html

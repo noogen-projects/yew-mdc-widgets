@@ -7,6 +7,16 @@ use yew::{html, html::onclick, Callback, Html, MouseEvent};
 
 use crate::{utils::VTagExt, CustomEvent, MdcWidget, AUTO_INIT_ATTR};
 
+pub mod mdc {
+    pub const TYPE_NAME: &str = "MDCChip";
+}
+
+pub mod set {
+    pub mod mdc {
+        pub const TYPE_NAME: &str = "MDCChipSet";
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct Chip {
     html: Html,
@@ -97,7 +107,7 @@ impl Chip {
         let root = self.root_tag_mut();
 
         if enabled {
-            root.set_attr(AUTO_INIT_ATTR, "MDCChip");
+            root.set_attr(AUTO_INIT_ATTR, mdc::TYPE_NAME);
         } else {
             root.remove_attr(AUTO_INIT_ATTR);
         }
@@ -206,7 +216,7 @@ fn mark_svg_path(parent: &mut Html) {
 }
 
 impl MdcWidget for Chip {
-    const NAME: &'static str = "Chip";
+    const NAME: &'static str = stringify!(Chip);
 
     fn html(&self) -> &Html {
         &self.html
@@ -265,7 +275,7 @@ impl ChipSet {
 
     pub fn new() -> Self {
         let mut chip_set = Self::simple();
-        chip_set.root_tag_mut().set_attr(AUTO_INIT_ATTR, "MDCChipSet");
+        chip_set.root_tag_mut().set_attr(AUTO_INIT_ATTR, set::mdc::TYPE_NAME);
         chip_set
     }
 
@@ -345,7 +355,7 @@ impl ChipSet {
 }
 
 impl MdcWidget for ChipSet {
-    const NAME: &'static str = "ChipSet";
+    const NAME: &'static str = stringify!(ChipSet);
 
     fn html(&self) -> &Html {
         &self.html

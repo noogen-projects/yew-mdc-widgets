@@ -9,6 +9,10 @@ use crate::{
     MdcWidget, AUTO_INIT_ATTR,
 };
 
+pub mod mdc {
+    pub const TYPE_NAME: &str = "MDCRadio";
+}
+
 #[derive(Debug, Clone)]
 pub struct Radio {
     html: Html,
@@ -34,7 +38,7 @@ impl Radio {
 
     pub fn new() -> Self {
         let mut radio = Self::simple();
-        radio.root_tag_mut().set_attr(AUTO_INIT_ATTR, "MDCRadio");
+        radio.root_tag_mut().set_attr(AUTO_INIT_ATTR, mdc::TYPE_NAME);
         radio
     }
 
@@ -76,7 +80,7 @@ impl Radio {
 }
 
 impl MdcWidget for Radio {
-    const NAME: &'static str = "Radio";
+    const NAME: &'static str = stringify!(Radio);
 
     fn html(&self) -> &Html {
         &self.html

@@ -15,6 +15,8 @@ pub mod mdc {
 
     use crate::Element;
 
+    pub const TYPE_NAME: &str = "MDCTab";
+
     #[wasm_bindgen]
     extern "C" {
         #[wasm_bindgen(js_name = MDCTab, js_namespace = ["mdc", "tab"])]
@@ -40,8 +42,6 @@ pub struct Tab {
 }
 
 impl Tab {
-    pub const MDC_TYPE_NAME: &'static str = "MDCTab";
-
     ///
     pub const CLASS: &'static str = "mdc-tab";
 
@@ -97,14 +97,11 @@ impl Tab {
     }
 
     pub fn indicator(mut self) -> Self {
-        self.insert_child(
-            1,
-            html! {
-                <span class = Self::INDICATOR_CLASS>
-                    <span class = "mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
-                </span>
-            },
-        );
+        self.insert_child(1, html! {
+            <span class = Self::INDICATOR_CLASS>
+                <span class = "mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+            </span>
+        });
         self
     }
 
@@ -172,7 +169,7 @@ impl Tab {
 }
 
 impl MdcWidget for Tab {
-    const NAME: &'static str = "Tab";
+    const NAME: &'static str = stringify!(Tab);
 
     fn html(&self) -> &Html {
         &self.html
@@ -200,6 +197,12 @@ impl DerefMut for Tab {
 impl From<Tab> for Html {
     fn from(widget: Tab) -> Self {
         widget.html
+    }
+}
+
+pub mod bar {
+    pub mod mdc {
+        pub const TYPE_NAME: &str = "MDCTabBar";
     }
 }
 
@@ -233,7 +236,7 @@ impl TabBar {
 
     pub fn new() -> Self {
         let mut tab_bar = Self::simple();
-        tab_bar.root_tag_mut().set_attr(AUTO_INIT_ATTR, "MDCTabBar");
+        tab_bar.root_tag_mut().set_attr(AUTO_INIT_ATTR, bar::mdc::TYPE_NAME);
         tab_bar
     }
 
@@ -265,7 +268,7 @@ impl TabBar {
 }
 
 impl MdcWidget for TabBar {
-    const NAME: &'static str = "TabBar";
+    const NAME: &'static str = stringify!(TabBar);
 
     fn html(&self) -> &Html {
         &self.html

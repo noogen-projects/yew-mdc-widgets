@@ -16,6 +16,8 @@ use crate::{
 pub mod mdc {
     use wasm_bindgen::prelude::*;
 
+    pub const TYPE_NAME: &str = "MDCDialog";
+
     #[wasm_bindgen]
     extern "C" {
         #[wasm_bindgen(js_name = MDCDialog)]
@@ -38,8 +40,6 @@ pub struct Dialog {
 }
 
 impl Dialog {
-    pub const MDC_TYPE_NAME: &'static str = "MDCDialog";
-
     /// The bounding box for the dialog's content.
     pub const SURFACE_CLASS: &'static str = "mdc-dialog__surface";
 
@@ -81,7 +81,7 @@ impl Dialog {
 
     pub fn new() -> Self {
         let mut dialog = Self::simple();
-        dialog.root_tag_mut().set_attr(AUTO_INIT_ATTR, Self::MDC_TYPE_NAME);
+        dialog.root_tag_mut().set_attr(AUTO_INIT_ATTR, mdc::TYPE_NAME);
         dialog
     }
 
@@ -156,14 +156,14 @@ impl Dialog {
 
     pub fn open_existing(id: impl AsRef<str>) {
         let dialog = dom::get_exist_element_by_id::<Element>(id.as_ref())
-            .get(Self::MDC_TYPE_NAME)
+            .get(mdc::TYPE_NAME)
             .unchecked_into::<mdc::Dialog>();
         dialog.open();
     }
 
     pub fn close_existing(id: impl AsRef<str>) {
         let dialog = dom::get_exist_element_by_id::<Element>(id.as_ref())
-            .get(Self::MDC_TYPE_NAME)
+            .get(mdc::TYPE_NAME)
             .unchecked_into::<mdc::Dialog>();
         dialog.close();
     }
@@ -198,7 +198,7 @@ impl Dialog {
 }
 
 impl MdcWidget for Dialog {
-    const NAME: &'static str = "Dialog";
+    const NAME: &'static str = stringify!(Dialog);
 
     fn html(&self) -> &Html {
         &self.html
