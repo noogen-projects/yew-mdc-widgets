@@ -3,6 +3,7 @@ use std::{
     rc::Rc,
 };
 
+use const_format::concatcp;
 use yew::{html, html::onclick, Callback, Html, MouseEvent};
 
 use crate::{utils::VTagExt, CustomEvent, MdcWidget, AUTO_INIT_ATTR};
@@ -205,12 +206,12 @@ fn mark_svg_path(parent: &mut Html) {
             for child in parent.children.iter_mut() {
                 mark_svg_path(child);
             }
-        },
+        }
         Html::VList(list) => {
             for item in list.iter_mut() {
                 mark_svg_path(item);
             }
-        },
+        }
         _ => (),
     }
 }
@@ -326,31 +327,31 @@ impl ChipSet {
     /// Indicates the chip was interacted with (via click/tap or Enter key).
     /// event.detail: `{ chipId: string }`
     pub fn on_interaction(self, callback: impl Into<Callback<CustomEvent>>) -> Self {
-        self.on_event("MDCChip:interaction", callback)
+        self.on_event(concatcp!(mdc::TYPE_NAME, ":interaction"), callback)
     }
 
     /// Indicates the chip's selection state has changed (for choice/filter chips).
     /// event.detail: `{chipId: string, selected: boolean}`
     pub fn on_selection(self, callback: impl Into<Callback<CustomEvent>>) -> Self {
-        self.on_event("MDCChip:selection", callback)
+        self.on_event(concatcp!(mdc::TYPE_NAME, ":selection"), callback)
     }
 
     /// Indicates the chip is ready to be removed from the DOM.
     /// event.detail: `{chipId: string, removedAnnouncement: string | null}`
     pub fn on_removal(self, callback: impl Into<Callback<CustomEvent>>) -> Self {
-        self.on_event("MDCChip:removal", callback)
+        self.on_event(concatcp!(mdc::TYPE_NAME, ":removal"), callback)
     }
 
     /// Indicates the chip's trailing icon was interacted with (via click/tap or Enter key).
     /// event.detail: `{chipId: string}`
     pub fn on_trailing_icon_interaction(self, callback: impl Into<Callback<CustomEvent>>) -> Self {
-        self.on_event("MDCChip:trailingIconInteraction", callback)
+        self.on_event(concatcp!(mdc::TYPE_NAME, ":trailingIconInteraction"), callback)
     }
 
     /// Indicates a navigation event has occurred on a chip.
     /// event.detail: `{chipId: string, key: string, source: FocusSource}`
     pub fn on_navigation(self, callback: impl Into<Callback<CustomEvent>>) -> Self {
-        self.on_event("MDCChip:navigation", callback)
+        self.on_event(concatcp!(mdc::TYPE_NAME, ":navigation"), callback)
     }
 }
 

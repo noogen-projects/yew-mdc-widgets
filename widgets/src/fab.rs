@@ -34,7 +34,7 @@ impl Fab {
         let mut icon_button = Self::simple();
         icon_button
             .root_tag_mut()
-            .set_attr(AUTO_INIT_ATTR, ripple::MDC_TYPE_NAME);
+            .set_attr(AUTO_INIT_ATTR, ripple::mdc::TYPE_NAME);
         icon_button
     }
 
@@ -55,7 +55,7 @@ impl Fab {
 
     pub fn ripple(mut self, enabled: bool) -> Self {
         if enabled {
-            self.root_tag_mut().set_attr(AUTO_INIT_ATTR, ripple::MDC_TYPE_NAME);
+            self.root_tag_mut().set_attr(AUTO_INIT_ATTR, ripple::mdc::TYPE_NAME);
         } else {
             self.root_tag_mut().remove_attr(AUTO_INIT_ATTR);
         }

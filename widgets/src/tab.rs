@@ -3,6 +3,7 @@ use std::{
     rc::Rc,
 };
 
+use const_format::concatcp;
 use yew::{html, html::onclick, Callback, Html, MouseEvent};
 
 use crate::{
@@ -97,11 +98,14 @@ impl Tab {
     }
 
     pub fn indicator(mut self) -> Self {
-        self.insert_child(1, html! {
-            <span class = Self::INDICATOR_CLASS>
-                <span class = "mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
-            </span>
-        });
+        self.insert_child(
+            1,
+            html! {
+                <span class = Self::INDICATOR_CLASS>
+                    <span class = "mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                </span>
+            },
+        );
         self
     }
 
@@ -164,7 +168,7 @@ impl Tab {
     /// Used by parent components to know which Tab to activate.
     /// event.detail: `{"tabId": string}`
     pub fn on_interaction(self, callback: impl Into<Callback<CustomEvent>>) -> Self {
-        self.on_event("MDCTab:interacted", callback)
+        self.on_event(concatcp!(mdc::TYPE_NAME, ":interacted"), callback)
     }
 }
 
@@ -263,7 +267,7 @@ impl TabBar {
     /// Listen for this to update content when a Tab becomes active.
     /// event.detail: '{"index": number}'
     pub fn on_activated(self, callback: impl Into<Callback<CustomEvent>>) -> Self {
-        self.on_event("MDCTabBar:activated", callback)
+        self.on_event(concatcp!(bar::mdc::TYPE_NAME, ":activated"), callback)
     }
 }
 

@@ -3,6 +3,7 @@ use std::{
     rc::Rc,
 };
 
+use const_format::concatcp;
 use yew::{html, html::onclick, Callback, Html, MouseEvent};
 
 use crate::{
@@ -50,7 +51,7 @@ impl IconButton {
         let mut icon_button = Self::simple();
         icon_button
             .root_tag_mut()
-            .set_attr(AUTO_INIT_ATTR, ripple::MDC_TYPE_NAME);
+            .set_attr(AUTO_INIT_ATTR, ripple::mdc::TYPE_NAME);
         icon_button
     }
 
@@ -84,7 +85,7 @@ impl IconButton {
         if !self.is_toggle {
             let root = self.root_tag_mut();
             if enabled {
-                root.set_attr(AUTO_INIT_ATTR, ripple::MDC_TYPE_NAME);
+                root.set_attr(AUTO_INIT_ATTR, ripple::mdc::TYPE_NAME);
             } else {
                 root.remove_attr(AUTO_INIT_ATTR);
             }
@@ -115,7 +116,7 @@ impl IconButton {
     /// Emits when the icon is toggled
     /// event.detail: `{"isOn": boolean}`
     pub fn on_change(self, callback: impl Into<Callback<CustomEvent>>) -> Self {
-        self.on_event("MDCIconButtonToggle:change", callback)
+        self.on_event(concatcp!(mdc::TYPE_NAME, ":change"), callback)
     }
 
     pub fn on_click(self, callback: impl Into<Callback<MouseEvent>>) -> Self {

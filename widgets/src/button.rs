@@ -46,7 +46,7 @@ impl Button {
 
     pub fn new() -> Self {
         let mut button = Self::simple();
-        button.root_tag_mut().set_attr(AUTO_INIT_ATTR, ripple::MDC_TYPE_NAME);
+        button.root_tag_mut().set_attr(AUTO_INIT_ATTR, ripple::mdc::TYPE_NAME);
         button
     }
 
@@ -80,7 +80,7 @@ impl Button {
         let root = self.root_tag_mut();
 
         if enabled {
-            root.set_attr(AUTO_INIT_ATTR, ripple::MDC_TYPE_NAME);
+            root.set_attr(AUTO_INIT_ATTR, ripple::mdc::TYPE_NAME);
         } else {
             root.remove_attr(AUTO_INIT_ATTR);
         }

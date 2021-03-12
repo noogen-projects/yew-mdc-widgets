@@ -1,5 +1,6 @@
 use std::ops::{Deref, DerefMut};
 
+use const_format::concatcp;
 use yew::{html, Callback, Event, Html};
 
 use crate::{utils::VTagExt, MdcWidget, AUTO_INIT_ATTR};
@@ -199,7 +200,7 @@ impl TopAppBar {
     }
 
     pub fn on_navigation(self, callback: impl Into<Callback<Event>>) -> Self {
-        self.on_event("MDCTopAppBar:nav", callback)
+        self.on_event(concatcp!(mdc::TYPE_NAME, ":nav"), callback)
     }
 }
 
