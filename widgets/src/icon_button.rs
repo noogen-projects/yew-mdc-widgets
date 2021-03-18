@@ -12,7 +12,7 @@ use crate::{
         dom::{self, JsCast, JsObjectAccess},
         VTagExt,
     },
-    CustomEvent, Element, MdcWidget, AUTO_INIT_ATTR,
+    CustomEvent, Element, MdcWidget, AUTO_INIT_ATTR, MATERIAL_ICONS_CLASS,
 };
 
 pub mod mdc {
@@ -40,9 +40,20 @@ pub struct IconButton {
 }
 
 impl IconButton {
+    ///Defaults to an icon button
+    pub const CLASS: &'static str = "mdc-icon-button";
+    ///This class is applied to the root element and is used to indicate if the icon button toggle is in the "on"
+    /// state.
+    pub const ON_CLASS: &'static str = "mdc-icon-button--on";
+    ///This class is applied to each icon element for the icon button toggle.
+    pub const ICON_CLASS: &'static str = "mdc-icon-button__icon";
+    ///This class is applied to a icon element and is used to indicate the toggle button icon that is represents the
+    /// "on" icon.
+    pub const ICON_ON_CLASS: &'static str = "mdc-icon-button__icon--on";
+
     pub fn simple() -> Self {
         Self {
-            html: html! { <button class = "mdc-icon-button" data-mdc-ripple-is-unbounded = ""></button> },
+            html: html! { <button class = Self::CLASS data-mdc-ripple-is-unbounded = ""></button> },
             is_toggle: false,
         }
     }
@@ -57,28 +68,28 @@ impl IconButton {
 
     pub fn icon(mut self, name: impl Into<String>) -> Self {
         let root = self.root_tag_mut();
-        root.add_class("material-icons");
+        root.add_class(MATERIAL_ICONS_CLASS);
         root.add_child(name.into().into());
         self
     }
 
     pub fn item(self, item: impl Into<Html>) -> Self {
-        self.add_item_with_class(item, "mdc-icon-button__icon")
+        self.add_item_with_class(item, Self::ICON_CLASS)
     }
 
     pub fn toggle(self, icon_on: impl Into<String>, icon_off: impl Into<String>) -> Self {
-        self.toggle_on(html! { <i class = "material-icons">{ icon_on.into() }</i> })
-            .toggle_off(html! { <i class = "material-icons">{ icon_off.into() }</i> })
+        self.toggle_on(html! { <i class = MATERIAL_ICONS_CLASS>{ icon_on.into() }</i> })
+            .toggle_off(html! { <i class = MATERIAL_ICONS_CLASS>{ icon_off.into() }</i> })
     }
 
     pub fn toggle_on(mut self, item: impl Into<Html>) -> Self {
         self.enable_toggle();
-        self.add_item_with_class(item, "mdc-icon-button__icon mdc-icon-button__icon--on")
+        self.add_item_with_class(item, concatcp!(IconButton::ICON_CLASS, " ", IconButton::ICON_ON_CLASS))
     }
 
     pub fn toggle_off(mut self, item: impl Into<Html>) -> Self {
         self.enable_toggle();
-        self.add_item_with_class(item, "mdc-icon-button__icon")
+        self.add_item_with_class(item, Self::ICON_CLASS)
     }
 
     pub fn ripple(mut self, enabled: bool) -> Self {
@@ -94,7 +105,7 @@ impl IconButton {
     }
 
     pub fn on(self) -> Self {
-        self.class("mdc-icon-button--on")
+        self.class(Self::ON_CLASS)
     }
 
     pub fn disabled(mut self, disabled: bool) -> Self {

@@ -98,14 +98,11 @@ impl Tab {
     }
 
     pub fn indicator(mut self) -> Self {
-        self.insert_child(
-            1,
-            html! {
-                <span class = Self::INDICATOR_CLASS>
-                    <span class = "mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
-                </span>
-            },
-        );
+        self.insert_child(1, html! {
+            <span class = Self::INDICATOR_CLASS>
+                <span class = "mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+            </span>
+        });
         self
     }
 

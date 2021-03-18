@@ -206,12 +206,12 @@ fn mark_svg_path(parent: &mut Html) {
             for child in parent.children.iter_mut() {
                 mark_svg_path(child);
             }
-        }
+        },
         Html::VList(list) => {
             for item in list.iter_mut() {
                 mark_svg_path(item);
             }
-        }
+        },
         _ => (),
     }
 }

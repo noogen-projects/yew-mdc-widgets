@@ -5,7 +5,7 @@ use std::{
 
 use yew::{html, html::onclick, Callback, Html, MouseEvent};
 
-use crate::{ripple, utils::VTagExt, MdcWidget, AUTO_INIT_ATTR};
+use crate::{ripple, utils::VTagExt, MdcWidget, AUTO_INIT_ATTR, MATERIAL_ICONS_CLASS};
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum ButtonStyle {
@@ -38,9 +38,18 @@ pub struct Button {
 }
 
 impl Button {
+    ///Defaults to a text button that is flush with the surface.
+    pub const CLASS: &'static str = "mdc-button";
+    ///Indicates the element which shows the ripple styling.
+    pub const RIPPLE_CLASS: &'static str = "mdc-button__ripple";
+    ///Indicates the element containing the button's text label.
+    pub const LABEL_CLASS: &'static str = "mdc-button__label";
+    ///Indicates the element containing the button's icon.
+    pub const ICON_CLASS: &'static str = "mdc-button__icon";
+
     pub fn simple() -> Self {
         Self {
-            html: html! { <button class = "mdc-button"><div class = "mdc-button__ripple"></div></button> },
+            html: html! { <button class = Self::CLASS><div class = Self::RIPPLE_CLASS></div></button> },
         }
     }
 
@@ -64,7 +73,7 @@ impl Button {
 
     pub fn label(mut self, label: impl Into<Html>) -> Self {
         self.root_tag_mut().children.push(html! {
-            <span class = "mdc-button__label">{ label }</span>
+            <span class = Self::LABEL_CLASS>{ label }</span>
         });
         self
     }
@@ -103,7 +112,7 @@ impl Button {
     pub fn add_before_label(mut self, item: impl Into<Html>) -> Self {
         let root = self.root_tag_mut();
         let idx = root
-            .find_child_contains_class_idx("mdc-button__label")
+            .find_child_contains_class_idx(Self::LABEL_CLASS)
             .unwrap_or_else(|| {
                 if root.is_last_child("script") {
                     root.children.len() - 1
@@ -118,7 +127,7 @@ impl Button {
     pub fn add_after_label(mut self, item: impl Into<Html>) -> Self {
         let root = self.root_tag_mut();
         let idx = root
-            .find_child_contains_class_idx("mdc-button__label")
+            .find_child_contains_class_idx(Self::LABEL_CLASS)
             .map(|idx| idx + 1)
             .unwrap_or_else(|| {
                 if root.is_last_child("script") {
@@ -133,7 +142,7 @@ impl Button {
 
     pub fn icon(self, name: impl Into<String>) -> Self {
         self.add_after_label(html! {
-            <i class = "material-icons mdc-button__icon" aria-hidden = "true">{ name.into() }</i>
+            <i class = vec![MATERIAL_ICONS_CLASS, Self::ICON_CLASS] aria-hidden = "true">{ name.into() }</i>
         })
     }
 

@@ -43,3 +43,5 @@ pub mod mdc {
 }
 
 pub const AUTO_INIT_ATTR: &str = "data-mdc-auto-init";
+
+pub const MATERIAL_ICONS_CLASS: &str = "material-icons";
