@@ -19,16 +19,28 @@ pub struct Radio {
 }
 
 impl Radio {
+    pub const CLASS: &'static str = "mdc-radio";
+
     const RIPPLE_CLASS: &'static str = "mdc-radio__ripple";
+
+    const NATIVE_CONTROL_CLASS: &'static str = "mdc-radio__native-control";
+
+    const BACKGROUND_CLASS: &'static str = "mdc-radio__background";
+
+    const OUTER_CIRCLE_CLASS: &'static str = "mdc-radio__outer-circle";
+
+    const INNER_CIRCLE_CLASS: &'static str = "mdc-radio__inner-circle";
+
+    const DISABLED_CLASS: &'static str = "mdc-radio--disabled";
 
     pub fn simple() -> Self {
         Self {
             html: html! {
-                <div class="mdc-radio">
-                    <input type = "radio" class = "mdc-radio__native-control" />
-                    <div class = "mdc-radio__background">
-                        <div class = "mdc-radio__outer-circle"></div>
-                        <div class = "mdc-radio__inner-circle"></div>
+                <div class=Self::CLASS>
+                    <input type = "radio" class = Self::NATIVE_CONTROL_CLASS />
+                    <div class = Self::BACKGROUND_CLASS>
+                        <div class = Self::OUTER_CIRCLE_CLASS></div>
+                        <div class = Self::INNER_CIRCLE_CLASS></div>
                     </div>
                     <div class = Self::RIPPLE_CLASS></div>
                 </div>
@@ -62,7 +74,7 @@ impl Radio {
     }
 
     pub fn disabled(mut self, disabled: bool) -> Self {
-        root_and_input_child_disabled(&mut self, "mdc-radio--disabled", disabled);
+        root_and_input_child_disabled(&mut self, Self::DISABLED_CLASS, disabled);
         self
     }
 
