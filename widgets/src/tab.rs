@@ -59,6 +59,10 @@ impl Tab {
 
     pub const INDICATOR_ACTIVE_CLASS: &'static str = "mdc-tab-indicator--active";
 
+    pub const INDICATOR_CONTENT_CLASS: &'static str = "mdc-tab-indicator__content";
+
+    pub const INDICATOR_CONTENT_UNDERLINE_CLASS: &'static str = "mdc-tab-indicator__content--underline";
+
     /// Indicates that the tab icon and label should flow vertically instead of horizontally.
     pub const STACKED_CLASS: &'static str = "mdc-tab--stacked";
 
@@ -102,7 +106,7 @@ impl Tab {
             1,
             html! {
                 <span class = Self::INDICATOR_CLASS>
-                    <span class = "mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                    <span class = (Self::INDICATOR_CONTENT_CLASS, Self::INDICATOR_CONTENT_UNDERLINE_CLASS)></span>
                 </span>
             },
         );
@@ -113,7 +117,7 @@ impl Tab {
         if let Some(content) = self.find_child_tag_mut(Self::CONTENT_CLASS) {
             content.add_child(html! {
                 <span class = Self::INDICATOR_CLASS>
-                    <span class = "mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                    <span class = (Self::INDICATOR_CONTENT_CLASS, Self::INDICATOR_CONTENT_UNDERLINE_CLASS)></span>
                 </span>
             });
         }
