@@ -142,7 +142,7 @@ impl Button {
 
     pub fn icon(self, name: impl Into<String>) -> Self {
         self.add_after_label(html! {
-            <i class = vec![MATERIAL_ICONS_CLASS, Self::ICON_CLASS] aria-hidden = "true">{ name.into() }</i>
+            <i class = (MATERIAL_ICONS_CLASS, Self::ICON_CLASS) aria-hidden = "true">{ name.into() }</i>
         })
     }
 

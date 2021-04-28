@@ -77,7 +77,7 @@ impl Component for Root {
                 { drawer }
                 <div class="mdc-drawer-scrim"></div>
 
-                <div class = vec!["app-content", Drawer::APP_CONTENT_CLASS]>
+                <div class = ("app-content", Drawer::APP_CONTENT_CLASS)>
                     { top_app_bar }
 
                     <div class = "mdc-top-app-bar--fixed-adjust">

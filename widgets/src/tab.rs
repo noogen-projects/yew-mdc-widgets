@@ -98,11 +98,14 @@ impl Tab {
     }
 
     pub fn indicator(mut self) -> Self {
-        self.insert_child(1, html! {
-            <span class = Self::INDICATOR_CLASS>
-                <span class = "mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
-            </span>
-        });
+        self.insert_child(
+            1,
+            html! {
+                <span class = Self::INDICATOR_CLASS>
+                    <span class = "mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                </span>
+            },
+        );
         self
     }
 
@@ -141,7 +144,7 @@ impl Tab {
         let root = self.root_tag_mut();
         if let Some(content) = root.find_child_contains_class_mut(Self::CONTENT_CLASS) {
             content.add_child(html! {
-                <span class = vec![Self::ICON_CLASS, "material-icons"] aria-hidden = "true">{ name.into() }</span>
+                <span class = (Self::ICON_CLASS, "material-icons") aria-hidden = "true">{ name.into() }</span>
             });
         }
         self

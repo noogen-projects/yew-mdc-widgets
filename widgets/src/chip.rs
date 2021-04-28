@@ -119,16 +119,16 @@ impl Chip {
         let root = self.root_tag_mut();
         if root.children.len() < 2 {
             root.add_child(html! {
-                <i class = vec!["material-icons", Self::ICON_CLASS, Self::ICON_LEADING_CLASS]>{ name.into() }</i>
+                <i class = ("material-icons", Self::ICON_CLASS, Self::ICON_LEADING_CLASS)>{ name.into() }</i>
             });
         } else {
             root.add_child(html! {
                 <span role = "gridcell">
-                    <i class = vec![
+                    <i class = (
                             "material-icons",
                             Self::ICON_CLASS,
                             Self::ICON_TRAILING_CLASS
-                        ] tabindex = "-1" role = "button">{ name.into() }</i>
+                ) tabindex = "-1" role = "button">{ name.into() }</i>
                 </span>
             });
         }
@@ -206,12 +206,12 @@ fn mark_svg_path(parent: &mut Html) {
             for child in parent.children.iter_mut() {
                 mark_svg_path(child);
             }
-        },
+        }
         Html::VList(list) => {
             for item in list.iter_mut() {
                 mark_svg_path(item);
             }
-        },
+        }
         _ => (),
     }
 }

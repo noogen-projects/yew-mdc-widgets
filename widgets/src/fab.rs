@@ -40,7 +40,7 @@ impl Fab {
 
     pub fn icon(mut self, name: impl Into<String>) -> Self {
         self.root_tag_mut().add_child(html! {
-            <span class = vec![Self::ICON_CLASS, "material-icons"]>{ name.into() }</span>
+            <span class = (Self::ICON_CLASS, "material-icons")>{ name.into() }</span>
         });
         self
     }
