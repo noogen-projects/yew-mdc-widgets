@@ -56,6 +56,7 @@ impl TopAppBar {
         if let Some(Html::VTag(row)) = self.root_tag_mut().children.first_mut() {
             if let Some(Html::VTag(start_section)) = row.children.first_mut() {
                 if let Some(title_tag) = start_section.find_child_contains_class_mut("mdc-top-app-bar__title") {
+                    title_tag.children.clear();
                     title_tag.add_child(title.into());
                 }
             }
