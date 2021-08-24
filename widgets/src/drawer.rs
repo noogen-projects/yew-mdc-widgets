@@ -96,9 +96,12 @@ impl Drawer {
     pub fn header(mut self, header: impl Into<Html>) -> Self {
         let root = self.root_tag_mut();
         root.remove_child_contains_class(Self::HEADER_CLASS);
-        root.insert_child(0, html! {
-            <div class = Self::HEADER_CLASS>{ header }</div>
-        });
+        root.insert_child(
+            0,
+            html! {
+                <div class = Self::HEADER_CLASS>{ header }</div>
+            },
+        );
         self
     }
 
@@ -114,6 +117,7 @@ impl Drawer {
 
         let root = self.root_tag_mut();
         if let Some(header) = root.find_child_contains_class_mut(Self::HEADER_CLASS) {
+            header.remove_child_contains_class(Self::TITLE_CLASS);
             header.insert_child(0, title);
             self
         } else {
@@ -133,6 +137,7 @@ impl Drawer {
 
         let root = self.root_tag_mut();
         if let Some(header) = root.find_child_contains_class_mut(Self::HEADER_CLASS) {
+            header.remove_child_contains_class(Self::SUBTITLE_CLASS);
             header.add_child(subtitle);
             self
         } else {
