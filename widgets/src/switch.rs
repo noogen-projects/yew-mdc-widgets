@@ -23,14 +23,28 @@ impl Default for Switch {
 }
 
 impl Switch {
+    pub const CLASS: &'static str = "mdc-switch";
+
+    pub const TRACK_CLASS: &'static str = "mdc-switch__track";
+
+    pub const THUMB_UNDERLAY_CLASS: &'static str = "mdc-switch__thumb-underlay";
+
+    pub const THUMB_CLASS: &'static str = "mdc-switch__thumb";
+
+    pub const NATIVE_CONTROL_CLASS: &'static str = "mdc-switch__native-control";
+
+    pub const DISABLED_CLASS: &'static str = "mdc-switch--disabled";
+
+    pub const CHECKED_CLASS: &'static str = "mdc-switch--checked";
+
     pub fn simple() -> Self {
         Self {
             html: html! {
-                <div class = "mdc-switch">
-                    <div class = "mdc-switch__track"></div>
-                    <div class = "mdc-switch__thumb-underlay">
-                        <div class = "mdc-switch__thumb"></div>
-                        <input type = "checkbox" class = "mdc-switch__native-control" role = "switch" aria-checked = "false" />
+                <div class = Self::CLASS>
+                    <div class = Self::TRACK_CLASS></div>
+                    <div class = Self::THUMB_UNDERLAY_CLASS>
+                        <div class = Self::THUMB_CLASS></div>
+                        <input type = "checkbox" class = Self::NATIVE_CONTROL_CLASS role = "switch" aria-checked = "false" />
                     </div>
                 </div>
             },
@@ -55,7 +69,7 @@ impl Switch {
     }
 
     pub fn disable(mut self, disable: bool) -> Self {
-        root_and_input_child_disabled(&mut self, "mdc-switch--disabled", disable);
+        root_and_input_child_disabled(&mut self, Self::DISABLED_CLASS, disable);
         self
     }
 
@@ -67,9 +81,9 @@ impl Switch {
         let root = self.root_tag_mut();
 
         if on {
-            root.add_class_if_needed("mdc-switch--checked");
+            root.add_class_if_needed(Self::CHECKED_CLASS);
         } else {
-            root.remove_class("mdc-switch--checked")
+            root.remove_class(Self::CHECKED_CLASS)
         }
 
         if let Some(input) = root.find_child_tag_recursively_mut("input") {

@@ -3,7 +3,7 @@ use std::{
     rc::Rc,
 };
 
-use yew::{html, html::onclick, Callback, Html, MouseEvent};
+use yew::{classes, html, html::onclick, Callback, Html, MouseEvent};
 
 use crate::{ripple, utils::VTagExt, MdcWidget, AUTO_INIT_ATTR};
 
@@ -46,7 +46,7 @@ impl Fab {
 
     pub fn icon(mut self, name: impl Into<String>) -> Self {
         self.root_tag_mut().add_child(html! {
-            <span class = vec![Self::ICON_CLASS, "material-icons"]>{ name.into() }</span>
+            <span class = classes!(Self::ICON_CLASS, "material-icons")>{ name.into() }</span>
         });
         self
     }

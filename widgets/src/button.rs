@@ -3,7 +3,7 @@ use std::{
     rc::Rc,
 };
 
-use yew::{html, html::onclick, Callback, Html, MouseEvent};
+use yew::{classes, html, html::onclick, Callback, Html, MouseEvent};
 
 use crate::{ripple, utils::VTagExt, MdcWidget, AUTO_INIT_ATTR, MATERIAL_ICONS_CLASS};
 
@@ -148,7 +148,7 @@ impl Button {
 
     pub fn icon(self, name: impl Into<String>) -> Self {
         self.add_after_label(html! {
-            <i class = vec![MATERIAL_ICONS_CLASS, Self::ICON_CLASS] aria-hidden = "true">{ name.into() }</i>
+            <i class = classes!(MATERIAL_ICONS_CLASS, Self::ICON_CLASS) aria-hidden = "true">{ name.into() }</i>
         })
     }
 

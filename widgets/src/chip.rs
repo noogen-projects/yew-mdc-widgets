@@ -4,7 +4,7 @@ use std::{
 };
 
 use const_format::concatcp;
-use yew::{html, html::onclick, Callback, Html, MouseEvent};
+use yew::{classes, html, html::onclick, Callback, Html, MouseEvent};
 
 use crate::{utils::VTagExt, CustomEvent, MdcWidget, AUTO_INIT_ATTR};
 
@@ -125,16 +125,16 @@ impl Chip {
         let root = self.root_tag_mut();
         if root.children.len() < 2 {
             root.add_child(html! {
-                <i class = vec!["material-icons", Self::ICON_CLASS, Self::ICON_LEADING_CLASS]>{ name.into() }</i>
+                <i class = classes!("material-icons", Self::ICON_CLASS, Self::ICON_LEADING_CLASS)>{ name.into() }</i>
             });
         } else {
             root.add_child(html! {
                 <span role = "gridcell">
-                    <i class = vec![
+                    <i class = classes!(
                             "material-icons",
                             Self::ICON_CLASS,
                             Self::ICON_TRAILING_CLASS
-                        ] tabindex = "-1" role = "button">{ name.into() }</i>
+                ) tabindex = "-1" role = "button">{ name.into() }</i>
                 </span>
             });
         }

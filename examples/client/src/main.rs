@@ -2,7 +2,7 @@
 
 use std::iter::FromIterator;
 
-use yew::{html, initialize, run_loop, utils, App, Component, ComponentLink, Html};
+use yew::{classes, html, initialize, run_loop, utils, App, Component, ComponentLink, Html};
 use yew_mdc_widgets::{
     auto_init, drawer,
     utils::dom::{get_exist_element_by_id, JsObjectAccess},
@@ -77,7 +77,7 @@ impl Component for Root {
                 { drawer }
                 <div class="mdc-drawer-scrim"></div>
 
-                <div class = vec!["app-content", Drawer::APP_CONTENT_CLASS]>
+                <div class = classes!("app-content", Drawer::APP_CONTENT_CLASS)>
                     { top_app_bar }
 
                     <div class = "mdc-top-app-bar--fixed-adjust">

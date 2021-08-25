@@ -4,7 +4,7 @@ use std::{
 };
 
 use const_format::concatcp;
-use yew::{html, html::onclick, Callback, Html, MouseEvent};
+use yew::{classes, html, html::onclick, Callback, Html, MouseEvent};
 
 use crate::{
     utils::{dom, VTagExt},
@@ -65,6 +65,10 @@ impl Tab {
 
     pub const INDICATOR_ACTIVE_CLASS: &'static str = "mdc-tab-indicator--active";
 
+    pub const INDICATOR_CONTENT_CLASS: &'static str = "mdc-tab-indicator__content";
+
+    pub const INDICATOR_CONTENT_UNDERLINE_CLASS: &'static str = "mdc-tab-indicator__content--underline";
+
     /// Indicates that the tab icon and label should flow vertically instead of horizontally.
     pub const STACKED_CLASS: &'static str = "mdc-tab--stacked";
 
@@ -106,7 +110,7 @@ impl Tab {
     pub fn indicator(mut self) -> Self {
         self.insert_child(1, html! {
             <span class = Self::INDICATOR_CLASS>
-                <span class = "mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                <span class = classes!(Self::INDICATOR_CONTENT_CLASS, Self::INDICATOR_CONTENT_UNDERLINE_CLASS)></span>
             </span>
         });
         self
@@ -116,7 +120,7 @@ impl Tab {
         if let Some(content) = self.find_child_tag_mut(Self::CONTENT_CLASS) {
             content.add_child(html! {
                 <span class = Self::INDICATOR_CLASS>
-                    <span class = "mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                    <span class = classes!(Self::INDICATOR_CONTENT_CLASS, Self::INDICATOR_CONTENT_UNDERLINE_CLASS)></span>
                 </span>
             });
         }
@@ -147,7 +151,7 @@ impl Tab {
         let root = self.root_tag_mut();
         if let Some(content) = root.find_child_contains_class_mut(Self::CONTENT_CLASS) {
             content.add_child(html! {
-                <span class = vec![Self::ICON_CLASS, "material-icons"] aria-hidden = "true">{ name.into() }</span>
+                <span class = classes!(Self::ICON_CLASS, "material-icons") aria-hidden = "true">{ name.into() }</span>
             });
         }
         self
