@@ -14,9 +14,9 @@ keywords = ["noogen", "web", "mdc", "widgets", "yew"]
 categories = ["web-programming", "wasm", "gui"]
 
 [dependencies]
-yew = { version = "0.17", features = ["web_sys"] }
+yew = { version = "0.18", features = ["web_sys"] }
 js-sys = "0.3"
-gloo = "0.2"
+gloo = "0.3"
 wasm-bindgen = "0.2"
 const_format = "0.2"
 

@@ -39,6 +39,12 @@ pub struct IconButton {
     is_toggle: bool,
 }
 
+impl Default for IconButton {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl IconButton {
     ///Defaults to an icon button
     pub const CLASS: &'static str = "mdc-icon-button";

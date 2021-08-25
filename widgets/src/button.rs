@@ -37,6 +37,12 @@ pub struct Button {
     html: Html,
 }
 
+impl Default for Button {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Button {
     ///Defaults to a text button that is flush with the surface.
     pub const CLASS: &'static str = "mdc-button";

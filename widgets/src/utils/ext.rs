@@ -1,11 +1,7 @@
-use std::{
-    borrow::Borrow,
-    hash::Hash,
-    ops::{Deref, DerefMut},
-};
+use std::ops::{Deref, DerefMut};
 
 use yew::{
-    virtual_dom::{VNode, VTag},
+    virtual_dom::{AttrValue, Attributes, VNode, VTag},
     Html,
 };
 
@@ -16,12 +12,9 @@ pub trait VTagExt {
     fn add_class_if_needed(&mut self, class: impl AsRef<str>);
     fn remove_class(&mut self, class: &str);
     fn remove_any_class(&mut self, classes: &[&str]);
-    fn attr<Q>(&self, attr: &Q) -> Option<&String>
-    where
-        Q: ?Sized + Hash + Eq,
-        String: Borrow<Q>;
-    fn set_attr(&mut self, attr: impl Into<String>, value: impl Into<String>);
-    fn remove_attr(&mut self, attr: impl AsRef<str>) -> Option<String>;
+    fn attr(&self, attr: impl AsRef<str>) -> Option<&AttrValue>;
+    fn set_attr(&mut self, attr: &'static str, value: impl Into<AttrValue>);
+    fn remove_attr(&mut self, attr: impl AsRef<str>) -> Option<AttrValue>;
     fn is_contains_class(&self, class: &str) -> bool;
     fn is_contains_any_class(&self, classes: &[&str]) -> bool;
     fn is_first_child_contains_class(&self, class: &str) -> bool;
@@ -56,11 +49,11 @@ impl VTagExt for VTag {
 
     fn add_class(&mut self, class: impl AsRef<str>) {
         let class = class.as_ref().trim();
-        if let Some(classes) = self.attributes.get_mut("class") {
-            classes.push(' ');
-            classes.push_str(class)
+        if let Some(classes) = self.attr("class") {
+            let classes = format!("{} {}", classes, class);
+            self.set_attr("class", classes);
         } else {
-            self.attributes.insert("class".to_string(), class.to_string());
+            self.set_attr("class", class.to_string());
         }
     }
 
@@ -72,43 +65,50 @@ impl VTagExt for VTag {
     }
 
     fn remove_class(&mut self, class: &str) {
-        if let Some(classes) = self.attributes.get_mut("class") {
-            *classes = classes
+        if let Some(classes) = self.attr("class") {
+            let classes = classes
                 .split_whitespace()
                 .filter(|item| class != *item)
                 .collect::<Vec<_>>()
                 .join(" ");
+            self.set_attr("class", classes);
         }
     }
 
     fn remove_any_class(&mut self, classes: &[&str]) {
-        if let Some(class) = self.attributes.get_mut("class") {
-            *class = class
+        if let Some(class) = self.attr("class") {
+            let class = class
                 .split_whitespace()
                 .filter(|item| !classes.contains(item))
                 .collect::<Vec<_>>()
                 .join(" ");
+            self.set_attr("class", class);
         }
     }
 
-    fn attr<Q>(&self, attr: &Q) -> Option<&String>
-    where
-        Q: ?Sized + Hash + Eq,
-        String: Borrow<Q>,
-    {
-        self.attributes.get(attr)
+    fn attr(&self, attr: impl AsRef<str>) -> Option<&AttrValue> {
+        match &self.attributes {
+            Attributes::Vec(attrs) => attrs.iter().find_map(|pos_attr| {
+                if pos_attr.0 == attr.as_ref() {
+                    pos_attr.1.as_ref()
+                } else {
+                    None
+                }
+            }),
+            Attributes::IndexMap(attrs) => attrs.get(attr.as_ref()),
+        }
     }
 
-    fn set_attr(&mut self, attr: impl Into<String>, value: impl Into<String>) {
-        self.attributes.insert(attr.into(), value.into());
+    fn set_attr(&mut self, attr: &'static str, value: impl Into<AttrValue>) {
+        self.attributes.get_mut_index_map().insert(attr, value.into());
     }
 
-    fn remove_attr(&mut self, attr: impl AsRef<str>) -> Option<String> {
-        self.attributes.remove(attr.as_ref())
+    fn remove_attr(&mut self, attr: impl AsRef<str>) -> Option<AttrValue> {
+        self.attributes.get_mut_index_map().remove(attr.as_ref())
     }
 
     fn is_contains_class(&self, class: &str) -> bool {
-        if let Some(classes) = self.attributes.get("class") {
+        if let Some(classes) = self.attr("class") {
             classes.split_whitespace().any(|item| item == class)
         } else {
             false
@@ -116,7 +116,7 @@ impl VTagExt for VTag {
     }
 
     fn is_contains_any_class(&self, classes: &[&str]) -> bool {
-        if let Some(class) = self.attributes.get("class") {
+        if let Some(class) = self.attr("class") {
             class.split_whitespace().any(|item| classes.contains(&item))
         } else {
             false
@@ -257,11 +257,7 @@ impl VTagExt for Html {
         }
     }
 
-    fn attr<Q>(&self, attr: &Q) -> Option<&String>
-    where
-        Q: ?Sized + Hash + Eq,
-        String: Borrow<Q>,
-    {
+    fn attr(&self, attr: impl AsRef<str>) -> Option<&AttrValue> {
         if let Html::VTag(tag) = self {
             tag.attr(attr)
         } else {
@@ -269,13 +265,13 @@ impl VTagExt for Html {
         }
     }
 
-    fn set_attr(&mut self, attr: impl Into<String>, value: impl Into<String>) {
+    fn set_attr(&mut self, attr: &'static str, value: impl Into<AttrValue>) {
         if let Html::VTag(tag) = self {
             tag.set_attr(attr, value);
         }
     }
 
-    fn remove_attr(&mut self, attr: impl AsRef<str>) -> Option<String> {
+    fn remove_attr(&mut self, attr: impl AsRef<str>) -> Option<AttrValue> {
         if let Html::VTag(tag) = self {
             tag.remove_attr(attr)
         } else {
@@ -605,9 +601,10 @@ fn add_child_script_statement(child: Option<&mut VTag>, statement: impl AsRef<st
         if let Some(Html::VText(text)) = script.children.children.first_mut() {
             let text = &mut text.text;
             if text.starts_with('{') && text.ends_with('}') {
-                text.insert_str(text.len() - 1, statement.as_ref());
+                let insert_pos = text.len() - 1;
+                text.to_mut().insert_str(insert_pos, statement.as_ref());
             } else {
-                text.push_str(statement.as_ref());
+                text.to_mut().push_str(statement.as_ref());
             }
         }
     }

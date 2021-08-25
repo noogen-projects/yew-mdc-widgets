@@ -40,6 +40,12 @@ pub struct Dialog {
     html: Html,
 }
 
+impl Default for Dialog {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Dialog {
     /// The bounding box for the dialog's content.
     pub const SURFACE_CLASS: &'static str = "mdc-dialog__surface";

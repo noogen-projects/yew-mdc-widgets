@@ -14,6 +14,12 @@ pub struct TopAppBar {
     html: Html,
 }
 
+impl Default for TopAppBar {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl TopAppBar {
     pub const VAR_NAME: &'static str = "top_app_bar";
     const SCROLLED_CLASS: &'static str = "mdc-top-app-bar--fixed-scrolled";
@@ -111,9 +117,9 @@ impl TopAppBar {
 
     pub fn root_id(&self) -> &str {
         self.root_tag()
-            .attributes
-            .get("id")
+            .attr("id")
             .expect("The TopAppBar widget must have ID")
+            .as_ref()
     }
 
     pub fn shadow_when_scroll_script(&self, factory: impl AsRef<str>) -> String {

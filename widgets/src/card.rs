@@ -153,7 +153,11 @@ impl Card {
         let root = self.root_tag_mut();
         if enabled {
             if !root.is_last_child("script") {
-                if let Some(id) = root.attributes.get("id") {
+                if let Some(id) = root
+                    .attributes
+                    .iter()
+                    .find_map(|(key, val)| if key == "id" { Some(val) } else { None })
+                {
                     root.children.push(html! {
                         <script>{
                             format!(r"{{const ripples = [].map.call(

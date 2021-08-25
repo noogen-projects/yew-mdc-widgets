@@ -62,7 +62,7 @@ where
 
         let listener = move |event: &Event| {
             let event: E = JsValue::from(event).into();
-            callback.call(this.clone(), event.clone());
+            callback.call(this.clone(), event);
         };
 
         let options = EventListenerOptions::enable_prevent_default();

@@ -3,7 +3,7 @@ use std::{
     rc::Rc,
 };
 
-use yew::{html, html::onclick, Callback, Html, MouseEvent};
+use yew::{html, html::onclick, virtual_dom::AttrValue, Callback, Html, MouseEvent};
 
 use crate::{ripple, utils::VTagExt, MdcWidget, AUTO_INIT_ATTR};
 
@@ -30,10 +30,10 @@ impl ListItem {
         }
     }
 
-    pub fn simple_link(href: impl AsRef<str>) -> Self {
+    pub fn simple_link(href: impl Into<AttrValue>) -> Self {
         Self {
             html: html! {
-                <a class = Self::CLASS href = href.as_ref() />
+                <a class = Self::CLASS href = href.into() />
             },
         }
     }
@@ -42,7 +42,7 @@ impl ListItem {
         Self::simple().interactive().ripple(true)
     }
 
-    pub fn link(href: impl AsRef<str>) -> Self {
+    pub fn link(href: impl Into<AttrValue>) -> Self {
         Self::simple_link(href).interactive().ripple(true)
     }
 
@@ -148,9 +148,9 @@ impl ListItem {
 
         if let Some(id) = root
             .find_child_tag_recursively("input")
-            .and_then(|input| input.attributes.get("id"))
+            .and_then(|input| input.attr("id"))
         {
-            label.set_attr("for", id);
+            label.set_attr("for", id.clone());
         }
 
         let idx = root
@@ -219,9 +219,9 @@ impl List {
 
     pub fn root_id(&self) -> &str {
         self.root_tag()
-            .attributes
-            .get("id")
+            .attr("id")
             .expect("The List widget must have ID")
+            .as_ref()
     }
 
     pub fn single_selection(self) -> Self {

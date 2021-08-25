@@ -16,6 +16,12 @@ pub struct Switch {
     html: Html,
 }
 
+impl Default for Switch {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Switch {
     pub fn simple() -> Self {
         Self {

@@ -13,6 +13,12 @@ pub struct Drawer {
     html: Html,
 }
 
+impl Default for Drawer {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Drawer {
     pub const VAR_NAME: &'static str = "drawer";
     pub const APP_CONTENT_CLASS: &'static str = "mdc-drawer-app-content";
@@ -35,9 +41,9 @@ impl Drawer {
 
     pub fn root_id(&self) -> &str {
         self.root_tag()
-            .attributes
-            .get("id")
+            .attr("id")
             .expect("The Drawer widget must have ID")
+            .as_ref()
     }
 
     pub fn add_script_statement(mut self, statement: String) -> Self {
@@ -96,12 +102,9 @@ impl Drawer {
     pub fn header(mut self, header: impl Into<Html>) -> Self {
         let root = self.root_tag_mut();
         root.remove_child_contains_class(Self::HEADER_CLASS);
-        root.insert_child(
-            0,
-            html! {
-                <div class = Self::HEADER_CLASS>{ header }</div>
-            },
-        );
+        root.insert_child(0, html! {
+            <div class = Self::HEADER_CLASS>{ header }</div>
+        });
         self
     }
 

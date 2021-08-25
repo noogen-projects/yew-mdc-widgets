@@ -20,6 +20,12 @@ pub struct Menu {
     list: List,
 }
 
+impl Default for Menu {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Menu {
     pub const VAR_NAME: &'static str = "menu";
     pub const ANCHOR_CLASS: &'static str = "mdc-menu-surface--anchor";
@@ -52,9 +58,9 @@ impl Menu {
 
     pub fn root_id(&self) -> &str {
         self.root_tag()
-            .attributes
-            .get("id")
+            .attr("id")
             .expect("The Menu widget must have ID")
+            .as_ref()
     }
 
     pub fn add_script_statement(mut self, statement: String) -> Self {

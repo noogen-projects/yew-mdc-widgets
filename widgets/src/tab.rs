@@ -42,6 +42,12 @@ pub struct Tab {
     html: Html,
 }
 
+impl Default for Tab {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Tab {
     ///
     pub const CLASS: &'static str = "mdc-tab";
@@ -212,6 +218,12 @@ pub struct TabBar {
     html: Html,
 }
 
+impl Default for TabBar {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl TabBar {
     pub const CLASS: &'static str = "mdc-tab-bar";
 
@@ -257,7 +269,10 @@ impl TabBar {
 
     #[track_caller]
     pub fn root_id(&self) -> &str {
-        self.root_tag().attr("id").expect("The TabBar widget must have ID")
+        self.root_tag()
+            .attr("id")
+            .expect("The TabBar widget must have ID")
+            .as_ref()
     }
 
     /// Emitted when a Tab is activated with the index of the activated Tab.

@@ -194,7 +194,7 @@ impl TextField {
                     .map(|idx| idx + 1)
                     .unwrap_or(0);
                 self.root_tag_mut().children.insert(idx, html! {
-                    <span class = "mdc-floating-label" id = label_id>{ label }</span>
+                    <span class = "mdc-floating-label" id = label_id.clone()>{ label }</span>
                 });
                 if let Some(input_tag) = self.root_tag_mut().find_child_tag_mut("input") {
                     input_tag.set_attr("aria-labelledby", label_id);
@@ -204,7 +204,7 @@ impl TextField {
                 if let Some(tag) = self.root_tag_mut().find_child_contains_class_mut("mdc-notched-outline") {
                     if let Some(notch) = tag.find_child_contains_class_mut("mdc-notched-outline__notch") {
                         notch.children.push(html! {
-                            <span class = "mdc-floating-label" id = label_id>{ label }</span>
+                            <span class = "mdc-floating-label" id = label_id.clone()>{ label }</span>
                         });
                     }
                 }
@@ -216,7 +216,7 @@ impl TextField {
             TextFieldStyle::FilledFullWidth => {
                 if let Some(input_tag) = self.root_tag_mut().find_child_tag_mut("input") {
                     if let Html::VText(label) = label.into() {
-                        input_tag.set_attr("placeholder", &label.text);
+                        input_tag.set_attr("placeholder", label.text.clone());
                         input_tag.set_attr("aria-label", label.text);
                     }
                 }
@@ -286,9 +286,9 @@ impl TextField {
 
     pub fn root_id(&self) -> &str {
         self.root_tag()
-            .attributes
-            .get("id")
+            .attr("id")
             .expect("The TextField widget must have ID")
+            .as_ref()
     }
 
     pub fn on_click(self, callback: impl Into<Callback<MouseEvent>>) -> Self {

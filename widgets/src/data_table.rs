@@ -3,7 +3,12 @@ use std::{
     rc::Rc,
 };
 
-use yew::{html, html::onclick, virtual_dom::VTag, Callback, Html, MouseEvent};
+use yew::{
+    html,
+    html::onclick,
+    virtual_dom::{AttrValue, VTag},
+    Callback, Html, MouseEvent,
+};
 
 use crate::{utils::VTagExt, Checkbox, MdcWidget};
 
@@ -107,18 +112,18 @@ impl DataTable {
 
         let row_id = format!("{}-row-{}", self.root_id(), self.row_count());
         let mut row = html! {
-            <tr data-row-id = row_id class = "mdc-data-table__row">{ row }</tr>
+            <tr data-row-id = row_id.clone() class = "mdc-data-table__row">{ row }</tr>
         };
 
         let row_checkbox = if self.row_selection {
-            Some(Self::row_checkbox(&row_id))
+            Some(Self::row_checkbox(row_id.clone()))
         } else {
             None
         };
 
         if let Some(cell) = row.first_child_tag_mut("td") {
-            cell.attributes.insert("scope".into(), "row".into());
-            cell.attributes.insert("id".into(), row_id);
+            cell.set_attr("scope", "row");
+            cell.set_attr("id", row_id);
         }
 
         if let Some(row_checkbox) = row_checkbox {
@@ -160,7 +165,7 @@ impl DataTable {
             let body = self.table_body_tag_mut();
             for row in body.children.iter_mut() {
                 if let Html::VTag(row) = row {
-                    let row_id = row.attributes.get("id").expect("A row ID expected");
+                    let row_id = row.attr("id").expect("A row ID expected").clone();
                     row.children.insert(0, Self::row_checkbox(row_id));
                 }
             }
@@ -190,7 +195,7 @@ impl DataTable {
 
     pub fn root_id(&self) -> &str {
         if let Html::VTag(tag) = &self.html {
-            tag.attributes.get("id").expect("The DataTable widget must have ID")
+            tag.attr("id").expect("The DataTable widget must have ID").as_ref()
         } else {
             panic!("The DataTable widget must be contains the root tag!")
         }
@@ -260,8 +265,8 @@ impl DataTable {
         }
     }
 
-    fn row_checkbox(row_id: impl AsRef<str>) -> Html {
-        let row_id = row_id.as_ref();
+    fn row_checkbox(row_id: impl Into<AttrValue>) -> Html {
+        let row_id = row_id.into();
         let checkbox = Checkbox::new()
             .id(format!("{}-checkbox", row_id))
             .class("mdc-data-table__row-checkbox")

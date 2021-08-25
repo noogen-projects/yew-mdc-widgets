@@ -24,6 +24,12 @@ pub struct Chip {
     tab_index: isize,
 }
 
+impl Default for Chip {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Chip {
     ///
     pub const CLASS: &'static str = "mdc-chip";
@@ -136,7 +142,7 @@ impl Chip {
     }
 
     pub fn text(mut self, text: impl Into<Html>) -> Self {
-        let tab_index = self.tab_index;
+        let tab_index = self.tab_index.to_string();
         self.root_tag_mut().add_child(html! {
             <span role = "gridcell">
                 <span tabindex = tab_index class = Self::PRIMARY_ACTION_CLASS>
@@ -253,6 +259,12 @@ pub struct ChipSet {
     html: Html,
 }
 
+impl Default for ChipSet {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl ChipSet {
     pub const VAR_NAME: &'static str = "chip_set";
 
@@ -321,7 +333,10 @@ impl ChipSet {
 
     #[track_caller]
     pub fn root_id(&self) -> &str {
-        self.root_tag().attr("id").expect("The ChipSet widget must have ID")
+        self.root_tag()
+            .attr("id")
+            .expect("The ChipSet widget must have ID")
+            .as_ref()
     }
 
     /// Indicates the chip was interacted with (via click/tap or Enter key).

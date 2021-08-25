@@ -1,6 +1,6 @@
 use std::ops::{Deref, DerefMut};
 
-use yew::{html, services::ConsoleService, Callback, Html, MouseEvent};
+use yew::{html, services::ConsoleService, virtual_dom::AttrValue, Callback, Html, MouseEvent};
 
 use crate::{
     utils::{
@@ -16,6 +16,12 @@ pub mod mdc {
 #[derive(Debug, Clone)]
 pub struct Checkbox {
     html: Html,
+}
+
+impl Default for Checkbox {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl Checkbox {
@@ -52,7 +58,7 @@ impl Checkbox {
         })
     }
 
-    pub fn labeled_by(mut self, labeled_by: impl Into<String>) -> Self {
+    pub fn labeled_by(mut self, labeled_by: impl Into<AttrValue>) -> Self {
         if let Some(input) = self.root_tag_mut().find_child_tag_mut("input") {
             input.set_attr("aria-labelledby", labeled_by);
         }

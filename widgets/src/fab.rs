@@ -12,6 +12,12 @@ pub struct Fab {
     html: Html,
 }
 
+impl Default for Fab {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Fab {
     pub const ICON_CLASS: &'static str = "mdc-fab__icon";
     pub const MINI_CLASS: &'static str = "mdc-fab--mini";

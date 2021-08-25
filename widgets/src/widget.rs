@@ -56,11 +56,11 @@ pub trait MdcWidget {
         self
     }
 
-    fn attr(mut self, attr: impl Into<String>, value: impl Into<String>) -> Self
+    fn attr(mut self, attr: &'static str, value: impl Into<String>) -> Self
     where
         Self: Sized,
     {
-        self.root_tag_mut().set_attr(attr.into(), value.into());
+        self.root_tag_mut().set_attr(attr, value.into());
         self
     }
 

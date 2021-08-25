@@ -1,6 +1,6 @@
 use std::ops::{Deref, DerefMut};
 
-use yew::{html, services::ConsoleService, Callback, Html, MouseEvent};
+use yew::{html, services::ConsoleService, virtual_dom::AttrValue, Callback, Html, MouseEvent};
 
 use crate::{
     utils::{
@@ -16,6 +16,12 @@ pub mod mdc {
 #[derive(Debug, Clone)]
 pub struct Radio {
     html: Html,
+}
+
+impl Default for Radio {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl Radio {
@@ -42,7 +48,7 @@ impl Radio {
         radio
     }
 
-    pub fn name_of_set(mut self, name: impl Into<String>) -> Self {
+    pub fn name_of_set(mut self, name: impl Into<AttrValue>) -> Self {
         if let Some(input) = self.root_tag_mut().find_child_tag_mut("input") {
             input.set_attr("name", name);
         }
