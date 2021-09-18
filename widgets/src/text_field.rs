@@ -91,18 +91,12 @@ pub struct TextField {
 
 impl TextField {
     pub const CLASS: &'static str = "mdc-text-field";
-
-    const INPUT_CLASS: &'static str = "mdc-text-field__input";
-
-    const RIPPLE_CLASS: &'static str = "mdc-text-field__ripple";
-
-    const DISABLED_CLASS: &'static str = "mdc-text-field--disabled";
-
-    const HELPER_LINE_CLASS: &'static str = "mdc-text-field-helper-line";
-
-    const HELPER_TEXT_CLASS: &'static str = "mdc-text-field-helper-text";
-
-    const CHARACTER_COUNTER_CLASS: &'static str = "mdc-text-field-character-counter";
+    pub const INPUT_CLASS: &'static str = "mdc-text-field__input";
+    pub const RIPPLE_CLASS: &'static str = "mdc-text-field__ripple";
+    pub const DISABLED_CLASS: &'static str = "mdc-text-field--disabled";
+    pub const HELPER_LINE_CLASS: &'static str = "mdc-text-field-helper-line";
+    pub const HELPER_TEXT_CLASS: &'static str = "mdc-text-field-helper-text";
+    pub const CHARACTER_COUNTER_CLASS: &'static str = "mdc-text-field-character-counter";
 
     fn simple() -> Html {
         let mut html = html! {
