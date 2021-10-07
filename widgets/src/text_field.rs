@@ -6,6 +6,7 @@ use std::{
 use yew::{
     html,
     html::{onclick, oninput},
+    virtual_dom::VTag,
     Callback, Html, InputData, MouseEvent,
 };
 
@@ -204,7 +205,7 @@ impl TextField {
                 self.root_tag_mut()
                     .children
                     .insert(idx, FloatingLabel::simple(label_id.clone(), label).into());
-                if let Some(input_tag) = self.root_tag_mut().find_child_tag_mut("input") {
+                if let Some(input_tag) = self.input_tag_mut() {
                     input_tag.set_attr("aria-labelledby", label_id);
                 }
             },
@@ -217,12 +218,12 @@ impl TextField {
                     }
                 }
 
-                if let Some(input_tag) = self.root_tag_mut().find_child_tag_mut("input") {
+                if let Some(input_tag) = self.input_tag_mut() {
                     input_tag.set_attr("aria-labelledby", label_id);
                 }
             },
             TextFieldStyle::FilledFullWidth => {
-                if let Some(input_tag) = self.root_tag_mut().find_child_tag_mut("input") {
+                if let Some(input_tag) = self.input_tag_mut() {
                     if let Html::VText(label) = label.into() {
                         input_tag.set_attr("placeholder", label.text.clone());
                         input_tag.set_attr("aria-label", label.text);
@@ -235,7 +236,7 @@ impl TextField {
 
     pub fn disabled(mut self) -> Self {
         self.add_class(Self::DISABLED_CLASS);
-        if let Some(input_tag) = self.root_tag_mut().find_child_tag_mut("input") {
+        if let Some(input_tag) = self.input_tag_mut() {
             input_tag.set_attr("disabled", "");
         }
         self
@@ -245,7 +246,7 @@ impl TextField {
         let id = self.root_id();
         let helper_id = format!("{}-helper", id);
 
-        if let Some(input_tag) = self.root_tag_mut().find_child_tag_mut("input") {
+        if let Some(input_tag) = self.input_tag_mut() {
             input_tag.set_attr("aria-controls", helper_id.clone());
             input_tag.set_attr("aria-describedby", helper_id.clone());
         }
@@ -268,7 +269,7 @@ impl TextField {
     pub fn char_counter(mut self, max_length: usize) -> Self {
         let helper_string = format!("0 / {}", max_length);
 
-        if let Some(input_tag) = self.root_tag_mut().find_child_tag_mut("input") {
+        if let Some(input_tag) = self.input_tag_mut() {
             input_tag.set_attr("maxlength", format!("{}", max_length));
         }
         if let Some(helper_line_div) = self.html_mut().find_child_contains_class_mut(Self::HELPER_LINE_CLASS) {
@@ -286,6 +287,10 @@ impl TextField {
         self
     }
 
+    pub fn input_tag_mut(&mut self) -> Option<&mut VTag> {
+        self.root_tag_mut().find_child_tag_mut("input")
+    }
+
     pub fn root_id(&self) -> &str {
         self.root_tag()
             .attr("id")
@@ -298,7 +303,7 @@ impl TextField {
     }
 
     pub fn on_input(mut self, callback: impl Into<Callback<InputData>>) -> Self {
-        if let Some(input) = self.root_tag_mut().find_child_tag_recursively_mut("input") {
+        if let Some(input) = self.input_tag_mut() {
             input.add_listener(Rc::new(oninput::Wrapper::new(callback.into())));
         }
         self
