@@ -7,9 +7,9 @@ pub use web_sys;
 pub use yew;
 
 pub use self::{
-    button::*, card::*, checkbox::*, chip::*, data_table::*, dialog::*, drawer::*, fab::*, icon_button::*, list::*,
-    listeners::*, mdc::auto_init, menu::*, radio::*, switch::*, tab::*, text_field::*, top_app_bar::*,
-    widget::MdcWidget,
+    button::*, card::*, checkbox::*, chip::*, data_table::*, dialog::*, drawer::*, fab::*, floating_label::*,
+    icon_button::*, list::*, listeners::*, mdc::auto_init, menu::*, radio::*, switch::*, tab::*, text_field::*,
+    top_app_bar::*, widget::MdcWidget,
 };
 
 pub mod button;

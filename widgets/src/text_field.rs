@@ -6,7 +6,7 @@ use std::{
 use yew::{
     classes, html,
     html::{onclick, oninput},
-    virtual_dom::VTag,
+    virtual_dom::{AttrValue, VTag},
     Callback, Html, InputData, MouseEvent,
 };
 
@@ -63,7 +63,6 @@ pub mod mdc {
 pub enum TextFieldStyle {
     Filled,
     Outlined,
-    FilledFullWidth,
 }
 
 impl TextFieldStyle {
@@ -71,16 +70,11 @@ impl TextFieldStyle {
         match self {
             TextFieldStyle::Filled => "mdc-text-field--filled",
             TextFieldStyle::Outlined => "mdc-text-field--outlined",
-            TextFieldStyle::FilledFullWidth => "mdc-text-field--filled mdc-text-field--fullwidth",
         }
     }
 
-    pub fn classes() -> [&'static str; 3] {
-        [
-            TextFieldStyle::Filled.class(),
-            TextFieldStyle::Outlined.class(),
-            TextFieldStyle::FilledFullWidth.class(),
-        ]
+    pub fn classes() -> [&'static str; 2] {
+        [TextFieldStyle::Filled.class(), TextFieldStyle::Outlined.class()]
     }
 }
 
@@ -102,6 +96,7 @@ impl TextField {
     pub const ICON_CLASS: &'static str = "mdc-text-field__icon";
     pub const LEADING_ICON_CLASS: &'static str = "mdc-text-field__icon--leading";
     pub const TRAILING_ICON_CLASS: &'static str = "mdc-text-field__icon--trailing";
+    pub const WITH_LABEL_FLOATING_CLASS: &'static str = "mdc-text-field--label-floating";
 
     fn simple() -> Html {
         let mut html = html! {
@@ -133,20 +128,12 @@ impl TextField {
         text_field.class(TextFieldStyle::Outlined.class())
     }
 
-    pub fn fullwidth() -> Self {
-        let text_field = Self {
-            html: Self::simple(),
-            style: TextFieldStyle::FilledFullWidth,
-        };
-        text_field.ripple(true).class(TextFieldStyle::FilledFullWidth.class())
-    }
-
     pub fn mdc_object(id: impl AsRef<str>) -> mdc::TextField {
         mdc::TextField::new(dom::get_exist_element_by_id::<Element>(id.as_ref()))
     }
 
     /// Returns the input's value.
-    pub fn value(id: impl AsRef<str>) -> String {
+    pub fn get_value(id: impl AsRef<str>) -> String {
         Self::mdc_object(id).value()
     }
 
@@ -195,9 +182,16 @@ impl TextField {
         self
     }
 
-    pub fn label(mut self, label: impl Into<Html>) -> Self {
-        let id = self.root_id();
-        let label_id = format!("{}-label", id);
+    pub fn label(self, label: impl Into<Html>) -> Self {
+        self.floating_label(FloatingLabel::new(label), false)
+    }
+
+    pub fn floating_label(mut self, mut label: FloatingLabel, pre_filled: bool) -> Self {
+        let label_id = label.get_id().unwrap_or_else(|| format!("{}-label", self.root_id()));
+        if pre_filled {
+            self.add_class_if_needed(Self::WITH_LABEL_FLOATING_CLASS);
+            label.add_class_if_needed(FloatingLabel::FLOAT_ABOVE_CLASS)
+        };
 
         match self.style {
             TextFieldStyle::Filled => {
@@ -206,9 +200,7 @@ impl TextField {
                     .find_child_tag_idx("input")
                     .map(|idx| idx + 1)
                     .unwrap_or(0);
-                self.root_tag_mut()
-                    .children
-                    .insert(idx, FloatingLabel::simple(label_id.clone(), label).into());
+                self.root_tag_mut().children.insert(idx, label.into());
                 if let Some(input_tag) = self.input_tag_mut() {
                     input_tag.set_attr("aria-labelledby", label_id);
                 }
@@ -216,9 +208,7 @@ impl TextField {
             TextFieldStyle::Outlined => {
                 if let Some(tag) = self.root_tag_mut().find_child_contains_class_mut(NotchedOutline::CLASS) {
                     if let Some(notch) = tag.find_child_contains_class_mut(NotchedOutline::NOTCH_CLASS) {
-                        notch
-                            .children
-                            .push(FloatingLabel::simple(label_id.clone(), label).into());
+                        notch.children.push(label.into());
                     }
                 }
 
@@ -226,33 +216,36 @@ impl TextField {
                     input_tag.set_attr("aria-labelledby", label_id);
                 }
             },
-            TextFieldStyle::FilledFullWidth => {
-                if let Some(input_tag) = self.input_tag_mut() {
-                    if let Html::VText(label) = label.into() {
-                        input_tag.set_attr("placeholder", label.text.clone());
-                        input_tag.set_attr("aria-label", label.text);
-                    }
-                }
-            },
         }
         self
     }
 
+    pub fn value(mut self, value: impl Into<AttrValue>) -> Self {
+        self.add_class_if_needed(Self::WITH_LABEL_FLOATING_CLASS);
+        if let Some(label) = self.find_child_contains_class_recursively_mut(FloatingLabel::CLASS) {
+            label.add_class_if_needed(FloatingLabel::FLOAT_ABOVE_CLASS);
+        }
+        self.input_tag_mut().map(|input| input.value = Some(value.into()));
+        self
+    }
+
     pub fn leading_tile(mut self, tile: impl Into<Html>) -> Self {
+        self.add_class(Self::WITH_LEADING_ICON_CLASS);
         let root = self.root_tag_mut();
         let index = root.find_child_tag_idx("input").unwrap_or_default();
         root.insert_child(index, tile);
-        self.class(Self::WITH_LEADING_ICON_CLASS)
+        self
     }
 
     pub fn trailing_tile(mut self, tile: impl Into<Html>) -> Self {
+        self.add_class(Self::WITH_TRAILING_ICON_CLASS);
         let root = self.root_tag_mut();
         let index = root
             .find_child_tag_idx("input")
             .map(|index| index + 1)
             .unwrap_or_default();
         root.insert_child(index, tile);
-        self.class(Self::WITH_TRAILING_ICON_CLASS)
+        self
     }
 
     pub fn leading_icon(self, name: impl Into<String>) -> Self {

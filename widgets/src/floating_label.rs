@@ -2,7 +2,7 @@ use std::ops::{Deref, DerefMut};
 
 use yew::{html, Html};
 
-use crate::MdcWidget;
+use crate::{utils::VTagExt, MdcWidget};
 
 pub mod mdc {
     pub const TYPE_NAME: &str = "MDCFloatingLabel";
@@ -12,20 +12,26 @@ pub mod mdc {
 pub struct FloatingLabel {
     html: Html,
 }
+
 impl FloatingLabel {
     pub const CLASS: &'static str = "mdc-floating-label";
     pub const FLOAT_ABOVE_CLASS: &'static str = "mdc-floating-label--float-above";
     pub const SHAKE_CLASS: &'static str = "mdc-floating-label--shake";
     pub const REQUIRED_CLASS: &'static str = "mdc-floating-label--required";
 
-    pub fn simple(id: impl Into<String>, label: impl Into<Html>) -> Self {
+    pub fn new(label: impl Into<Html>) -> Self {
         Self {
             html: html! {
-                <span class = Self::CLASS id = id.into()>{ label }</span>
+                <span class = Self::CLASS>{ label }</span>
             },
         }
     }
+
+    pub fn get_id(&self) -> Option<String> {
+        self.root_tag().attr("id").map(ToString::to_string)
+    }
 }
+
 impl MdcWidget for FloatingLabel {
     const NAME: &'static str = stringify!(FloatingLabel);
 

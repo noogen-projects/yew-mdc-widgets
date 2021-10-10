@@ -670,9 +670,6 @@ impl Root {
                     <span class = "demo-item">
                         { TextField::outlined() }
                     </span>
-                    <span class = "demo-item" style = "width: 100%">
-                        { TextField::fullwidth() }
-                    </span>
                 </div>
                 <div>
                     <h3 class = "mdc-typography--subtitle1">{ "Labeled" }</h3>
@@ -682,8 +679,8 @@ impl Root {
                     <span class = "demo-item">
                         { TextField::outlined().id("text-field-outlined-labeled").label("Outlined text field") }
                     </span>
-                    <span class = "demo-item" style = "width: 100%">
-                        { TextField::fullwidth().id("text-field-fullwidth-labeled").label("Fullwidth text field") }
+                    <span class = "demo-item">
+                        { TextField::outlined().id("text-field-prefilled-labeled").label("Outlined text field").value("Pre-filled value") }
                     </span>
                 </div>
                 <div>
@@ -704,11 +701,12 @@ impl Root {
                                 .helper_text(HelperText::new("Helper text").persistent())
                         }
                     </span>
-                    <span class = "demo-item" style = "width: 100%">
+                    <span class = "demo-item">
                         {
-                            TextField::fullwidth()
-                                .id("text-field-fullwidth-helpertext")
-                                .label("Fullwidth text field")
+                            TextField::outlined()
+                                .id("text-field-prefilled-helpertext")
+                                .label("Outlined text field")
+                                .value("Pre-filled value")
                                 .helper_text(HelperText::new("Helper text"))
                         }
                     </span>
@@ -733,11 +731,12 @@ impl Root {
                                 .helper_text(HelperText::new("Helper text"))
                         }
                     </span>
-                    <span class = "demo-item" style = "width: 100%">
+                    <span class = "demo-item">
                         {
-                            TextField::fullwidth()
-                                .id("text-field-fullwidth-charcounter")
-                                .label("Fullwidth text field")
+                            TextField::filled()
+                                .id("text-field-prefilled-charcounter")
+                                .label("Filled text field")
+                                .value("Pre-filled value")
                                 .char_counter(20)
                                 .helper_text(HelperText::new("Helper text"))
                         }
@@ -761,7 +760,7 @@ impl Root {
                         { TextField::outlined().id("text-field-outlined-labeled-disabled").label("Outlined disabled text field").disabled() }
                     </span>
                     <span class = "demo-item" style = "width: 100%">
-                        { TextField::fullwidth().id("text-field-fullwidth-disabled").label("Fullwidth disabled text field").disabled() }
+                        { TextField::outlined().id("text-field-prefilled-disabled").label("Outlined disabled text field").value("Pre-filled value").disabled() }
                     </span>
                 </div>
             </div>
