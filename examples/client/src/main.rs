@@ -721,7 +721,7 @@ impl Root {
                                 .id("text-field-filled-labeled-charcounter")
                                 .label("Filled text field")
                                 .char_counter(20)
-                                .helper_text(HelperText::new("help").persistent())
+                                .helper_text(HelperText::new("Helper text").persistent())
                         }
                     </span>
                     <span class = "demo-item">
@@ -730,7 +730,7 @@ impl Root {
                                 .id("text-field-outlined-labeled-charcounter")
                                 .label("Outlined text field")
                                 .char_counter(20)
-                                .helper_text(HelperText::new("help"))
+                                .helper_text(HelperText::new("Helper text"))
                         }
                     </span>
                     <span class = "demo-item" style = "width: 100%">
@@ -739,11 +739,20 @@ impl Root {
                                 .id("text-field-fullwidth-charcounter")
                                 .label("Fullwidth text field")
                                 .char_counter(20)
-                                .helper_text(HelperText::new("help"))
+                                .helper_text(HelperText::new("Helper text"))
                         }
                     </span>
                 </div>
-                 <div>
+                <div>
+                    <h3 class = "mdc-typography--subtitle1">{ "With icon" }</h3>
+                    <span class = "demo-item">
+                        { TextField::filled().id("text-field-filled-icon").label("Filled text field").leading_icon("event") }
+                    </span>
+                    <span class = "demo-item">
+                        { TextField::outlined().id("text-field-outlined-icon").label("Outlined text field").leading_icon("event").trailing_icon("delete") }
+                    </span>
+                </div>
+                <div>
                     <h3 class = "mdc-typography--subtitle1">{ "Disabled" }</h3>
                     <span class = "demo-item">
                         { TextField::filled().id("text-field-filled-labeled-disabled").label("Filled disabled text field").disabled() }

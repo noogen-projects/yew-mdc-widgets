@@ -4,7 +4,7 @@ use std::{
 };
 
 use yew::{
-    html,
+    classes, html,
     html::{onclick, oninput},
     virtual_dom::VTag,
     Callback, Html, InputData, MouseEvent,
@@ -97,6 +97,11 @@ impl TextField {
     pub const DISABLED_CLASS: &'static str = "mdc-text-field--disabled";
     pub const HELPER_LINE_CLASS: &'static str = "mdc-text-field-helper-line";
     pub const CHARACTER_COUNTER_CLASS: &'static str = "mdc-text-field-character-counter";
+    pub const WITH_LEADING_ICON_CLASS: &'static str = "mdc-text-field--with-leading-icon";
+    pub const WITH_TRAILING_ICON_CLASS: &'static str = "mdc-text-field--with-trailing-icon";
+    pub const ICON_CLASS: &'static str = "mdc-text-field__icon";
+    pub const LEADING_ICON_CLASS: &'static str = "mdc-text-field__icon--leading";
+    pub const TRAILING_ICON_CLASS: &'static str = "mdc-text-field__icon--trailing";
 
     fn simple() -> Html {
         let mut html = html! {
@@ -231,6 +236,35 @@ impl TextField {
             },
         }
         self
+    }
+
+    pub fn leading_tile(mut self, tile: impl Into<Html>) -> Self {
+        let root = self.root_tag_mut();
+        let index = root.find_child_tag_idx("input").unwrap_or_default();
+        root.insert_child(index, tile);
+        self.class(Self::WITH_LEADING_ICON_CLASS)
+    }
+
+    pub fn trailing_tile(mut self, tile: impl Into<Html>) -> Self {
+        let root = self.root_tag_mut();
+        let index = root
+            .find_child_tag_idx("input")
+            .map(|index| index + 1)
+            .unwrap_or_default();
+        root.insert_child(index, tile);
+        self.class(Self::WITH_TRAILING_ICON_CLASS)
+    }
+
+    pub fn leading_icon(self, name: impl Into<String>) -> Self {
+        self.leading_tile(
+            html! { <i class = classes!("material-icons", Self::ICON_CLASS, Self::LEADING_ICON_CLASS)>{ name.into() }</i> },
+        )
+    }
+
+    pub fn trailing_icon(self, name: impl Into<String>) -> Self {
+        self.trailing_tile(
+            html! { <i class = classes!("material-icons", Self::ICON_CLASS, Self::TRAILING_ICON_CLASS)>{ name.into() }</i> },
+        )
     }
 
     pub fn disabled(mut self) -> Self {
