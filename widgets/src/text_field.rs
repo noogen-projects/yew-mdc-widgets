@@ -189,7 +189,7 @@ impl TextField {
     pub fn floating_label(mut self, mut label: FloatingLabel, pre_filled: bool) -> Self {
         let label_id = label.get_id().unwrap_or_else(|| format!("{}-label", self.root_id()));
         if pre_filled {
-            self.add_class_if_needed(Self::WITH_LABEL_FLOATING_CLASS);
+            self.root_tag_mut().add_class_if_needed(Self::WITH_LABEL_FLOATING_CLASS);
             label.add_class_if_needed(FloatingLabel::FLOAT_ABOVE_CLASS)
         };
 
@@ -221,7 +221,7 @@ impl TextField {
     }
 
     pub fn value(mut self, value: impl Into<AttrValue>) -> Self {
-        self.add_class_if_needed(Self::WITH_LABEL_FLOATING_CLASS);
+        self.root_tag_mut().add_class_if_needed(Self::WITH_LABEL_FLOATING_CLASS);
         if let Some(label) = self.find_child_contains_class_recursively_mut(FloatingLabel::CLASS) {
             label.add_class_if_needed(FloatingLabel::FLOAT_ABOVE_CLASS);
         }
