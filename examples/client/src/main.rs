@@ -7,7 +7,8 @@ use yew_mdc_widgets::{
     auto_init, drawer,
     utils::dom::{get_exist_element_by_id, JsObjectAccess},
     Button, ButtonStyle, Card, CardContent, Checkbox, Chip, ChipSet, DataTable, Dialog, Drawer, Element, Fab,
-    IconButton, List, ListItem, MdcWidget, Menu, Radio, Switch, Tab, TabBar, TableCell, TextField, TopAppBar,
+    HelperText, IconButton, List, ListItem, MdcWidget, Menu, Radio, Switch, Tab, TabBar, TableCell, TextField,
+    TopAppBar,
 };
 
 struct Root;
@@ -688,25 +689,58 @@ impl Root {
                 <div>
                     <h3 class = "mdc-typography--subtitle1">{ "Helper text" }</h3>
                     <span class = "demo-item">
-                        { TextField::filled().id("text-field-filled-labeled-helpertext").label("Filled text field").helper_text("Helper text") }
+                        {
+                            TextField::filled()
+                                .id("text-field-filled-labeled-helpertext")
+                                .label("Filled text field")
+                                .helper_text(HelperText::new("Helper text"))
+                        }
                     </span>
                     <span class = "demo-item">
-                        { TextField::outlined().id("text-field-outlined-labeled-helpertext").label("Outlined text field").helper_text("Helper text") }
+                        {
+                            TextField::outlined()
+                                .id("text-field-outlined-labeled-helpertext")
+                                .label("Outlined text field")
+                                .helper_text(HelperText::new("Helper text").persistent())
+                        }
                     </span>
                     <span class = "demo-item" style = "width: 100%">
-                        { TextField::fullwidth().id("text-field-fullwidth-helpertext").label("Fullwidth text field").helper_text("Helper text") }
+                        {
+                            TextField::fullwidth()
+                                .id("text-field-fullwidth-helpertext")
+                                .label("Fullwidth text field")
+                                .helper_text(HelperText::new("Helper text"))
+                        }
                     </span>
                 </div>
                 <div>
                     <h3 class = "mdc-typography--subtitle1">{ "Char counter" }</h3>
                     <span class = "demo-item">
-                        { TextField::filled().id("text-field-filled-labeled-charcounter").label("Filled text field").char_counter(20).helper_text("help") }
+                        {
+                            TextField::filled()
+                                .id("text-field-filled-labeled-charcounter")
+                                .label("Filled text field")
+                                .char_counter(20)
+                                .helper_text(HelperText::new("help").persistent())
+                        }
                     </span>
                     <span class = "demo-item">
-                        { TextField::outlined().id("text-field-outlined-labeled-charcounter").label("Outlined text field").char_counter(20).helper_text("help") }
+                        {
+                            TextField::outlined()
+                                .id("text-field-outlined-labeled-charcounter")
+                                .label("Outlined text field")
+                                .char_counter(20)
+                                .helper_text(HelperText::new("help"))
+                        }
                     </span>
                     <span class = "demo-item" style = "width: 100%">
-                        { TextField::fullwidth().id("text-field-fullwidth-charcounter").label("Fullwidth text field").char_counter(20).helper_text("help") }
+                        {
+                            TextField::fullwidth()
+                                .id("text-field-fullwidth-charcounter")
+                                .label("Fullwidth text field")
+                                .char_counter(20)
+                                .helper_text(HelperText::new("help"))
+                        }
                     </span>
                 </div>
                  <div>

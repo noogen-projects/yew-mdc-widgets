@@ -96,7 +96,6 @@ impl TextField {
     pub const RIPPLE_CLASS: &'static str = "mdc-text-field__ripple";
     pub const DISABLED_CLASS: &'static str = "mdc-text-field--disabled";
     pub const HELPER_LINE_CLASS: &'static str = "mdc-text-field-helper-line";
-    pub const HELPER_TEXT_CLASS: &'static str = "mdc-text-field-helper-text";
     pub const CHARACTER_COUNTER_CLASS: &'static str = "mdc-text-field-character-counter";
 
     fn simple() -> Html {
@@ -242,24 +241,29 @@ impl TextField {
         self
     }
 
-    pub fn helper_text(mut self, helper_text: impl Into<Html>) -> Self {
+    pub fn helper_text(mut self, mut helper_text: HelperText) -> Self {
         let id = self.root_id();
-        let helper_id = format!("{}-helper", id);
+        let helper_id = match helper_text.root_tag().attr("id") {
+            Some(id) => id.to_string(),
+            None => {
+                let helper_id = format!("{}-helper", id);
+                helper_text = helper_text.id(&helper_id);
+                helper_id
+            },
+        };
 
         if let Some(input_tag) = self.input_tag_mut() {
             input_tag.set_attr("aria-controls", helper_id.clone());
             input_tag.set_attr("aria-describedby", helper_id.clone());
         }
 
-        if let Some(helper_line_div) = self.html_mut().find_child_contains_class_mut(Self::HELPER_LINE_CLASS) {
-            helper_line_div.children.insert(0, html! {
-                <div class = Self::HELPER_TEXT_CLASS id = helper_id aria-hidden = "true">{ helper_text }</div>
-            });
+        if let Some(helper_line) = self.html_mut().find_child_contains_class_mut(Self::HELPER_LINE_CLASS) {
+            helper_line.children.insert(0, helper_text.into());
         } else {
             self = self.into_widget_with_v_list();
             self.html_mut().add_child(html! {
                 <div class = Self::HELPER_LINE_CLASS>
-                    <div class = Self::HELPER_TEXT_CLASS id = helper_id aria-hidden = "true">{ helper_text }</div>
+                    { helper_text }
                 </div>
             });
         }
@@ -272,14 +276,14 @@ impl TextField {
         if let Some(input_tag) = self.input_tag_mut() {
             input_tag.set_attr("maxlength", format!("{}", max_length));
         }
-        if let Some(helper_line_div) = self.html_mut().find_child_contains_class_mut(Self::HELPER_LINE_CLASS) {
-            helper_line_div.children.push(html! {
+        if let Some(helper_line) = self.html_mut().find_child_contains_class_mut(Self::HELPER_LINE_CLASS) {
+            helper_line.children.push(html! {
                 <div class = Self::CHARACTER_COUNTER_CLASS>{ helper_string }</div>
             });
         } else {
             self = self.into_widget_with_v_list();
             self.html_mut().add_child(html! {
-                <div class=Self::HELPER_LINE_CLASS>
+                <div class = Self::HELPER_LINE_CLASS>
                     <div class = Self::CHARACTER_COUNTER_CLASS>{ helper_string }</div>
                 </div>
             });
@@ -347,6 +351,67 @@ impl DerefMut for TextField {
 
 impl From<TextField> for Html {
     fn from(widget: TextField) -> Self {
+        widget.html
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct HelperText {
+    html: Html,
+}
+
+impl HelperText {
+    pub const CLASS: &'static str = "mdc-text-field-helper-text";
+    pub const PERSISTENT_CLASS: &'static str = "mdc-text-field-helper-text--persistent";
+    pub const VALIDATION_MSG_CLASS: &'static str = "mdc-text-field-helper-text--validation-msg";
+
+    pub fn new(text: impl Into<Html>) -> Self {
+        Self {
+            html: html! {
+                <div class = Self::CLASS>{ text }</div>
+            },
+        }
+    }
+
+    pub fn persistent(mut self) -> Self {
+        self.root_tag_mut().add_class(Self::PERSISTENT_CLASS);
+        self
+    }
+
+    pub fn validation_msg(mut self) -> Self {
+        self.root_tag_mut().add_class(Self::VALIDATION_MSG_CLASS);
+        self
+    }
+}
+
+impl MdcWidget for HelperText {
+    const NAME: &'static str = stringify!(HelperText);
+
+    fn html(&self) -> &Html {
+        &self.html
+    }
+
+    fn html_mut(&mut self) -> &mut Html {
+        &mut self.html
+    }
+}
+
+impl Deref for HelperText {
+    type Target = Html;
+
+    fn deref(&self) -> &Self::Target {
+        &self.html
+    }
+}
+
+impl DerefMut for HelperText {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.html
+    }
+}
+
+impl From<HelperText> for Html {
+    fn from(widget: HelperText) -> Self {
         widget.html
     }
 }
