@@ -14,14 +14,12 @@ pub struct NotchedOutline {
 
 impl NotchedOutline {
     pub const CLASS: &'static str = "mdc-notched-outline";
-
     pub const LEADING_CLASS: &'static str = "mdc-notched-outline__leading";
-
     pub const NOTCH_CLASS: &'static str = "mdc-notched-outline__notch";
-
     pub const TRAILING_CLASS: &'static str = "mdc-notched-outline__trailing";
+    pub const NOTCHED_CLASS: &'static str = "mdc-notched-outline--notched";
 
-    pub fn simple() -> Self {
+    pub fn new() -> Self {
         Self {
             html: html! {
                 <span class = Self::CLASS>

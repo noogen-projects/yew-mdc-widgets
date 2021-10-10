@@ -124,7 +124,7 @@ impl TextField {
         text_field
             .root_tag_mut()
             .children
-            .insert(1, NotchedOutline::simple().into());
+            .insert(1, NotchedOutline::new().into());
         text_field.class(TextFieldStyle::Outlined.class())
     }
 
@@ -183,15 +183,11 @@ impl TextField {
     }
 
     pub fn label(self, label: impl Into<Html>) -> Self {
-        self.floating_label(FloatingLabel::new(label), false)
+        self.floating_label(FloatingLabel::new(label))
     }
 
-    pub fn floating_label(mut self, mut label: FloatingLabel, pre_filled: bool) -> Self {
+    pub fn floating_label(mut self, label: FloatingLabel) -> Self {
         let label_id = label.get_id().unwrap_or_else(|| format!("{}-label", self.root_id()));
-        if pre_filled {
-            self.root_tag_mut().add_class_if_needed(Self::WITH_LABEL_FLOATING_CLASS);
-            label.add_class_if_needed(FloatingLabel::FLOAT_ABOVE_CLASS)
-        };
 
         match self.style {
             TextFieldStyle::Filled => {
@@ -221,9 +217,12 @@ impl TextField {
     }
 
     pub fn value(mut self, value: impl Into<AttrValue>) -> Self {
-        self.root_tag_mut().add_class_if_needed(Self::WITH_LABEL_FLOATING_CLASS);
+        self.add_class_if_needed(Self::WITH_LABEL_FLOATING_CLASS);
         if let Some(label) = self.find_child_contains_class_recursively_mut(FloatingLabel::CLASS) {
             label.add_class_if_needed(FloatingLabel::FLOAT_ABOVE_CLASS);
+        }
+        if let Some(notched) = self.find_child_contains_class_recursively_mut(NotchedOutline::CLASS) {
+            notched.add_class_if_needed(NotchedOutline::NOTCHED_CLASS);
         }
         self.input_tag_mut().map(|input| input.value = Some(value.into()));
         self
