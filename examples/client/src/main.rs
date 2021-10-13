@@ -7,7 +7,7 @@ use yew_mdc_widgets::{
     auto_init, drawer,
     utils::dom::{get_exist_element_by_id, JsObjectAccess},
     Button, ButtonStyle, Card, CardContent, Checkbox, Chip, ChipSet, DataTable, Dialog, Drawer, Element, Fab,
-    IconButton, List, ListItem, MdcWidget, Menu, Radio, Switch, Tab, TabBar, TableCell, TextField, TopAppBar,
+    IconButton, List, ListItem, MdcWidget, Menu, Radio, Snackbar, Switch, Tab, TabBar, TableCell, TextField, TopAppBar,
 };
 
 struct Root;
@@ -37,6 +37,7 @@ impl Component for Root {
             ListItem::link("#radio_buttons").text("Radio buttons"),
             ListItem::link("#switch").text("Switch"),
             ListItem::link("#chips").text("Chips"),
+            ListItem::link("#snackbars").text("Snackbars"),
             ListItem::link("#text_fields").text("Text fields"),
             ListItem::link("#lists").text("Lists"),
             ListItem::link("#menu").text("Menu"),
@@ -105,6 +106,9 @@ impl Component for Root {
 
                             <h2 class = "demo-title mdc-typography--headline6"><a name = "chips"></a>{ "Chips" }</h2>
                             { self.view_chips() }
+
+                            <h2 class = "demo-title mdc-typography--headline6"><a name = "snackbars"></a>{ "Snackbars" }</h2>
+                            { self.view_snackbars() }
 
                             <h2 class = "demo-title mdc-typography--headline6"><a name = "text_fields"></a>{ "Text fields" }</h2>
                             { self.view_text_fields() }
@@ -652,6 +656,53 @@ impl Root {
                                 .chip(Chip::simple().tab_index(0).icon("event").text("Chip One").selected())
                                 .chip(Chip::simple().text("Chip Two").icon("cancel"))
                         }
+                    </span>
+                </div>
+            </div>
+        }
+    }
+
+    fn view_snackbars(&self) -> Html {
+        let baseline = Snackbar::new()
+            .id("baseline-snackbar")
+            .label("Baseline snackbar test banner")
+            .dismiss(IconButton::new().icon("close"));
+        let open_baseline_button = Button::raised()
+            .class(Snackbar::DEMO_BUTTON_CLASS)
+            .label("Baseline")
+            .on_click(|_| Snackbar::open_existing("baseline-snackbar"));
+        let leading = Snackbar::leading()
+            .id("leading-snackbar")
+            .label("Leading snackbar test banner")
+            .dismiss(IconButton::new().icon("close"));
+        let open_leading_button = Button::raised()
+            .class(Snackbar::DEMO_BUTTON_CLASS)
+            .label("Leading")
+            .on_click(|_| Snackbar::open_existing("leading-snackbar"));
+        let stacked = Snackbar::stacked()
+            .id("stacked-snackbar")
+            .label("Stacked snackbar test banner with a button")
+            .action(Button::new().label("Retry"))
+            .dismiss(IconButton::new().icon("close"));
+        let open_stacked_button = Button::raised()
+            .class(Snackbar::DEMO_BUTTON_CLASS)
+            .label("Stacked")
+            .on_click(|_| Snackbar::open_existing("stacked-snackbar"));
+
+        html! {
+            <div>
+                <div>
+                    <span class = "demo-item">
+                        { open_baseline_button }
+                        { baseline }
+                    </span>
+                    <span class = "demo-item">
+                        { open_leading_button }
+                        { leading }
+                    </span>
+                    <span class = "demo-item">
+                        { open_stacked_button }
+                        { stacked }
                     </span>
                 </div>
             </div>

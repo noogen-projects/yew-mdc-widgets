@@ -8,7 +8,7 @@ pub use yew;
 
 pub use self::{
     button::*, card::*, checkbox::*, chip::*, data_table::*, dialog::*, drawer::*, fab::*, icon_button::*, list::*,
-    listeners::*, mdc::auto_init, menu::*, radio::*, switch::*, tab::*, text_field::*, top_app_bar::*,
+    listeners::*, mdc::auto_init, menu::*, radio::*, snackbar::*, switch::*, tab::*, text_field::*, top_app_bar::*,
     widget::MdcWidget,
 };
 
@@ -29,12 +29,14 @@ pub mod menu;
 pub mod notched_outline;
 pub mod radio;
 pub mod ripple;
+pub mod snackbar;
 pub mod switch;
 pub mod tab;
 pub mod text_field;
 pub mod top_app_bar;
 pub mod utils;
 pub mod widget;
+
 pub mod mdc {
     use wasm_bindgen::prelude::*;
 
