@@ -33,3 +33,8 @@ dependencies = ["set_vars"]
 
 [tasks.example_client]
 dependencies = ["build_example_client", "deploy_example_client"]
+
+[tasks.run]
+command = "cargo"
+args = ["run", "-p", "example_server", "${ADDITIONAL}"]
+dependencies = ["example_client"]

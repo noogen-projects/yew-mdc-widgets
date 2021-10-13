@@ -4,8 +4,9 @@ use std::{
 };
 
 use yew::{
-    html,
+    classes, html,
     html::{onclick, oninput},
+    virtual_dom::{AttrValue, VTag},
     Callback, Html, InputData, MouseEvent,
 };
 
@@ -62,7 +63,6 @@ pub mod mdc {
 pub enum TextFieldStyle {
     Filled,
     Outlined,
-    FilledFullWidth,
 }
 
 impl TextFieldStyle {
@@ -70,16 +70,11 @@ impl TextFieldStyle {
         match self {
             TextFieldStyle::Filled => "mdc-text-field--filled",
             TextFieldStyle::Outlined => "mdc-text-field--outlined",
-            TextFieldStyle::FilledFullWidth => "mdc-text-field--filled mdc-text-field--fullwidth",
         }
     }
 
-    pub fn classes() -> [&'static str; 3] {
-        [
-            TextFieldStyle::Filled.class(),
-            TextFieldStyle::Outlined.class(),
-            TextFieldStyle::FilledFullWidth.class(),
-        ]
+    pub fn classes() -> [&'static str; 2] {
+        [TextFieldStyle::Filled.class(), TextFieldStyle::Outlined.class()]
     }
 }
 
@@ -95,8 +90,13 @@ impl TextField {
     pub const RIPPLE_CLASS: &'static str = "mdc-text-field__ripple";
     pub const DISABLED_CLASS: &'static str = "mdc-text-field--disabled";
     pub const HELPER_LINE_CLASS: &'static str = "mdc-text-field-helper-line";
-    pub const HELPER_TEXT_CLASS: &'static str = "mdc-text-field-helper-text";
     pub const CHARACTER_COUNTER_CLASS: &'static str = "mdc-text-field-character-counter";
+    pub const WITH_LEADING_ICON_CLASS: &'static str = "mdc-text-field--with-leading-icon";
+    pub const WITH_TRAILING_ICON_CLASS: &'static str = "mdc-text-field--with-trailing-icon";
+    pub const ICON_CLASS: &'static str = "mdc-text-field__icon";
+    pub const LEADING_ICON_CLASS: &'static str = "mdc-text-field__icon--leading";
+    pub const TRAILING_ICON_CLASS: &'static str = "mdc-text-field__icon--trailing";
+    pub const WITH_LABEL_FLOATING_CLASS: &'static str = "mdc-text-field--label-floating";
 
     fn simple() -> Html {
         let mut html = html! {
@@ -124,16 +124,8 @@ impl TextField {
         text_field
             .root_tag_mut()
             .children
-            .insert(1, NotchedOutline::simple().into());
+            .insert(1, NotchedOutline::new().into());
         text_field.class(TextFieldStyle::Outlined.class())
-    }
-
-    pub fn fullwidth() -> Self {
-        let text_field = Self {
-            html: Self::simple(),
-            style: TextFieldStyle::FilledFullWidth,
-        };
-        text_field.ripple(true).class(TextFieldStyle::FilledFullWidth.class())
     }
 
     pub fn mdc_object(id: impl AsRef<str>) -> mdc::TextField {
@@ -141,7 +133,7 @@ impl TextField {
     }
 
     /// Returns the input's value.
-    pub fn value(id: impl AsRef<str>) -> String {
+    pub fn get_value(id: impl AsRef<str>) -> String {
         Self::mdc_object(id).value()
     }
 
@@ -190,9 +182,12 @@ impl TextField {
         self
     }
 
-    pub fn label(mut self, label: impl Into<Html>) -> Self {
-        let id = self.root_id();
-        let label_id = format!("{}-label", id);
+    pub fn label(self, label: impl Into<Html>) -> Self {
+        self.floating_label(FloatingLabel::new(label))
+    }
+
+    pub fn floating_label(mut self, label: FloatingLabel) -> Self {
+        let label_id = label.get_id().unwrap_or_else(|| format!("{}-label", self.root_id()));
 
         match self.style {
             TextFieldStyle::Filled => {
@@ -201,64 +196,100 @@ impl TextField {
                     .find_child_tag_idx("input")
                     .map(|idx| idx + 1)
                     .unwrap_or(0);
-                self.root_tag_mut()
-                    .children
-                    .insert(idx, FloatingLabel::simple(label_id.clone(), label).into());
-                if let Some(input_tag) = self.root_tag_mut().find_child_tag_mut("input") {
+                self.root_tag_mut().children.insert(idx, label.into());
+                if let Some(input_tag) = self.input_tag_mut() {
                     input_tag.set_attr("aria-labelledby", label_id);
                 }
             },
             TextFieldStyle::Outlined => {
                 if let Some(tag) = self.root_tag_mut().find_child_contains_class_mut(NotchedOutline::CLASS) {
                     if let Some(notch) = tag.find_child_contains_class_mut(NotchedOutline::NOTCH_CLASS) {
-                        notch
-                            .children
-                            .push(FloatingLabel::simple(label_id.clone(), label).into());
+                        notch.children.push(label.into());
                     }
                 }
 
-                if let Some(input_tag) = self.root_tag_mut().find_child_tag_mut("input") {
+                if let Some(input_tag) = self.input_tag_mut() {
                     input_tag.set_attr("aria-labelledby", label_id);
-                }
-            },
-            TextFieldStyle::FilledFullWidth => {
-                if let Some(input_tag) = self.root_tag_mut().find_child_tag_mut("input") {
-                    if let Html::VText(label) = label.into() {
-                        input_tag.set_attr("placeholder", label.text.clone());
-                        input_tag.set_attr("aria-label", label.text);
-                    }
                 }
             },
         }
         self
     }
 
+    pub fn value(mut self, value: impl Into<AttrValue>) -> Self {
+        self.add_class_if_needed(Self::WITH_LABEL_FLOATING_CLASS);
+        if let Some(label) = self.find_child_contains_class_recursively_mut(FloatingLabel::CLASS) {
+            label.add_class_if_needed(FloatingLabel::FLOAT_ABOVE_CLASS);
+        }
+        if let Some(notched) = self.find_child_contains_class_recursively_mut(NotchedOutline::CLASS) {
+            notched.add_class_if_needed(NotchedOutline::NOTCHED_CLASS);
+        }
+        self.input_tag_mut().map(|input| input.value = Some(value.into()));
+        self
+    }
+
+    pub fn leading_tile(mut self, tile: impl Into<Html>) -> Self {
+        self.add_class(Self::WITH_LEADING_ICON_CLASS);
+        let root = self.root_tag_mut();
+        let index = root.find_child_tag_idx("input").unwrap_or_default();
+        root.insert_child(index, tile);
+        self
+    }
+
+    pub fn trailing_tile(mut self, tile: impl Into<Html>) -> Self {
+        self.add_class(Self::WITH_TRAILING_ICON_CLASS);
+        let root = self.root_tag_mut();
+        let index = root
+            .find_child_tag_idx("input")
+            .map(|index| index + 1)
+            .unwrap_or_default();
+        root.insert_child(index, tile);
+        self
+    }
+
+    pub fn leading_icon(self, name: impl Into<String>) -> Self {
+        self.leading_tile(
+            html! { <i class = classes!("material-icons", Self::ICON_CLASS, Self::LEADING_ICON_CLASS)>{ name.into() }</i> },
+        )
+    }
+
+    pub fn trailing_icon(self, name: impl Into<String>) -> Self {
+        self.trailing_tile(
+            html! { <i class = classes!("material-icons", Self::ICON_CLASS, Self::TRAILING_ICON_CLASS)>{ name.into() }</i> },
+        )
+    }
+
     pub fn disabled(mut self) -> Self {
         self.add_class(Self::DISABLED_CLASS);
-        if let Some(input_tag) = self.root_tag_mut().find_child_tag_mut("input") {
+        if let Some(input_tag) = self.input_tag_mut() {
             input_tag.set_attr("disabled", "");
         }
         self
     }
 
-    pub fn helper_text(mut self, helper_text: impl Into<Html>) -> Self {
+    pub fn helper_text(mut self, mut helper_text: HelperText) -> Self {
         let id = self.root_id();
-        let helper_id = format!("{}-helper", id);
+        let helper_id = match helper_text.root_tag().attr("id") {
+            Some(id) => id.to_string(),
+            None => {
+                let helper_id = format!("{}-helper", id);
+                helper_text = helper_text.id(&helper_id);
+                helper_id
+            },
+        };
 
-        if let Some(input_tag) = self.root_tag_mut().find_child_tag_mut("input") {
+        if let Some(input_tag) = self.input_tag_mut() {
             input_tag.set_attr("aria-controls", helper_id.clone());
             input_tag.set_attr("aria-describedby", helper_id.clone());
         }
 
-        if let Some(helper_line_div) = self.html_mut().find_child_contains_class_mut(Self::HELPER_LINE_CLASS) {
-            helper_line_div.children.insert(0, html! {
-                <div class = Self::HELPER_TEXT_CLASS id = helper_id aria-hidden = "true">{ helper_text }</div>
-            });
+        if let Some(helper_line) = self.html_mut().find_child_contains_class_mut(Self::HELPER_LINE_CLASS) {
+            helper_line.children.insert(0, helper_text.into());
         } else {
             self = self.into_widget_with_v_list();
             self.html_mut().add_child(html! {
                 <div class = Self::HELPER_LINE_CLASS>
-                    <div class = Self::HELPER_TEXT_CLASS id = helper_id aria-hidden = "true">{ helper_text }</div>
+                    { helper_text }
                 </div>
             });
         }
@@ -268,22 +299,26 @@ impl TextField {
     pub fn char_counter(mut self, max_length: usize) -> Self {
         let helper_string = format!("0 / {}", max_length);
 
-        if let Some(input_tag) = self.root_tag_mut().find_child_tag_mut("input") {
+        if let Some(input_tag) = self.input_tag_mut() {
             input_tag.set_attr("maxlength", format!("{}", max_length));
         }
-        if let Some(helper_line_div) = self.html_mut().find_child_contains_class_mut(Self::HELPER_LINE_CLASS) {
-            helper_line_div.children.push(html! {
+        if let Some(helper_line) = self.html_mut().find_child_contains_class_mut(Self::HELPER_LINE_CLASS) {
+            helper_line.children.push(html! {
                 <div class = Self::CHARACTER_COUNTER_CLASS>{ helper_string }</div>
             });
         } else {
             self = self.into_widget_with_v_list();
             self.html_mut().add_child(html! {
-                <div class=Self::HELPER_LINE_CLASS>
+                <div class = Self::HELPER_LINE_CLASS>
                     <div class = Self::CHARACTER_COUNTER_CLASS>{ helper_string }</div>
                 </div>
             });
         }
         self
+    }
+
+    pub fn input_tag_mut(&mut self) -> Option<&mut VTag> {
+        self.root_tag_mut().find_child_tag_mut("input")
     }
 
     pub fn root_id(&self) -> &str {
@@ -298,7 +333,7 @@ impl TextField {
     }
 
     pub fn on_input(mut self, callback: impl Into<Callback<InputData>>) -> Self {
-        if let Some(input) = self.root_tag_mut().find_child_tag_recursively_mut("input") {
+        if let Some(input) = self.input_tag_mut() {
             input.add_listener(Rc::new(oninput::Wrapper::new(callback.into())));
         }
         self
@@ -342,6 +377,67 @@ impl DerefMut for TextField {
 
 impl From<TextField> for Html {
     fn from(widget: TextField) -> Self {
+        widget.html
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct HelperText {
+    html: Html,
+}
+
+impl HelperText {
+    pub const CLASS: &'static str = "mdc-text-field-helper-text";
+    pub const PERSISTENT_CLASS: &'static str = "mdc-text-field-helper-text--persistent";
+    pub const VALIDATION_MSG_CLASS: &'static str = "mdc-text-field-helper-text--validation-msg";
+
+    pub fn new(text: impl Into<Html>) -> Self {
+        Self {
+            html: html! {
+                <div class = Self::CLASS>{ text }</div>
+            },
+        }
+    }
+
+    pub fn persistent(mut self) -> Self {
+        self.root_tag_mut().add_class(Self::PERSISTENT_CLASS);
+        self
+    }
+
+    pub fn validation_msg(mut self) -> Self {
+        self.root_tag_mut().add_class(Self::VALIDATION_MSG_CLASS);
+        self
+    }
+}
+
+impl MdcWidget for HelperText {
+    const NAME: &'static str = stringify!(HelperText);
+
+    fn html(&self) -> &Html {
+        &self.html
+    }
+
+    fn html_mut(&mut self) -> &mut Html {
+        &mut self.html
+    }
+}
+
+impl Deref for HelperText {
+    type Target = Html;
+
+    fn deref(&self) -> &Self::Target {
+        &self.html
+    }
+}
+
+impl DerefMut for HelperText {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.html
+    }
+}
+
+impl From<HelperText> for Html {
+    fn from(widget: HelperText) -> Self {
         widget.html
     }
 }
