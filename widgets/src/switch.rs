@@ -1,6 +1,6 @@
 use std::ops::{Deref, DerefMut};
 
-use yew::{classes, html, Callback, Html, MouseEvent};
+use yew::{classes, html, virtual_dom::VTag, Callback, Html, MouseEvent};
 
 use crate::{
     utils::{labeled_on_click, IntoWidgetWithVList, VTagExt},
@@ -116,9 +116,54 @@ impl Switch {
         self
     }
 
+    pub fn icon_on(mut self, icon: impl Into<Html>) -> Self {
+        let mut icon = icon.into();
+        icon.add_class_if_needed(Self::ICON_CLASS);
+        icon.add_class_if_needed(Self::ICON_ON_CLASS);
+
+        self.icons().children.insert(0, icon);
+        self
+    }
+
+    pub fn icon_on_default(self) -> Self {
+        self.icon_on(html! {
+            <svg viewBox = "0 0 24 24">
+                <path d = "M19.69,5.23L8.96,15.96l-4.23-4.23L2.96,13.5l6,6L21.46,7L19.69,5.23z" />
+            </svg>
+        })
+    }
+
+    pub fn icon_off(mut self, icon: impl Into<Html>) -> Self {
+        let mut icon = icon.into();
+        icon.add_class_if_needed(Self::ICON_CLASS);
+        icon.add_class_if_needed(Self::ICON_OFF_CLASS);
+
+        self.icons().children.push(icon);
+        self
+    }
+
+    pub fn icon_off_default(self) -> Self {
+        self.icon_off(html! {
+            <svg viewBox = "0 0 24 24">
+                <path d = "M20 13H4v-2h16v2z" />
+            </svg>
+        })
+    }
+
     pub fn on_click(mut self, callback: impl Into<Callback<MouseEvent>>) -> Self {
         labeled_on_click(&mut self, callback.into());
         self
+    }
+
+    fn icons(&mut self) -> &mut VTag {
+        let handle = self
+            .root_tag_mut()
+            .find_child_contains_class_recursively_mut(Self::HANDLE_CLASS)
+            .unwrap();
+        if handle.find_child_contains_class_mut(Self::ICONS_CLASS).is_none() {
+            handle.add_child(html! { <div class = Self::ICONS_CLASS></div> });
+        }
+        handle.find_child_contains_class_mut(Self::ICONS_CLASS).unwrap()
     }
 }
 
