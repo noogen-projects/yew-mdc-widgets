@@ -32,8 +32,8 @@ impl Fab {
     pub fn simple() -> Self {
         Self {
             html: html! {
-                <button class = Self::CLASS>
-                    <div class = Self::RIPPLE_CLASS></div>
+                <button class = { Self::CLASS }>
+                    <div class = { Self::RIPPLE_CLASS }></div>
                 </button>
             },
         }
@@ -45,7 +45,7 @@ impl Fab {
 
     pub fn icon(mut self, name: impl Into<String>) -> Self {
         self.root_tag_mut().add_child(html! {
-            <span class = classes!(Self::ICON_CLASS, "material-icons")>{ name.into() }</span>
+            <span class = { classes!(Self::ICON_CLASS, "material-icons") }>{ name.into() }</span>
         });
         self
     }
@@ -76,7 +76,7 @@ impl Fab {
     pub fn label(mut self, label: impl Into<Html>) -> Self {
         self = self.class(Self::EXTENDED_CLASS);
         self.root_tag_mut().add_child(html! {
-            <span class = Self::LABEL_CLASS>{ label.into() }</span>
+            <span class = { Self::LABEL_CLASS }>{ label.into() }</span>
         });
         self
     }

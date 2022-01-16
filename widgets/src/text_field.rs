@@ -7,14 +7,14 @@ use yew::{
     classes, html,
     html::{onclick, oninput},
     virtual_dom::{AttrValue, VTag},
-    Callback, Html, InputData, MouseEvent,
+    Callback, Html, InputEvent, MouseEvent,
 };
 
 use crate::{
     floating_label::FloatingLabel,
     line_ripple,
     notched_outline::NotchedOutline,
-    utils::{dom, IntoWidgetWithVList, VTagExt},
+    utils::{dom, IntoWidgetWithVList, ManageChildren, VTagExt},
     Element, MdcWidget, AUTO_INIT_ATTR,
 };
 
@@ -100,11 +100,11 @@ impl TextField {
 
     fn simple() -> Html {
         let mut html = html! {
-            <label class = Self::CLASS>
-                <input class = Self::INPUT_CLASS type = "text"/>
+            <label class = { Self::CLASS }>
+                <input class = { Self::INPUT_CLASS } type = "text"/>
             </label>
         };
-        html.root_tag_mut().unwrap().set_attr(AUTO_INIT_ATTR, mdc::TYPE_NAME);
+        html.root_tag_mut().unwrap(/* root tag already exists */).set_attr(AUTO_INIT_ATTR, mdc::TYPE_NAME);
         html
     }
 
@@ -121,10 +121,7 @@ impl TextField {
             html: Self::simple(),
             style: TextFieldStyle::Outlined,
         };
-        text_field
-            .root_tag_mut()
-            .children
-            .insert(1, NotchedOutline::new().into());
+        text_field.root_tag_mut().add_child(NotchedOutline::new().into());
         text_field.class(TextFieldStyle::Outlined.class())
     }
 
@@ -159,23 +156,25 @@ impl TextField {
 
     pub fn ripple(mut self, enabled: bool) -> Self {
         if self.style != TextFieldStyle::Outlined {
-            if enabled {
-                if !self.root_tag().is_some_child_contains_class(Self::RIPPLE_CLASS) {
-                    self.root_tag_mut().children.insert(0, html! {
-                        <span class = Self::RIPPLE_CLASS></span>
-                    });
-                }
-                if !self.root_tag().is_some_child_contains_class(line_ripple::mdc::CLASS) {
-                    self.root_tag_mut().children.push(html! {
-                        <span class = line_ripple::mdc::CLASS></span>
-                    });
-                }
-            } else {
-                if let Some(idx) = self.root_tag().find_child_contains_class_idx(Self::RIPPLE_CLASS) {
-                    self.root_tag_mut().children.remove(idx);
-                }
-                if let Some(idx) = self.root_tag().find_child_contains_class_idx(line_ripple::mdc::CLASS) {
-                    self.root_tag_mut().children.remove(idx);
+            if let Some(children) = self.root_tag_mut().children_mut() {
+                if enabled {
+                    if !children.is_some_child_contains_class(Self::RIPPLE_CLASS) {
+                        children.insert(0, html! {
+                            <span class = { Self::RIPPLE_CLASS }></span>
+                        });
+                    }
+                    if !children.is_some_child_contains_class(line_ripple::mdc::CLASS) {
+                        children.push(html! {
+                            <span class = { line_ripple::mdc::CLASS }></span>
+                        });
+                    }
+                } else {
+                    if let Some(idx) = children.find_child_contains_class_idx(Self::RIPPLE_CLASS) {
+                        children.remove(idx);
+                    }
+                    if let Some(idx) = children.find_child_contains_class_idx(line_ripple::mdc::CLASS) {
+                        children.remove(idx);
+                    }
                 }
             }
         }
@@ -196,7 +195,7 @@ impl TextField {
                     .find_child_tag_idx("input")
                     .map(|idx| idx + 1)
                     .unwrap_or(0);
-                self.root_tag_mut().children.insert(idx, label.into());
+                self.root_tag_mut().insert_child(idx, label);
                 if let Some(input_tag) = self.input_tag_mut() {
                     input_tag.set_attr("aria-labelledby", label_id);
                 }
@@ -204,7 +203,7 @@ impl TextField {
             TextFieldStyle::Outlined => {
                 if let Some(tag) = self.root_tag_mut().find_child_contains_class_mut(NotchedOutline::CLASS) {
                     if let Some(notch) = tag.find_child_contains_class_mut(NotchedOutline::NOTCH_CLASS) {
-                        notch.children.push(label.into());
+                        notch.add_child(label.into());
                     }
                 }
 
@@ -224,7 +223,9 @@ impl TextField {
         if let Some(notched) = self.find_child_contains_class_recursively_mut(NotchedOutline::CLASS) {
             notched.add_class_if_needed(NotchedOutline::NOTCHED_CLASS);
         }
-        self.input_tag_mut().map(|input| input.value = Some(value.into()));
+        if let Some(input) = self.input_tag_mut() {
+            input.set_value(Some(value.into()));
+        }
         self
     }
 
@@ -249,13 +250,13 @@ impl TextField {
 
     pub fn leading_icon(self, name: impl Into<String>) -> Self {
         self.leading_tile(
-            html! { <i class = classes!("material-icons", Self::ICON_CLASS, Self::LEADING_ICON_CLASS)>{ name.into() }</i> },
+            html! { <i class = { classes!("material-icons", Self::ICON_CLASS, Self::LEADING_ICON_CLASS) }>{ name.into() }</i> },
         )
     }
 
     pub fn trailing_icon(self, name: impl Into<String>) -> Self {
         self.trailing_tile(
-            html! { <i class = classes!("material-icons", Self::ICON_CLASS, Self::TRAILING_ICON_CLASS)>{ name.into() }</i> },
+            html! { <i class = { classes!("material-icons", Self::ICON_CLASS, Self::TRAILING_ICON_CLASS) }>{ name.into() }</i> },
         )
     }
 
@@ -280,15 +281,15 @@ impl TextField {
 
         if let Some(input_tag) = self.input_tag_mut() {
             input_tag.set_attr("aria-controls", helper_id.clone());
-            input_tag.set_attr("aria-describedby", helper_id.clone());
+            input_tag.set_attr("aria-describedby", helper_id);
         }
 
         if let Some(helper_line) = self.html_mut().find_child_contains_class_mut(Self::HELPER_LINE_CLASS) {
-            helper_line.children.insert(0, helper_text.into());
+            helper_line.insert_child(0, helper_text);
         } else {
             self = self.into_widget_with_v_list();
             self.html_mut().add_child(html! {
-                <div class = Self::HELPER_LINE_CLASS>
+                <div class = { Self::HELPER_LINE_CLASS }>
                     { helper_text }
                 </div>
             });
@@ -303,14 +304,14 @@ impl TextField {
             input_tag.set_attr("maxlength", format!("{}", max_length));
         }
         if let Some(helper_line) = self.html_mut().find_child_contains_class_mut(Self::HELPER_LINE_CLASS) {
-            helper_line.children.push(html! {
-                <div class = Self::CHARACTER_COUNTER_CLASS>{ helper_string }</div>
+            helper_line.add_child(html! {
+                <div class = { Self::CHARACTER_COUNTER_CLASS }>{ helper_string }</div>
             });
         } else {
             self = self.into_widget_with_v_list();
             self.html_mut().add_child(html! {
-                <div class = Self::HELPER_LINE_CLASS>
-                    <div class = Self::CHARACTER_COUNTER_CLASS>{ helper_string }</div>
+                <div class = { Self::HELPER_LINE_CLASS }>
+                    <div class = { Self::CHARACTER_COUNTER_CLASS }>{ helper_string }</div>
                 </div>
             });
         }
@@ -321,18 +322,15 @@ impl TextField {
         self.root_tag_mut().find_child_tag_mut("input")
     }
 
-    pub fn root_id(&self) -> &str {
-        self.root_tag()
-            .attr("id")
-            .expect("The TextField widget must have ID")
-            .as_ref()
+    pub fn root_id(&self) -> AttrValue {
+        self.root_tag().attr("id").expect("The TextField widget must have ID")
     }
 
     pub fn on_click(self, callback: impl Into<Callback<MouseEvent>>) -> Self {
         self.listener(Rc::new(onclick::Wrapper::new(callback.into())))
     }
 
-    pub fn on_input(mut self, callback: impl Into<Callback<InputData>>) -> Self {
+    pub fn on_input(mut self, callback: impl Into<Callback<InputEvent>>) -> Self {
         if let Some(input) = self.input_tag_mut() {
             input.add_listener(Rc::new(oninput::Wrapper::new(callback.into())));
         }
@@ -394,7 +392,7 @@ impl HelperText {
     pub fn new(text: impl Into<Html>) -> Self {
         Self {
             html: html! {
-                <div class = Self::CLASS>{ text }</div>
+                <div class = { Self::CLASS }>{ text }</div>
             },
         }
     }

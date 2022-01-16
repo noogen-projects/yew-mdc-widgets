@@ -5,7 +5,11 @@ use std::{
 
 use yew::{classes, html, html::onclick, virtual_dom::AttrValue, Callback, Html, MouseEvent};
 
-use crate::{ripple, utils::VTagExt, MdcWidget, AUTO_INIT_ATTR};
+use crate::{
+    ripple,
+    utils::{ManageChildren, VTagExt},
+    MdcWidget, AUTO_INIT_ATTR,
+};
 
 pub mod mdc {
     use wasm_bindgen::prelude::*;
@@ -94,7 +98,7 @@ impl ListItem {
     pub fn simple() -> Self {
         Self {
             html: html! {
-                <li class = Self::CLASS />
+                <li class = { Self::CLASS } />
             },
         }
     }
@@ -102,7 +106,7 @@ impl ListItem {
     pub fn simple_link(href: impl Into<AttrValue>) -> Self {
         Self {
             html: html! {
-                <a class = Self::CLASS href = href.into() />
+                <a class = { Self::CLASS } href = { href.into() } />
             },
         }
     }
@@ -118,7 +122,7 @@ impl ListItem {
     pub fn interactive(mut self) -> Self {
         let root = self.root_tag_mut();
         if root.find_child_contains_class_idx(Self::RIPPLE_CLASS).is_none() {
-            root.add_child(html! { <span class = Self::RIPPLE_CLASS></span> })
+            root.add_child(html! { <span class = { Self::RIPPLE_CLASS }></span> })
         }
         self
     }
@@ -142,24 +146,26 @@ impl ListItem {
         let root = self.root_tag_mut();
 
         if let Some(idx) = root.find_child_contains_class_idx(Self::TEXT_ITEM_CLASS) {
-            let mut primary = root.children.remove(idx);
-            primary.remove_class(Self::TEXT_ITEM_CLASS);
-            primary.add_class(Self::PRIMARY_TEXT_ITEM_CLASS);
+            if let Some(children) = root.children_mut() {
+                let mut primary = children.remove(idx);
+                primary.remove_class(Self::TEXT_ITEM_CLASS);
+                primary.add_class(Self::PRIMARY_TEXT_ITEM_CLASS);
 
-            root.children.insert(idx, html! {
-                <span class = Self::TEXT_ITEM_CLASS>
-                    { primary }
-                    <span class = Self::SECONDARY_TEXT_ITEM_CLASS>
-                        { text }
+                children.insert(idx, html! {
+                    <span class = { Self::TEXT_ITEM_CLASS }>
+                        { primary }
+                        <span class = { Self::SECONDARY_TEXT_ITEM_CLASS }>
+                            { text }
+                        </span>
                     </span>
-                </span>
-            });
+                });
+            }
         } else {
             let idx = root
                 .find_child_contains_class_idx(Self::LAST_TILE_CLASS)
-                .unwrap_or_else(|| root.children.len());
-            root.children.insert(idx, html! {
-                <span class = Self::TEXT_ITEM_CLASS>{ text }</span>
+                .unwrap_or_else(|| root.children().len());
+            root.insert_child(idx, html! {
+                <span class = { Self::TEXT_ITEM_CLASS }>{ text }</span>
             });
         }
         self
@@ -181,7 +187,7 @@ impl ListItem {
         let (idx, class) = if root.is_some_child_contains_class(Self::FIRST_TILE_CLASS)
             || root.is_some_child_contains_class(Self::TEXT_ITEM_CLASS)
         {
-            (root.children.len(), Self::LAST_TILE_CLASS)
+            (root.children().len(), Self::LAST_TILE_CLASS)
         } else {
             let idx = root
                 .find_child_contains_class_idx(Self::RIPPLE_CLASS)
@@ -189,8 +195,8 @@ impl ListItem {
                 .unwrap_or(0);
             (idx, Self::FIRST_TILE_CLASS)
         };
-        root.children.insert(idx, html! {
-            <span class = class>{ tile }</span>
+        root.insert_child(idx, html! {
+            <span class = { class }>{ tile }</span>
         });
         self
     }
@@ -204,14 +210,16 @@ impl ListItem {
             .or_else(|| root_tag.find_child_contains_class_idx(Self::FIRST_TILE_CLASS))
             .expect("The widget must have tile!");
 
-        root_tag.children[tile_idx].add_class("material-icons");
-        root_tag.children[tile_idx].set_attr("aria-hidden", "true");
+        if let Some(children) = root_tag.children_mut() {
+            children[tile_idx].add_class("material-icons");
+            children[tile_idx].set_attr("aria-hidden", "true");
+        }
         self
     }
 
     pub fn label(mut self, label: impl Into<Html>) -> Self {
         let mut label = html! {
-            <label class = Self::TEXT_ITEM_CLASS>{ label }</label>
+            <label class = { Self::TEXT_ITEM_CLASS }>{ label }</label>
         };
         let root = self.root_tag_mut();
 
@@ -219,14 +227,14 @@ impl ListItem {
             .find_child_tag_recursively("input")
             .and_then(|input| input.attr("id"))
         {
-            label.set_attr("for", id.clone());
+            label.set_attr("for", id);
         }
 
         let idx = root
             .find_child_contains_class_idx(Self::LAST_TILE_CLASS)
-            .unwrap_or_else(|| root.children.len());
+            .unwrap_or_else(|| root.children().len());
 
-        root.children.insert(idx, label);
+        root.insert_child(idx, label);
         self
     }
 
@@ -277,13 +285,13 @@ impl List {
 
     pub fn simple_ul() -> Self {
         Self {
-            html: html! { <ul class = Self::CLASS></ul> },
+            html: html! { <ul class = { Self::CLASS }></ul> },
         }
     }
 
     pub fn simple_nav() -> Self {
         Self {
-            html: html! { <nav class = Self::CLASS></nav> },
+            html: html! { <nav class = { Self::CLASS }></nav> },
         }
     }
 
@@ -295,11 +303,8 @@ impl List {
         Self::simple_nav().attr(AUTO_INIT_ATTR, mdc::TYPE_NAME)
     }
 
-    pub fn root_id(&self) -> &str {
-        self.root_tag()
-            .attr("id")
-            .expect("The List widget must have ID")
-            .as_ref()
+    pub fn root_id(&self) -> AttrValue {
+        self.root_tag().attr("id").expect("The List widget must have ID")
     }
 
     pub fn single_selection(self) -> Self {
@@ -388,7 +393,7 @@ impl List {
     pub fn item(mut self, item: impl Into<Html>) -> Self {
         let mut item = item.into();
         let root = self.root_tag_mut();
-        let item_number = root.children.len();
+        let item_number = root.children().len();
 
         if item.attr("id").is_none() && item.is_some_child_contains_class(ListItem::RIPPLE_CLASS) {
             if let Some(id) = root.attr("id") {
@@ -397,7 +402,8 @@ impl List {
                     .into();
             }
         }
-        root.children.push(item);
+
+        root.add_child(item);
         self
     }
 
@@ -409,8 +415,8 @@ impl List {
     }
 
     pub fn divider(mut self) -> Self {
-        self.root_tag_mut().children.push(html! {
-            <li role = "separator" class = Self::DIVIDER_CLASS></li>
+        self.root_tag_mut().add_child(html! {
+            <li role = "separator" class = { Self::DIVIDER_CLASS }></li>
         });
         self
     }
@@ -418,8 +424,8 @@ impl List {
     /// Increases the leading margin of the divider so that it does not intersect
     /// the graphics column.
     pub fn divider_inset_leading(mut self) -> Self {
-        self.root_tag_mut().children.push(html! {
-            <li role = "separator" class = classes!(Self::DIVIDER_CLASS, Self::DIVIDER_INSET_LEADING_CLASS)></li>
+        self.root_tag_mut().add_child(html! {
+            <li role = "separator" class = { classes!(Self::DIVIDER_CLASS, Self::DIVIDER_INSET_LEADING_CLASS) }></li>
         });
         self
     }
@@ -427,8 +433,8 @@ impl List {
     /// Increases the trailing margin of the divider so that it coincides with the
     /// item's padding.
     pub fn divider_inset_trailing(mut self) -> Self {
-        self.root_tag_mut().children.push(html! {
-            <li role = "separator" class = classes!(Self::DIVIDER_CLASS, Self::DIVIDER_INSET_TRAILING_CLASS)></li>
+        self.root_tag_mut().add_child(html! {
+            <li role = "separator" class = { classes!(Self::DIVIDER_CLASS, Self::DIVIDER_INSET_TRAILING_CLASS) }></li>
         });
         self
     }
@@ -436,8 +442,8 @@ impl List {
     /// Alters the inset to correspond to the item's padding rather than the leading
     /// graphics column.
     pub fn divider_inset_padding(mut self) -> Self {
-        self.root_tag_mut().children.push(html! {
-            <li role = "separator" class = classes!(Self::DIVIDER_CLASS, Self::DIVIDER_INSET_PADDING_CLASS)></li>
+        self.root_tag_mut().add_child(html! {
+            <li role = "separator" class = { classes!(Self::DIVIDER_CLASS, Self::DIVIDER_INSET_PADDING_CLASS) }></li>
         });
         self
     }
@@ -450,7 +456,7 @@ impl List {
 
     pub fn markup_only(mut self) -> Self {
         if let Html::VList(mut list) = self.html {
-            self.html = list.children.remove(0);
+            self.html = list.remove(0);
         }
         self
     }

@@ -5,7 +5,11 @@ use std::{
 
 use yew::{classes, html, html::onclick, Callback, Html, MouseEvent};
 
-use crate::{ripple, utils::VTagExt, MdcWidget, AUTO_INIT_ATTR, MATERIAL_ICONS_CLASS};
+use crate::{
+    ripple,
+    utils::{ManageChildren, VTagExt},
+    MdcWidget, AUTO_INIT_ATTR, MATERIAL_ICONS_CLASS,
+};
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum ButtonStyle {
@@ -58,7 +62,7 @@ impl Button {
 
     pub fn simple() -> Self {
         Self {
-            html: html! { <button class = Self::CLASS><div class = Self::RIPPLE_CLASS></div></button> },
+            html: html! { <button class = { Self::CLASS }><div class = { Self::RIPPLE_CLASS }></div></button> },
         }
     }
 
@@ -81,8 +85,8 @@ impl Button {
     }
 
     pub fn label(mut self, label: impl Into<Html>) -> Self {
-        self.root_tag_mut().children.push(html! {
-            <span class = Self::LABEL_CLASS>{ label }</span>
+        self.root_tag_mut().children_mut().unwrap(/* root tag of button always has children */).push(html! {
+            <span class = { Self::LABEL_CLASS }>{ label }</span>
         });
         self
     }
@@ -124,12 +128,12 @@ impl Button {
             .find_child_contains_class_idx(Self::LABEL_CLASS)
             .unwrap_or_else(|| {
                 if root.is_last_child("script") {
-                    root.children.len() - 1
+                    root.children().len() - 1
                 } else {
-                    root.children.len()
+                    root.children().len()
                 }
             });
-        root.children.insert(idx, item.into());
+        root.children_mut().unwrap(/* root tag of button always has children */).insert(idx, item.into());
         self
     }
 
@@ -140,18 +144,18 @@ impl Button {
             .map(|idx| idx + 1)
             .unwrap_or_else(|| {
                 if root.is_last_child("script") {
-                    root.children.len() - 1
+                    root.children().len() - 1
                 } else {
-                    root.children.len()
+                    root.children().len()
                 }
             });
-        root.children.insert(idx, item.into());
+        root.children_mut().unwrap(/* root tag of button always has children */).insert(idx, item.into());
         self
     }
 
     pub fn icon(self, name: impl Into<String>) -> Self {
         self.add_after_label(html! {
-            <i class = classes!(MATERIAL_ICONS_CLASS, Self::ICON_CLASS) aria-hidden = "true">{ name.into() }</i>
+            <i class = { classes!(MATERIAL_ICONS_CLASS, Self::ICON_CLASS) } aria-hidden = "true">{ name.into() }</i>
         })
     }
 

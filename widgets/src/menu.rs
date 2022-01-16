@@ -1,11 +1,11 @@
 use std::ops::{Deref, DerefMut};
 
-use yew::{html, Html};
+use yew::{html, virtual_dom::AttrValue, Html};
 
 use crate::{
     utils::{
         dom::{self, JsObjectAccess},
-        VTagExt,
+        ManageChildren, VTagExt,
     },
     Element, List, MdcWidget, AUTO_INIT_ATTR,
 };
@@ -56,11 +56,8 @@ impl Menu {
         self.add_script_statement(statement)
     }
 
-    pub fn root_id(&self) -> &str {
-        self.root_tag()
-            .attr("id")
-            .expect("The Menu widget must have ID")
-            .as_ref()
+    pub fn root_id(&self) -> AttrValue {
+        self.root_tag().attr("id").expect("The Menu widget must have ID")
     }
 
     pub fn add_script_statement(mut self, statement: String) -> Self {
@@ -163,7 +160,7 @@ impl From<Menu> for Html {
     fn from(menu: Menu) -> Self {
         let Menu { mut html, list } = menu;
         if let Html::VTag(tag) = &mut html {
-            tag.children.insert(0, Html::from(list));
+            tag.insert_child(0, Html::from(list));
         }
         html
     }

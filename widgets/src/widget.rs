@@ -3,10 +3,10 @@ use std::rc::Rc;
 use wasm_bindgen::JsValue;
 use yew::{
     virtual_dom::{Listener, VTag},
-    Html,
+    Callback, Html,
 };
 
-use crate::{utils::VTagExt, EventCallback, EventListener};
+use crate::{utils::VTagExt, EventListener};
 
 pub trait MdcWidget {
     const NAME: &'static str;
@@ -41,19 +41,19 @@ pub trait MdcWidget {
     where
         Self: Sized,
     {
-        self.root_tag_mut().add_listener(listener);
+        let root = self.root_tag_mut();
+        if !root.add_listener(listener.clone()) {
+            root.set_listeners([Some(listener)].into());
+        }
         self
     }
 
-    fn on_event<E, C>(mut self, event_name: &'static str, callback: impl Into<C>) -> Self
+    fn on_event<E>(self, event_type: &'static str, callback: impl Into<Callback<E>>) -> Self
     where
         E: From<JsValue> + Clone + 'static,
-        C: EventCallback<E>,
         Self: Sized,
     {
-        let listener = Rc::new(EventListener::new(event_name, callback.into()));
-        self.root_tag_mut().add_listener(listener);
-        self
+        self.listener(Rc::new(EventListener::new(event_type, callback.into())))
     }
 
     fn attr(mut self, attr: &'static str, value: impl Into<String>) -> Self

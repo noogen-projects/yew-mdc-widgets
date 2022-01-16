@@ -22,15 +22,22 @@ impl NotchedOutline {
     pub fn new() -> Self {
         Self {
             html: html! {
-                <span class = Self::CLASS>
-                    <span class = Self::LEADING_CLASS></span>
-                    <span class = Self::NOTCH_CLASS></span>
-                    <span class = Self::TRAILING_CLASS></span>
+                <span class = { Self::CLASS }>
+                    <span class = { Self::LEADING_CLASS }></span>
+                    <span class = { Self::NOTCH_CLASS }></span>
+                    <span class = { Self::TRAILING_CLASS }></span>
                 </span>
             },
         }
     }
 }
+
+impl Default for NotchedOutline {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl MdcWidget for NotchedOutline {
     const NAME: &'static str = stringify!(FloatingLabel);
 

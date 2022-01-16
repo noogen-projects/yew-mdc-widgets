@@ -1,10 +1,12 @@
 use std::ops::{Deref, DerefMut};
 
-use yew::{html, services::ConsoleService, virtual_dom::AttrValue, Callback, Html, MouseEvent};
+use yew::{html, virtual_dom::AttrValue, Callback, Html, MouseEvent};
 
 use crate::{
+    console,
     utils::{
-        add_input_label, labeled_on_click, ripple_element, root_and_input_child_disabled, IntoWidgetWithVList, VTagExt,
+        add_input_label, labeled_on_click, ripple_element, root_and_input_child_disabled, IntoWidgetWithVList,
+        ManageChildren, VTagExt,
     },
     MdcWidget, AUTO_INIT_ATTR,
 };
@@ -42,13 +44,13 @@ impl Radio {
     pub fn simple() -> Self {
         Self {
             html: html! {
-                <div class=Self::CLASS>
-                    <input type = "radio" class = Self::NATIVE_CONTROL_CLASS />
-                    <div class = Self::BACKGROUND_CLASS>
-                        <div class = Self::OUTER_CIRCLE_CLASS></div>
-                        <div class = Self::INNER_CIRCLE_CLASS></div>
+                <div class = { Self::CLASS }>
+                    <input type = "radio" class = { Self::NATIVE_CONTROL_CLASS } />
+                    <div class = { Self::BACKGROUND_CLASS }>
+                        <div class = { Self::OUTER_CIRCLE_CLASS }></div>
+                        <div class = { Self::INNER_CIRCLE_CLASS }></div>
                     </div>
-                    <div class = Self::RIPPLE_CLASS></div>
+                    <div class = { Self::RIPPLE_CLASS }></div>
                 </div>
             },
         }
@@ -69,7 +71,7 @@ impl Radio {
 
     pub fn label(self, label: impl Into<Html>) -> Self {
         add_input_label(self, label).unwrap_or_else(|widget| {
-            ConsoleService::error(&format!("Could not find input tag's id attribute for {}", Self::NAME));
+            console::error!(format!("Could not find input tag's id attribute for {}", Self::NAME));
             widget
         })
     }
@@ -86,7 +88,7 @@ impl Radio {
 
     pub fn checked(mut self, checked: bool) -> Self {
         if let Some(input) = self.root_tag_mut().find_child_tag_mut("input") {
-            input.checked = checked;
+            input.set_checked(checked);
         }
         self
     }

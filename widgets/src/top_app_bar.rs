@@ -1,9 +1,12 @@
 use std::ops::{Deref, DerefMut};
 
 use const_format::concatcp;
-use yew::{html, Callback, Event, Html};
+use yew::{html, virtual_dom::AttrValue, Callback, Event, Html};
 
-use crate::{utils::VTagExt, MdcWidget, AUTO_INIT_ATTR};
+use crate::{
+    utils::{ManageChildren, VTagExt},
+    MdcWidget, AUTO_INIT_ATTR,
+};
 
 pub mod mdc {
     pub const TYPE_NAME: &str = "MDCTopAppBar";
@@ -59,10 +62,10 @@ impl TopAppBar {
     }
 
     pub fn title(mut self, title: impl Into<Html>) -> Self {
-        if let Some(Html::VTag(row)) = self.root_tag_mut().children.first_mut() {
-            if let Some(Html::VTag(start_section)) = row.children.first_mut() {
+        if let Some(row) = self.root_tag_mut().first_child_tag_mut() {
+            if let Some(start_section) = row.first_child_tag_mut() {
                 if let Some(title_tag) = start_section.find_child_contains_class_mut("mdc-top-app-bar__title") {
-                    title_tag.children.clear();
+                    title_tag.clear_children();
                     title_tag.add_child(title.into());
                 }
             }
@@ -74,28 +77,28 @@ impl TopAppBar {
         let mut item = item.into();
         item.add_class("mdc-top-app-bar__navigation-icon");
 
-        if let Some(Html::VTag(row)) = self.root_tag_mut().children.first_mut() {
-            if let Some(Html::VTag(start_section)) = row.children.first_mut() {
-                let idx = start_section.children.len() - 1;
-                start_section.children.insert(idx, item);
+        if let Some(row) = self.root_tag_mut().first_child_tag_mut() {
+            if let Some(start_section) = row.first_child_tag_mut() {
+                let idx = start_section.children().len() - 1;
+                start_section.insert_child(idx, item);
             }
         }
         self
     }
 
     pub fn start_section_item(mut self, item: impl Into<Html>) -> Self {
-        if let Some(Html::VTag(row)) = self.root_tag_mut().children.first_mut() {
-            if let Some(Html::VTag(start_section)) = row.children.first_mut() {
-                start_section.children.push(item.into());
+        if let Some(row) = self.root_tag_mut().first_child_tag_mut() {
+            if let Some(start_section) = row.first_child_tag_mut() {
+                start_section.add_child(item.into());
             }
         }
         self
     }
 
     pub fn middle_section(mut self, content: impl Into<Html>) -> Self {
-        if let Some(Html::VTag(row)) = self.root_tag_mut().children.first_mut() {
-            let idx = row.children.len() - 1;
-            row.children.insert(
+        if let Some(row) = self.root_tag_mut().first_child_tag_mut() {
+            let idx = row.children().len() - 1;
+            row.insert_child(
                 idx,
                 html! { <section class = "mdc-top-app-bar__section">{ content }</section> },
             );
@@ -107,19 +110,16 @@ impl TopAppBar {
         let mut item = item.into();
         item.add_class("mdc-top-app-bar__action-item");
 
-        if let Some(Html::VTag(row)) = self.root_tag_mut().children.first_mut() {
-            if let Some(Html::VTag(end_section)) = row.children.last_mut() {
-                end_section.children.push(item);
+        if let Some(row) = self.root_tag_mut().first_child_tag_mut() {
+            if let Some(end_section) = row.last_child_tag_mut() {
+                end_section.add_child(item);
             }
         }
         self
     }
 
-    pub fn root_id(&self) -> &str {
-        self.root_tag()
-            .attr("id")
-            .expect("The TopAppBar widget must have ID")
-            .as_ref()
+    pub fn root_id(&self) -> AttrValue {
+        self.root_tag().attr("id").expect("The TopAppBar widget must have ID")
     }
 
     pub fn shadow_when_scroll_script(&self, factory: impl AsRef<str>) -> String {

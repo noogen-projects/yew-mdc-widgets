@@ -2,10 +2,11 @@
 
 use std::iter::FromIterator;
 
-use yew::{classes, html, initialize, run_loop, utils, App, Component, ComponentLink, Html};
+use yew::{classes, html, Component, Html};
 use yew_mdc_widgets::{
     auto_init, drawer,
-    utils::dom::{get_exist_element_by_id, JsObjectAccess},
+    utils::dom::{document, get_exist_element_by_id, JsObjectAccess},
+    yew::Context,
     Button, ButtonStyle, Card, CardContent, Checkbox, Chip, ChipSet, DataTable, Dialog, Drawer, Element, Fab,
     HelperText, IconButton, List, ListItem, MdcWidget, Menu, Radio, Switch, Tab, TabBar, TableCell, TextField,
     TopAppBar,
@@ -17,19 +18,11 @@ impl Component for Root {
     type Message = ();
     type Properties = ();
 
-    fn create(_props: Self::Properties, _link: ComponentLink<Self>) -> Self {
+    fn create(_ctx: &Context<Self>) -> Self {
         Self
     }
 
-    fn update(&mut self, _msg: Self::Message) -> bool {
-        false
-    }
-
-    fn change(&mut self, _props: Self::Properties) -> bool {
-        false
-    }
-
-    fn view(&self) -> Html {
+    fn view(&self, _ctx: &Context<Self>) -> Html {
         let contents = vec![
             ListItem::link("#buttons").text("Buttons").tab_index(0),
             ListItem::link("#icon_buttons").text("Icon buttons"),
@@ -68,6 +61,7 @@ impl Component for Root {
             .navigation_item(IconButton::new().icon("menu"))
             .enable_shadow_when_scroll_window()
             .on_navigation(|_| {
+                gloo_console::log!("On nav!");
                 let drawer = get_exist_element_by_id::<Element>("app-drawer").get(drawer::mdc::TYPE_NAME);
                 let opened = drawer.get("open").as_bool().unwrap_or(false);
                 drawer.set("open", !opened);
@@ -76,9 +70,9 @@ impl Component for Root {
         html! {
             <>
                 { drawer }
-                <div class="mdc-drawer-scrim"></div>
+                <div class = "mdc-drawer-scrim"></div>
 
-                <div class = classes!("app-content", Drawer::APP_CONTENT_CLASS)>
+                <div class = { classes!("app-content", Drawer::APP_CONTENT_CLASS) }>
                     { top_app_bar }
 
                     <div class = "mdc-top-app-bar--fixed-adjust">
@@ -134,7 +128,7 @@ impl Component for Root {
         }
     }
 
-    fn rendered(&mut self, _first_render: bool) {
+    fn rendered(&mut self, _ctx: &Context<Self>, _first_render: bool) {
         auto_init();
     }
 }
@@ -1004,7 +998,7 @@ impl Root {
                 <div>
                     <h3 class = "mdc-typography--subtitle1">{ "Simple" }</h3>
                     <span class = "demo-item demo-list">
-                        <div id = "demo-menu" class = Menu::ANCHOR_CLASS>
+                        <div id = "demo-menu" class = { Menu::ANCHOR_CLASS }>
                             {
                                 Button::new()
                                     .label("Open Menu")
@@ -1098,7 +1092,7 @@ impl Root {
                 <div>
                     <h3 class = "mdc-typography--subtitle1">{ "Alert" }</h3>
                     <span class = "demo-item demo-list">
-                        <div id = "demo-menu" class = Menu::ANCHOR_CLASS>
+                        <div id = "demo-menu" class = { Menu::ANCHOR_CLASS }>
                             {
                                  Button::new()
                                     .label("Open Alert Dialog")
@@ -1127,7 +1121,7 @@ impl Root {
                 <div>
                     <h3 class = "mdc-typography--subtitle1">{ "Simple" }</h3>
                     <span class = "demo-item demo-list">
-                        <div id = "demo-menu" class = Menu::ANCHOR_CLASS>
+                        <div id = "demo-menu" class = { Menu::ANCHOR_CLASS }>
                             {
                                  Button::new()
                                     .label("Open Simple Dialog")
@@ -1158,7 +1152,7 @@ impl Root {
                 <div>
                     <h3 class = "mdc-typography--subtitle1">{ "Confirmation" }</h3>
                     <span class = "demo-item demo-list">
-                        <div id = "demo-menu" class = Menu::ANCHOR_CLASS>
+                        <div id = "demo-menu" class = { Menu::ANCHOR_CLASS }>
                             {
                                  Button::new()
                                     .label("Open Confirmation Dialog")
@@ -1394,11 +1388,9 @@ impl Root {
 }
 
 fn main() {
-    initialize();
-    let root = utils::document()
+    let root = document()
         .query_selector("#root")
         .expect("Can't get root node for rendering")
         .expect("Can't unwrap root node");
-    App::<Root>::new().mount_with_props(root, ());
-    run_loop();
+    yew::start_app_in_element::<Root>(root);
 }

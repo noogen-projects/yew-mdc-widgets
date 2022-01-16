@@ -9,7 +9,7 @@ use yew::{html, html::onclick, virtual_dom::VTag, Callback, Html, MouseEvent};
 use crate::{
     utils::{
         dom::{self, JsCast, JsObjectAccess},
-        VTagExt,
+        ManageChildren, VTagExt,
     },
     Element, MdcWidget, AUTO_INIT_ATTR,
 };
@@ -77,7 +77,7 @@ impl Dialog {
             html: html! {
                 <div class = "mdc-dialog">
                     <div class = "mdc-dialog__container">
-                        <div class = Self::SURFACE_CLASS role = "alertdialog" aria-modal = "true">
+                        <div class = { Self::SURFACE_CLASS } role = "alertdialog" aria-modal = "true">
                         </div>
                     </div>
                     <div class = "mdc-dialog__scrim"></div>
@@ -127,9 +127,9 @@ impl Dialog {
             self = self.content(html! { <div></div> });
             self.surface_mut()
                 .find_child_contains_class_idx(Self::CONTENT_CLASS)
-                .unwrap()
+                .unwrap(/* content already exists */)
         };
-        self.surface_mut().children[content_idx].add_child(item.into());
+        self.surface_mut().children_mut().unwrap(/* surface always has children */)[content_idx].add_child(item.into());
         self
     }
 
@@ -148,15 +148,15 @@ impl Dialog {
         let actions_idx = surface
             .find_child_contains_class_idx(Self::ACTIONS_CLASS)
             .unwrap_or_else(|| {
-                surface.add_child(html! { <div class = Self::ACTIONS_CLASS></div> });
-                surface.children.len() - 1
+                surface.add_child(html! { <div class = { Self::ACTIONS_CLASS }></div> });
+                surface.children().len() - 1
             });
-        surface.children[actions_idx].add_child(action.into());
+        surface.children_mut().unwrap(/* surface always has children */)[actions_idx].add_child(action.into());
         self
     }
 
     fn surface_mut(&mut self) -> &mut VTag {
-        self.root_tag_mut().children.children[0]
+        self.root_tag_mut().children_mut().unwrap(/* dialog always has children */)[0]
             .find_child_contains_class_mut(Self::SURFACE_CLASS)
             .expect("Can't get dialog surface")
     }

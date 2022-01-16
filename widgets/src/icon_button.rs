@@ -66,8 +66,8 @@ impl IconButton {
     pub fn simple() -> Self {
         Self {
             html: html! {
-                <button class = Self::CLASS data-mdc-ripple-is-unbounded = "">
-                    <div class = Self::RIPPLE_CLASS></div>
+                <button class = { Self::CLASS } data-mdc-ripple-is-unbounded = "">
+                    <div class = { Self::RIPPLE_CLASS }></div>
                 </button>
             },
             is_toggle: false,
@@ -90,8 +90,8 @@ impl IconButton {
     }
 
     pub fn toggle(self, icon_on: impl Into<String>, icon_off: impl Into<String>) -> Self {
-        self.toggle_on(html! { <i class = MATERIAL_ICONS_CLASS>{ icon_on.into() }</i> })
-            .toggle_off(html! { <i class = MATERIAL_ICONS_CLASS>{ icon_off.into() }</i> })
+        self.toggle_on(html! { <i class = { MATERIAL_ICONS_CLASS }>{ icon_on.into() }</i> })
+            .toggle_off(html! { <i class = { MATERIAL_ICONS_CLASS }>{ icon_off.into() }</i> })
     }
 
     pub fn toggle_on(mut self, item: impl Into<Html>) -> Self {

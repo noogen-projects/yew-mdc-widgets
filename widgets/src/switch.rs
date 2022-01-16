@@ -3,7 +3,7 @@ use std::ops::{Deref, DerefMut};
 use yew::{classes, html, virtual_dom::VTag, Callback, Html, MouseEvent};
 
 use crate::{
-    utils::{labeled_on_click, IntoWidgetWithVList, VTagExt},
+    utils::{labeled_on_click, IntoWidgetWithVList, ManageChildren, VTagExt},
     MdcWidget, AUTO_INIT_ATTR,
 };
 
@@ -54,14 +54,14 @@ impl Switch {
     pub fn simple() -> Self {
         Self {
             html: html! {
-                <button class = classes!(Self::CLASS, Self::UNSELECTED_CLASS) aria-checked = "false">
-                    <div class = Self::TRACK_CLASS></div>
-                    <div class = Self::HANDLE_TRACK_CLASS>
-                        <div class = Self::HANDLE_CLASS>
-                            <div class = Self::SHADOW_CLASS>
-                                <div class = Self::ELEVATION_OVERLAY_CLASS></div>
+                <button class = { classes!(Self::CLASS, Self::UNSELECTED_CLASS) } aria-checked = "false">
+                    <div class = { Self::TRACK_CLASS }></div>
+                    <div class = { Self::HANDLE_TRACK_CLASS }>
+                        <div class = { Self::HANDLE_CLASS }>
+                            <div class = { Self::SHADOW_CLASS }>
+                                <div class = { Self::ELEVATION_OVERLAY_CLASS }></div>
                             </div>
-                            <div class = Self::RIPPLE_CLASS></div>
+                            <div class = { Self::RIPPLE_CLASS }></div>
                         </div>
                     </div>
                 </button>
@@ -76,10 +76,10 @@ impl Switch {
     }
 
     pub fn label(mut self, label: impl Into<Html>) -> Self {
-        let id = self.root_tag().attr("id").expect("Cannot find root tag id").to_owned();
+        let id = self.root_tag().attr("id").expect("Cannot find root tag id");
         self = self.into_widget_with_v_list();
         self.html_mut().add_child(html! {
-            <label for = id>{ label }</label>
+            <label for = { id }>{ label }</label>
         });
         self
     }
@@ -121,7 +121,7 @@ impl Switch {
         icon.add_class_if_needed(Self::ICON_CLASS);
         icon.add_class_if_needed(Self::ICON_ON_CLASS);
 
-        self.icons().children.insert(0, icon);
+        self.icons().insert_child(0, icon);
         self
     }
 
@@ -138,7 +138,7 @@ impl Switch {
         icon.add_class_if_needed(Self::ICON_CLASS);
         icon.add_class_if_needed(Self::ICON_OFF_CLASS);
 
-        self.icons().children.push(icon);
+        self.icons().add_child(icon);
         self
     }
 
@@ -161,7 +161,7 @@ impl Switch {
             .find_child_contains_class_recursively_mut(Self::HANDLE_CLASS)
             .unwrap();
         if handle.find_child_contains_class_mut(Self::ICONS_CLASS).is_none() {
-            handle.add_child(html! { <div class = Self::ICONS_CLASS></div> });
+            handle.add_child(html! { <div class = { Self::ICONS_CLASS }></div> });
         }
         handle.find_child_contains_class_mut(Self::ICONS_CLASS).unwrap()
     }

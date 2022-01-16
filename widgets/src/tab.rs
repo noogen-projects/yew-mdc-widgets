@@ -4,10 +4,10 @@ use std::{
 };
 
 use const_format::concatcp;
-use yew::{classes, html, html::onclick, Callback, Html, MouseEvent};
+use yew::{classes, html, html::onclick, virtual_dom::AttrValue, Callback, Html, MouseEvent};
 
 use crate::{
-    utils::{dom, VTagExt},
+    utils::{dom, ManageChildren, VTagExt},
     CustomEvent, Element, MdcWidget, AUTO_INIT_ATTR,
 };
 
@@ -85,9 +85,9 @@ impl Tab {
     pub fn simple() -> Self {
         Self {
             html: html! {
-                <button class = Self::CLASS role = "tab" aria-selected = "false" tabindex = "-1">
-                    <span class = Self::CONTENT_CLASS></span>
-                    <span class = Self::RIPPLE_CLASS></span>
+                <button class = { Self::CLASS } role = "tab" aria-selected = "false" tabindex = "-1">
+                    <span class = { Self::CONTENT_CLASS }></span>
+                    <span class = { Self::RIPPLE_CLASS }></span>
                 </button>
             },
         }
@@ -109,8 +109,8 @@ impl Tab {
 
     pub fn indicator(mut self) -> Self {
         self.insert_child(1, html! {
-            <span class = Self::INDICATOR_CLASS>
-                <span class = classes!(Self::INDICATOR_CONTENT_CLASS, Self::INDICATOR_CONTENT_UNDERLINE_CLASS)></span>
+            <span class = { Self::INDICATOR_CLASS }>
+                <span class = { classes!(Self::INDICATOR_CONTENT_CLASS, Self::INDICATOR_CONTENT_UNDERLINE_CLASS) }></span>
             </span>
         });
         self
@@ -119,8 +119,8 @@ impl Tab {
     pub fn content_indicator(mut self) -> Self {
         if let Some(content) = self.find_child_tag_mut(Self::CONTENT_CLASS) {
             content.add_child(html! {
-                <span class = Self::INDICATOR_CLASS>
-                    <span class = classes!(Self::INDICATOR_CONTENT_CLASS, Self::INDICATOR_CONTENT_UNDERLINE_CLASS)></span>
+                <span class = { Self::INDICATOR_CLASS }>
+                    <span class = { classes!(Self::INDICATOR_CONTENT_CLASS, Self::INDICATOR_CONTENT_UNDERLINE_CLASS) }></span>
                 </span>
             });
         }
@@ -151,7 +151,7 @@ impl Tab {
         let root = self.root_tag_mut();
         if let Some(content) = root.find_child_contains_class_mut(Self::CONTENT_CLASS) {
             content.add_child(html! {
-                <span class = classes!(Self::ICON_CLASS, "material-icons") aria-hidden = "true">{ name.into() }</span>
+                <span class = { classes!(Self::ICON_CLASS, "material-icons") } aria-hidden = "true">{ name.into() }</span>
             });
         }
         self
@@ -161,7 +161,7 @@ impl Tab {
         let root = self.root_tag_mut();
         if let Some(content) = root.find_child_contains_class_mut(Self::CONTENT_CLASS) {
             content.add_child(html! {
-                <span class = Self::LABEL_CLASS>{ label }</span>
+                <span class = { Self::LABEL_CLASS }>{ label }</span>
             });
         }
         self
@@ -240,10 +240,10 @@ impl TabBar {
     pub fn simple() -> Self {
         Self {
             html: html! {
-                <div class = Self::CLASS role = "tablist">
-                    <div class = Self::SCROLLER_CLASS>
-                        <div class = Self::SCROLL_AREA_CLASS>
-                            <div class = Self::SCROLL_CONTENT_CLASS></div>
+                <div class = { Self::CLASS } role = "tablist">
+                    <div class = { Self::SCROLLER_CLASS }>
+                        <div class = { Self::SCROLL_AREA_CLASS }>
+                            <div class = { Self::SCROLL_CONTENT_CLASS }></div>
                         </div>
                     </div>
                 </div>
@@ -272,11 +272,8 @@ impl TabBar {
     }
 
     #[track_caller]
-    pub fn root_id(&self) -> &str {
-        self.root_tag()
-            .attr("id")
-            .expect("The TabBar widget must have ID")
-            .as_ref()
+    pub fn root_id(&self) -> AttrValue {
+        self.root_tag().attr("id").expect("The TabBar widget must have ID")
     }
 
     /// Emitted when a Tab is activated with the index of the activated Tab.

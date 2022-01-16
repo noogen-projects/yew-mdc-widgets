@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use yew::{html, html::onclick, virtual_dom::AttrValue, Callback, Html, MouseEvent};
+use yew::{html, html::onclick, Callback, Classes, Html, MouseEvent};
 
 pub use self::ext::*;
 use crate::MdcWidget;
@@ -19,11 +19,11 @@ pub(crate) fn add_input_label<W: IntoWidgetWithVList>(mut widget: W, label: impl
         .and_then(|input| input.attr("id"))
     {
         let label = html! {
-            <label for = input_id>{ label }</label>
+            <label for = { input_id }>{ label }</label>
         };
         widget = widget.into_widget_with_v_list();
         if let Html::VList(list) = widget.html_mut() {
-            list.children.insert(1, label);
+            list.insert_child(1, label);
         }
         Ok(widget)
     } else {
@@ -31,18 +31,18 @@ pub(crate) fn add_input_label<W: IntoWidgetWithVList>(mut widget: W, label: impl
     }
 }
 
-pub(crate) fn ripple_element(widget: &mut impl MdcWidget, ripple_class: impl Into<AttrValue>, enabled: bool) {
+pub(crate) fn ripple_element(widget: &mut impl MdcWidget, ripple_class: impl Into<Classes>, enabled: bool) {
     let ripple_class = ripple_class.into();
     let root = widget.root_tag_mut();
     if enabled {
-        if !root.is_some_child_contains_class(&ripple_class) {
-            let idx = root.children.len().saturating_sub(1);
-            root.children.insert(idx, html! {
-                <div class = ripple_class></div>
+        if !root.is_some_child_contains_class(&ripple_class.to_string()) {
+            let idx = root.children().len().saturating_sub(1);
+            root.insert_child(idx, html! {
+                <div class = { ripple_class }></div>
             });
         }
     } else {
-        root.remove_child_contains_class(&ripple_class);
+        root.remove_child_contains_class(&ripple_class.to_string());
     }
 }
 
