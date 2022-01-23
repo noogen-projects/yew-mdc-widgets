@@ -4,8 +4,9 @@ use std::iter::FromIterator;
 
 use yew::{classes, html, Component, Html};
 use yew_mdc_widgets::{
-    auto_init, drawer,
-    utils::dom::{document, get_exist_element_by_id, JsObjectAccess},
+    auto_init,
+    dom::{self, existing::JsObjectAccess},
+    drawer,
     yew::Context,
     Button, ButtonStyle, Card, CardContent, Checkbox, Chip, ChipSet, DataTable, Dialog, Drawer, Element, Fab,
     HelperText, IconButton, List, ListItem, MdcWidget, Menu, Radio, Switch, Tab, TabBar, TableCell, TextField,
@@ -48,7 +49,8 @@ impl Component for Root {
                 List::nav()
                     .items(contents.clone().into_iter().map(|item| {
                         item.on_click(|_| {
-                            let drawer = get_exist_element_by_id::<Element>("app-drawer").get(drawer::mdc::TYPE_NAME);
+                            let drawer =
+                                dom::existing::get_element_by_id::<Element>("app-drawer").get(drawer::mdc::TYPE_NAME);
                             drawer.set("open", false);
                         })
                     }))
@@ -62,7 +64,7 @@ impl Component for Root {
             .enable_shadow_when_scroll_window()
             .on_navigation(|_| {
                 gloo_console::log!("On nav!");
-                let drawer = get_exist_element_by_id::<Element>("app-drawer").get(drawer::mdc::TYPE_NAME);
+                let drawer = dom::existing::get_element_by_id::<Element>("app-drawer").get(drawer::mdc::TYPE_NAME);
                 let opened = drawer.get("open").as_bool().unwrap_or(false);
                 drawer.set("open", !opened);
             });
@@ -315,7 +317,7 @@ impl Root {
                     </span>
                     <span class = "demo-item">
                         { Fab::new().id("exited_fab").icon("add").on_click(|_| {
-                            get_exist_element_by_id::<Element>("exited_fab").class_list().add_1(Fab::EXITED_CLASS).ok();
+                            dom::existing::get_element_by_id::<Element>("exited_fab").class_list().add_1(Fab::EXITED_CLASS).ok();
                         }) }
                     </span>
                 </div>
@@ -329,7 +331,7 @@ impl Root {
                     </span>
                     <span class = "demo-item">
                         { Fab::new().mini().id("exited_fab_mini").icon("add").on_click(|_| {
-                            get_exist_element_by_id::<Element>("exited_fab_mini").class_list().add_1(Fab::EXITED_CLASS).ok();
+                            dom::existing::get_element_by_id::<Element>("exited_fab_mini").class_list().add_1(Fab::EXITED_CLASS).ok();
                         }) }
                     </span>
                 </div>
@@ -349,7 +351,7 @@ impl Root {
                     </span>
                     <span class = "demo-item">
                         { Fab::new().id("exited_fab_extended").icon("favorite_border").label("favorite").on_click(|_| {
-                            get_exist_element_by_id::<Element>("exited_fab_extended").class_list().add_1(Fab::EXITED_CLASS).ok();
+                            dom::existing::get_element_by_id::<Element>("exited_fab_extended").class_list().add_1(Fab::EXITED_CLASS).ok();
                         }) }
                     </span>
                 </div>
@@ -1388,9 +1390,6 @@ impl Root {
 }
 
 fn main() {
-    let root = document()
-        .query_selector("#root")
-        .expect("Can't get root node for rendering")
-        .expect("Can't unwrap root node");
+    let root = dom::existing::get_element_by_id::<Element>("root");
     yew::start_app_in_element::<Root>(root);
 }

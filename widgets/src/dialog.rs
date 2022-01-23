@@ -7,10 +7,8 @@ use const_format::concatcp;
 use yew::{html, html::onclick, virtual_dom::VTag, Callback, Html, MouseEvent};
 
 use crate::{
-    utils::{
-        dom::{self, JsCast, JsObjectAccess},
-        ManageChildren, VTagExt,
-    },
+    dom::{self, existing::JsObjectAccess, JsCast},
+    utils::{ManageChildren, VTagExt},
     Element, MdcWidget, AUTO_INIT_ATTR,
 };
 
@@ -162,14 +160,14 @@ impl Dialog {
     }
 
     pub fn open_existing(id: impl AsRef<str>) {
-        let dialog = dom::get_exist_element_by_id::<Element>(id.as_ref())
+        let dialog = dom::existing::get_element_by_id::<Element>(id.as_ref())
             .get(mdc::TYPE_NAME)
             .unchecked_into::<mdc::Dialog>();
         dialog.open();
     }
 
     pub fn close_existing(id: impl AsRef<str>) {
-        let dialog = dom::get_exist_element_by_id::<Element>(id.as_ref())
+        let dialog = dom::existing::get_element_by_id::<Element>(id.as_ref())
             .get(mdc::TYPE_NAME)
             .unchecked_into::<mdc::Dialog>();
         dialog.close();

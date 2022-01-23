@@ -3,10 +3,8 @@ use std::ops::{Deref, DerefMut};
 use yew::{html, virtual_dom::AttrValue, Html};
 
 use crate::{
-    utils::{
-        dom::{self, JsObjectAccess},
-        ManageChildren, VTagExt,
-    },
+    dom::{self, existing::JsObjectAccess},
+    utils::{ManageChildren, VTagExt},
     Element, List, MdcWidget, AUTO_INIT_ATTR,
 };
 
@@ -47,7 +45,7 @@ impl Menu {
     }
 
     pub fn open_existing(id: impl AsRef<str>) {
-        let menu = dom::get_exist_element_by_id::<Element>(id.as_ref()).get(mdc::TYPE_NAME);
+        let menu = dom::existing::get_element_by_id::<Element>(id.as_ref()).get(mdc::TYPE_NAME);
         menu.set("open", true);
     }
 

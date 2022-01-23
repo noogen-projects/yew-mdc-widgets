@@ -7,11 +7,9 @@ use const_format::concatcp;
 use yew::{html, html::onclick, Callback, Html, MouseEvent};
 
 use crate::{
+    dom::{self, existing::JsObjectAccess, JsCast},
     ripple,
-    utils::{
-        dom::{self, JsCast, JsObjectAccess},
-        VTagExt,
-    },
+    utils::VTagExt,
     CustomEvent, Element, MdcWidget, AUTO_INIT_ATTR, MATERIAL_ICONS_CLASS,
 };
 
@@ -130,7 +128,7 @@ impl IconButton {
     }
 
     pub fn set_on_by_id(id: impl AsRef<str>, is_on: bool) {
-        let toggle_button = dom::get_exist_element_by_id::<Element>(id.as_ref())
+        let toggle_button = dom::existing::get_element_by_id::<Element>(id.as_ref())
             .get(mdc::TYPE_NAME)
             .unchecked_into::<mdc::IconButtonToggle>();
         toggle_button.set_on(is_on);

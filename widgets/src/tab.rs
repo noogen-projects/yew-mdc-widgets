@@ -7,7 +7,8 @@ use const_format::concatcp;
 use yew::{classes, html, html::onclick, virtual_dom::AttrValue, Callback, Html, MouseEvent};
 
 use crate::{
-    utils::{dom, ManageChildren, VTagExt},
+    dom,
+    utils::{ManageChildren, VTagExt},
     CustomEvent, Element, MdcWidget, AUTO_INIT_ATTR,
 };
 
@@ -98,12 +99,12 @@ impl Tab {
     }
 
     pub fn activate(id: impl AsRef<str>) {
-        let tab = mdc::Tab::new(dom::get_exist_element_by_id::<Element>(id.as_ref()));
+        let tab = mdc::Tab::new(dom::existing::get_element_by_id::<Element>(id.as_ref()));
         tab.activate();
     }
 
     pub fn deactivate(id: impl AsRef<str>) {
-        let tab = mdc::Tab::new(dom::get_exist_element_by_id::<Element>(id.as_ref()));
+        let tab = mdc::Tab::new(dom::existing::get_element_by_id::<Element>(id.as_ref()));
         tab.deactivate();
     }
 

@@ -1,11 +1,11 @@
+pub use self::ext::*;
+
 use std::rc::Rc;
 
 use yew::{html, html::onclick, Callback, Classes, Html, MouseEvent};
 
-pub use self::ext::*;
 use crate::MdcWidget;
 
-pub mod dom;
 pub mod ext;
 
 pub(crate) trait IntoWidgetWithVList: MdcWidget {

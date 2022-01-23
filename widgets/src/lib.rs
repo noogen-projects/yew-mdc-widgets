@@ -4,6 +4,7 @@ pub use gloo;
 pub use gloo_console as console;
 pub use js_sys;
 pub use wasm_bindgen;
+pub use wasm_dom as dom;
 pub use web_sys;
 pub use yew;
 

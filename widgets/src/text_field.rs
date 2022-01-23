@@ -11,10 +11,11 @@ use yew::{
 };
 
 use crate::{
+    dom,
     floating_label::FloatingLabel,
     line_ripple,
     notched_outline::NotchedOutline,
-    utils::{dom, IntoWidgetWithVList, ManageChildren, VTagExt},
+    utils::{IntoWidgetWithVList, ManageChildren, VTagExt},
     Element, MdcWidget, AUTO_INIT_ATTR,
 };
 
@@ -126,7 +127,7 @@ impl TextField {
     }
 
     pub fn mdc_object(id: impl AsRef<str>) -> mdc::TextField {
-        mdc::TextField::new(dom::get_exist_element_by_id::<Element>(id.as_ref()))
+        mdc::TextField::new(dom::existing::get_element_by_id::<Element>(id.as_ref()))
     }
 
     /// Returns the input's value.
