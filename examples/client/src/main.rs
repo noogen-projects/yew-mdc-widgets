@@ -63,7 +63,6 @@ impl Component for Root {
             .navigation_item(IconButton::new().icon("menu"))
             .enable_shadow_when_scroll_window()
             .on_navigation(|_| {
-                gloo_console::log!("On nav!");
                 let drawer = dom::existing::get_element_by_id::<Element>("app-drawer").get(drawer::mdc::TYPE_NAME);
                 let opened = drawer.get("open").as_bool().unwrap_or(false);
                 drawer.set("open", !opened);

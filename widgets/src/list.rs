@@ -323,13 +323,13 @@ impl List {
         } else {
             let id = self.root_id();
             let script = format!(
-                r"{{
+                r"setTimeout(function() {{
                     const {list} = document.getElementById('{id}');
                     if ({list}.{mdc_type} === undefined) {{
                         window.mdc.autoInit({list}.parentElement);
                     }}
                     {statement}
-                }}",
+                }}, 0)",
                 list = Self::LIST_VAR_NAME,
                 mdc_type = mdc::TYPE_NAME,
                 id = id,

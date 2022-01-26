@@ -867,12 +867,14 @@ fn add_child_script_statement(child: Option<&mut VTag>, statement: impl AsRef<st
     if let Some(script) = child {
         if let Some(Html::VText(text)) = script.first_child_mut() {
             let mut text_string = text.text.to_string();
-            if text_string.starts_with('{') && text_string.ends_with('}') {
-                let insert_pos = text_string.len() - 1;
-                text_string.insert_str(insert_pos, statement.as_ref());
+            let insert_pos = if text_string.starts_with('{') && text_string.ends_with('}') {
+                text_string.len() - 1
+            } else if text_string.starts_with("setTimeout(") && text_string.ends_with("}, 0)") {
+                text_string.len() - 5
             } else {
-                text_string.push_str(statement.as_ref());
-            }
+                text_string.len()
+            };
+            text_string.insert_str(insert_pos, statement.as_ref());
             text.text = text_string.into();
         }
     }

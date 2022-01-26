@@ -24,7 +24,6 @@ impl Default for TopAppBar {
 }
 
 impl TopAppBar {
-    pub const VAR_NAME: &'static str = "top_app_bar";
     const SCROLLED_CLASS: &'static str = "mdc-top-app-bar--fixed-scrolled";
 
     /// Class used to style the content below the standard and fixed top app bar to prevent the top
@@ -164,26 +163,12 @@ impl TopAppBar {
         if self.html.find_child_tag("script").is_some() {
             self.html.add_child_script_statement(statement);
         } else {
-            let id = self.root_id();
-            let script = format!(
-                r"{{
-                    const {bar} = document.getElementById('{id}');
-                    if ({bar}.MDCTopAppBar === undefined) {{
-                        window.mdc.autoInit({bar}.parentElement);
-                    }}
-                    {statement}
-                }}",
-                bar = Self::VAR_NAME,
-                id = id,
-                statement = statement,
-            );
-
             let Self { html } = self;
             self = Self {
                 html: html! {
                     <>
                         { html }
-                        <script>{ script }</script>
+                        <script>{ statement }</script>
                     </>
                 },
             };

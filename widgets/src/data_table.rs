@@ -12,8 +12,12 @@ use yew::{
 
 use crate::{
     utils::{ManageChildren, VTagExt},
-    Checkbox, MdcWidget,
+    Checkbox, MdcWidget, AUTO_INIT_ATTR,
 };
+
+pub mod mdc {
+    pub const TYPE_NAME: &str = "MDCDataTable";
+}
 
 pub enum TableCell {
     Numeric(Html),
@@ -72,9 +76,7 @@ pub struct DataTable {
 impl DataTable {
     pub fn new(id: impl Into<String>) -> Self {
         let id = id.into();
-        let init_table = format!("mdc.dataTable.MDCDataTable.attachTo(document.getElementById('{}'))", id);
-
-        Self {
+        let mut table = Self {
             html: html! {
                 <div id = { id } class = "mdc-data-table">
                     <div class = "mdc-data-table__table-container">
@@ -86,12 +88,13 @@ impl DataTable {
                             </tbody>
                         </table>
                     </div>
-                    <script>{ init_table }</script>
                 </div>
             },
             row_selection: false,
             on_row_click: None,
-        }
+        };
+        table.root_tag_mut().set_attr(AUTO_INIT_ATTR, mdc::TYPE_NAME);
+        table
     }
 
     pub fn head(mut self, head: impl IntoIterator<Item = TableCell>) -> Self {
@@ -296,6 +299,18 @@ impl DataTable {
                 { checkbox }
             </td>
         }
+    }
+}
+
+impl MdcWidget for DataTable {
+    const NAME: &'static str = stringify!(DataTable);
+
+    fn html(&self) -> &Html {
+        &self.html
+    }
+
+    fn html_mut(&mut self) -> &mut Html {
+        &mut self.html
     }
 }
 

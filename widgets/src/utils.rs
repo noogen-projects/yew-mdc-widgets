@@ -2,11 +2,22 @@ pub use self::ext::*;
 
 use std::rc::Rc;
 
+use wasm_dom::UnwrapThrowExt;
+use web_sys::Node;
 use yew::{html, html::onclick, Callback, Classes, Html, MouseEvent};
 
 use crate::MdcWidget;
 
 pub mod ext;
+
+pub fn raw_html(tag: impl AsRef<str>, inner_html: impl AsRef<str>) -> Html {
+    let html = wasm_dom::existing::document()
+        .create_element(tag.as_ref())
+        .expect_throw("Tag should be created");
+    html.set_inner_html(inner_html.as_ref());
+
+    Html::VRef(Node::from(html))
+}
 
 pub(crate) trait IntoWidgetWithVList: MdcWidget {
     fn into_widget_with_v_list(self) -> Self;
