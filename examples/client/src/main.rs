@@ -2,13 +2,11 @@
 
 use std::iter::FromIterator;
 
-use yew::{classes, html, Component, Html};
+use yew::{classes, html, Component, Context, Html};
 use yew_mdc_widgets::{
     auto_init,
     dom::{self, existing::JsObjectAccess},
-    drawer,
-    yew::Context,
-    Button, ButtonStyle, Card, CardContent, Checkbox, Chip, ChipSet, DataTable, Dialog, Drawer, Element, Fab,
+    drawer, Button, ButtonStyle, Card, CardContent, Checkbox, Chip, ChipSet, DataTable, Dialog, Drawer, Element, Fab,
     HelperText, IconButton, List, ListItem, MdcWidget, Menu, Radio, Switch, Tab, TabBar, TableCell, TextField,
     TopAppBar,
 };
@@ -76,7 +74,7 @@ impl Component for Root {
                 <div class = { classes!("app-content", Drawer::APP_CONTENT_CLASS) }>
                     { top_app_bar }
 
-                    <div class = "mdc-top-app-bar--fixed-adjust">
+                    <div class = { TopAppBar::FIXED_ADJUST_CLASS }>
                         <div class = "demo-content">
                             <h1 class = "demo-title mdc-typography--headline5">{ "Material design components" }</h1>
                             { List::nav().items(contents) }
