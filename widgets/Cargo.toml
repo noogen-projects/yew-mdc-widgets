@@ -14,7 +14,7 @@ keywords = ["noogen", "web", "mdc", "widgets", "yew"]
 categories = ["web-programming", "wasm", "gui"]
 
 [dependencies]
-yew = { git = "https://github.com/XX/yew.git", branch = "other_listener_kind" }
+yew = { git = "https://github.com/yewstack/yew.git" }
 js-sys = "0.3"
 gloo = "0.5"
 gloo-console = "0.2"

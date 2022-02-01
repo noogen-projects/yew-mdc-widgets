@@ -41,10 +41,7 @@ pub trait MdcWidget {
     where
         Self: Sized,
     {
-        let root = self.root_tag_mut();
-        if !root.add_listener(listener.clone()) {
-            root.set_listeners([Some(listener)].into());
-        }
+        self.root_tag_mut().add_listener(listener);
         self
     }
 
