@@ -1,6 +1,6 @@
 [package]
 name = "yew-mdc-widgets"
-version = "0.3.1"
+version = "0.3.2"
 authors = [
     "Alexander Mescheryakov <freecoder.xx@gmail.com>",
     "Noogen Team <info.noogen@gmail.com>",
