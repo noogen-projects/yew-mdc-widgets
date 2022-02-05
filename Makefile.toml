@@ -14,6 +14,7 @@ ADDITIONAL = "--color=auto" # it's a stub
 
 [tasks.build_example_client]
 command = "cargo"
+toolchain = "stable"
 args = ["build", "-p", "example_client", "--target", "wasm32-unknown-unknown", "${ADDITIONAL}"]
 dependencies = ["set_vars"]
 
@@ -36,5 +37,6 @@ dependencies = ["build_example_client", "deploy_example_client"]
 
 [tasks.run]
 command = "cargo"
+toolchain = "stable"
 args = ["run", "-p", "example_server", "${ADDITIONAL}"]
 dependencies = ["example_client"]

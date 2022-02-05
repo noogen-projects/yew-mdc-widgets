@@ -1,11 +1,11 @@
 [package]
 name = "yew-mdc-widgets"
-version = "0.1.0"
+version = "0.3.2"
 authors = [
     "Alexander Mescheryakov <freecoder.xx@gmail.com>",
     "Noogen Team <info.noogen@gmail.com>",
 ]
-edition = "2018"
+edition = "2021"
 license = "MIT"
 readme = "README.md"
 repository = "https://github.com/noogen-projects/yew-mdc-widgets"
@@ -14,10 +14,12 @@ keywords = ["noogen", "web", "mdc", "widgets", "yew"]
 categories = ["web-programming", "wasm", "gui"]
 
 [dependencies]
-yew = { version = "0.18", features = ["web_sys"] }
+yew = { git = "https://github.com/yewstack/yew.git" }
 js-sys = "0.3"
-gloo = "0.3"
+gloo = "0.5"
+gloo-console = "0.2"
 wasm-bindgen = "0.2"
+wasm-dom = "0.1"
 const_format = "0.2"
 
 [dependencies.web-sys]

@@ -19,8 +19,11 @@ impl Default for Fab {
 }
 
 impl Fab {
+    pub const CLASS: &'static str = "mdc-fab";
+    pub const RIPPLE_CLASS: &'static str = "mdc-fab__ripple";
     pub const ICON_CLASS: &'static str = "mdc-fab__icon";
     pub const MINI_CLASS: &'static str = "mdc-fab--mini";
+    pub const LABEL_CLASS: &'static str = "mdc-fab__label";
     pub const EXTENDED_CLASS: &'static str = "mdc-fab--extended";
 
     /// Animates the FAB out of view. When this class is removed, the FAB will return to view.
@@ -29,24 +32,20 @@ impl Fab {
     pub fn simple() -> Self {
         Self {
             html: html! {
-                <button class = "mdc-fab">
-                    <div class = "mdc-fab__ripple"></div>
+                <button class = { Self::CLASS }>
+                    <div class = { Self::RIPPLE_CLASS }></div>
                 </button>
             },
         }
     }
 
     pub fn new() -> Self {
-        let mut icon_button = Self::simple();
-        icon_button
-            .root_tag_mut()
-            .set_attr(AUTO_INIT_ATTR, ripple::mdc::TYPE_NAME);
-        icon_button
+        Self::simple().attr(AUTO_INIT_ATTR, ripple::mdc::TYPE_NAME)
     }
 
     pub fn icon(mut self, name: impl Into<String>) -> Self {
         self.root_tag_mut().add_child(html! {
-            <span class = classes!(Self::ICON_CLASS, "material-icons")>{ name.into() }</span>
+            <span class = { classes!(Self::ICON_CLASS, "material-icons") }>{ name.into() }</span>
         });
         self
     }
@@ -77,7 +76,7 @@ impl Fab {
     pub fn label(mut self, label: impl Into<Html>) -> Self {
         self = self.class(Self::EXTENDED_CLASS);
         self.root_tag_mut().add_child(html! {
-            <span class = "mdc-fab__label">{ label.into() }</span>
+            <span class = { Self::LABEL_CLASS }>{ label.into() }</span>
         });
         self
     }

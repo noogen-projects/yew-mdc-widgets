@@ -1,10 +1,12 @@
 use std::ops::{Deref, DerefMut};
 
-use yew::{html, services::ConsoleService, virtual_dom::AttrValue, Callback, Html, MouseEvent};
+use yew::{html, virtual_dom::AttrValue, Callback, Html, MouseEvent};
 
 use crate::{
+    console,
     utils::{
-        add_input_label, labeled_on_click, ripple_element, root_and_input_child_disabled, IntoWidgetWithVList, VTagExt,
+        add_input_label, labeled_on_click, ripple_element, root_and_input_child_disabled, IntoWidgetWithVList,
+        ManageChildren, VTagExt,
     },
     MdcWidget, AUTO_INIT_ATTR,
 };
@@ -39,7 +41,7 @@ impl Checkbox {
                         </svg>
                         <div class = "mdc-checkbox__mixedmark"></div>
                     </div>
-                    <div class = Self::RIPPLE_CLASS></div>
+                    <div class = { Self::RIPPLE_CLASS }></div>
                 </div>
             },
         }
@@ -53,7 +55,7 @@ impl Checkbox {
 
     pub fn label(self, label: impl Into<Html>) -> Self {
         add_input_label(self, label).unwrap_or_else(|widget| {
-            ConsoleService::error(&format!("Could not find input tag's id attribute for {}", Self::NAME));
+            console::log!(&format!("Could not find input tag's id attribute for {}", Self::NAME));
             widget
         })
     }
@@ -88,7 +90,7 @@ impl Checkbox {
 
     pub fn checked(mut self, checked: bool) -> Self {
         if let Some(input) = self.root_tag_mut().find_child_tag_mut("input") {
-            input.checked = checked;
+            input.set_checked(checked);
         }
         self
     }

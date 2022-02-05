@@ -10,7 +10,14 @@ use yew::{
     Callback, Html, MouseEvent,
 };
 
-use crate::{utils::VTagExt, Checkbox, MdcWidget};
+use crate::{
+    utils::{ManageChildren, VTagExt},
+    Checkbox, MdcWidget, AUTO_INIT_ATTR,
+};
+
+pub mod mdc {
+    pub const TYPE_NAME: &str = "MDCDataTable";
+}
 
 pub enum TableCell {
     Numeric(Html),
@@ -42,7 +49,7 @@ impl TableCell {
             TableCell::Text(content) => ("mdc-data-table__header-cell", content),
         };
         html! {
-            <th class = class role = "columnheader" scope = "col">{ content }</th>
+            <th class = { class } role = "columnheader" scope = "col">{ content }</th>
         }
     }
 
@@ -52,7 +59,7 @@ impl TableCell {
             TableCell::Text(content) => ("mdc-data-table__cell", content),
         };
         html! {
-            <td class = class>{ content }</td>
+            <td class = { class }>{ content }</td>
         }
     }
 }
@@ -69,11 +76,9 @@ pub struct DataTable {
 impl DataTable {
     pub fn new(id: impl Into<String>) -> Self {
         let id = id.into();
-        let init_table = format!("mdc.dataTable.MDCDataTable.attachTo(document.getElementById('{}'))", id);
-
-        Self {
+        let mut table = Self {
             html: html! {
-                <div id = id class = "mdc-data-table">
+                <div id = { id } class = "mdc-data-table">
                     <div class = "mdc-data-table__table-container">
                         <table class = "mdc-data-table__table">
                             <thead>
@@ -83,26 +88,28 @@ impl DataTable {
                             </tbody>
                         </table>
                     </div>
-                    <script>{ init_table }</script>
                 </div>
             },
             row_selection: false,
             on_row_click: None,
-        }
+        };
+        table.root_tag_mut().set_attr(AUTO_INIT_ATTR, mdc::TYPE_NAME);
+        table
     }
 
     pub fn head(mut self, head: impl IntoIterator<Item = TableCell>) -> Self {
         let head_cells: Vec<Html> = head.into_iter().map(|cell| cell.build_head_cell()).collect();
 
-        let head_row = self.table_header_row_tag_mut();
-        for idx in 0..head_row.children.len() {
-            if !head_row.children[idx].is_contains_class("mdc-data-table__header-cell--checkbox") {
-                head_row.children.remove(idx);
+        if let Some(header_cols) = self.table_header_row_tag_mut().children_mut() {
+            for idx in 0..header_cols.len() {
+                if !header_cols[idx].is_contains_class("mdc-data-table__header-cell--checkbox") {
+                    header_cols.remove(idx);
+                }
             }
-        }
 
-        for cell in head_cells {
-            head_row.children.push(cell);
+            for cell in head_cells {
+                header_cols.push(cell);
+            }
         }
         self
     }
@@ -112,7 +119,7 @@ impl DataTable {
 
         let row_id = format!("{}-row-{}", self.root_id(), self.row_count());
         let mut row = html! {
-            <tr data-row-id = row_id.clone() class = "mdc-data-table__row">{ row }</tr>
+            <tr data-row-id = { row_id.clone() } class = "mdc-data-table__row">{ row }</tr>
         };
 
         let row_checkbox = if self.row_selection {
@@ -121,14 +128,16 @@ impl DataTable {
             None
         };
 
-        if let Some(cell) = row.first_child_tag_mut("td") {
+        if let Some(cell) = row.find_child_tag_mut("td") {
             cell.set_attr("scope", "row");
             cell.set_attr("id", row_id);
         }
 
         if let Some(row_checkbox) = row_checkbox {
             if let Html::VTag(row) = &mut row {
-                row.children.insert(0, row_checkbox);
+                if let Some(cells) = row.children_mut() {
+                    cells.insert(0, row_checkbox);
+                }
             }
         }
 
@@ -136,7 +145,9 @@ impl DataTable {
             Self::add_on_click_to_row(&mut row, on_row_click);
         }
 
-        self.table_body_tag_mut().children.push(row);
+        if let Some(rows) = self.table_body_tag_mut().children_mut() {
+            rows.push(row);
+        }
         self
     }
 
@@ -144,8 +155,10 @@ impl DataTable {
         self.on_row_click = Some(on_row_click);
 
         let body = self.table_body_tag_mut();
-        for row in body.children.iter_mut() {
-            Self::add_on_click_to_row(row, on_row_click);
+        if let Some(children) = body.children_mut() {
+            for row in children.iter_mut() {
+                Self::add_on_click_to_row(row, on_row_click);
+            }
         }
         self
     }
@@ -160,13 +173,15 @@ impl DataTable {
             }
 
             let head_row = self.table_header_row_tag_mut();
-            head_row.children.insert(0, head_checkbox);
+            head_row.insert_child(0, head_checkbox);
 
             let body = self.table_body_tag_mut();
-            for row in body.children.iter_mut() {
-                if let Html::VTag(row) = row {
-                    let row_id = row.attr("id").expect("A row ID expected").clone();
-                    row.children.insert(0, Self::row_checkbox(row_id));
+            if let Some(children) = body.children_mut() {
+                for row in children.iter_mut() {
+                    if let Html::VTag(row) = row {
+                        let row_id = row.attr("id").expect("A row ID expected").clone();
+                        row.insert_child(0, Self::row_checkbox(row_id));
+                    }
                 }
             }
         } else if !selection && self.row_selection {
@@ -174,14 +189,16 @@ impl DataTable {
 
             let head_row = self.table_header_row_tag_mut();
             if head_row.is_first_child_contains_class("mdc-data-table__header-cell--checkbox") {
-                head_row.children.remove(0);
+                head_row.remove_child(0);
             }
 
             let body = self.table_body_tag_mut();
-            for row in body.children.iter_mut() {
-                if row.is_first_child_contains_class("mdc-data-table__cell--checkbox") {
-                    if let Html::VTag(row) = row {
-                        row.children.remove(0);
+            if let Some(children) = body.children_mut() {
+                for row in children.iter_mut() {
+                    if row.is_first_child_contains_class("mdc-data-table__cell--checkbox") {
+                        if let Html::VTag(ref mut row) = row {
+                            row.remove_child(0);
+                        }
                     }
                 }
             }
@@ -190,12 +207,12 @@ impl DataTable {
     }
 
     pub fn row_count(&self) -> usize {
-        self.table_body_tag().children.len()
+        self.table_body_tag().children().len()
     }
 
-    pub fn root_id(&self) -> &str {
+    pub fn root_id(&self) -> AttrValue {
         if let Html::VTag(tag) = &self.html {
-            tag.attr("id").expect("The DataTable widget must have ID").as_ref()
+            tag.attr("id").expect("The DataTable widget must have ID")
         } else {
             panic!("The DataTable widget must be contains the root tag!")
         }
@@ -203,8 +220,8 @@ impl DataTable {
 
     pub fn table_tag(&self) -> &VTag {
         if let Html::VTag(tag) = &self.html {
-            if let Some(Html::VTag(tag)) = tag.children.first() {
-                if let Some(table) = tag.first_child_tag("table") {
+            if let Some(Html::VTag(tag)) = tag.children().first() {
+                if let Some(table) = tag.find_child_tag("table") {
                     return table;
                 }
             }
@@ -214,8 +231,8 @@ impl DataTable {
 
     fn table_tag_mut(&mut self) -> &mut VTag {
         if let Html::VTag(tag) = &mut self.html {
-            if let Some(Html::VTag(tag)) = tag.children.first_mut() {
-                if let Some(table) = tag.first_child_tag_mut("table") {
+            if let Some(tag) = tag.first_child_tag_mut() {
+                if let Some(table) = tag.find_child_tag_mut("table") {
                     return table;
                 }
             }
@@ -224,8 +241,8 @@ impl DataTable {
     }
 
     fn table_header_row_tag_mut(&mut self) -> &mut VTag {
-        if let Some(head) = self.table_tag_mut().first_child_tag_mut("thead") {
-            if let Some(row) = head.first_child_tag_mut("tr") {
+        if let Some(head) = self.table_tag_mut().find_child_tag_mut("thead") {
+            if let Some(row) = head.find_child_tag_mut("tr") {
                 return row;
             }
         }
@@ -233,23 +250,29 @@ impl DataTable {
     }
 
     pub fn table_body_tag(&self) -> &VTag {
-        match self.table_tag().children.get(1) {
+        match self.table_tag().children().get(1) {
             Some(Html::VTag(tag)) if tag.tag() == "tbody" => tag,
             _ => panic!("The DataTable widget must be contains the table body tag!"),
         }
     }
 
     fn table_body_tag_mut(&mut self) -> &mut VTag {
-        match self.table_tag_mut().children.get_mut(1) {
+        match self
+            .table_tag_mut()
+            .children_mut()
+            .and_then(|children| children.get_mut(1))
+        {
             Some(Html::VTag(tag)) if tag.tag() == "tbody" => tag,
             _ => panic!("The DataTable widget must be contains the table body tag!"),
         }
     }
 
-    fn add_on_click_to_row(row: &mut Html, on_row_click: OnRowClickFn) {
+    fn add_on_click_to_row(row: &mut Html, on_row_click: OnRowClickFn) -> bool {
         if let Html::VTag(tag) = row {
             let callback = on_row_click(tag);
             tag.add_listener(Rc::new(onclick::Wrapper::new(callback)))
+        } else {
+            false
         }
     }
 
@@ -276,6 +299,18 @@ impl DataTable {
                 { checkbox }
             </td>
         }
+    }
+}
+
+impl MdcWidget for DataTable {
+    const NAME: &'static str = stringify!(DataTable);
+
+    fn html(&self) -> &Html {
+        &self.html
+    }
+
+    fn html_mut(&mut self) -> &mut Html {
+        &mut self.html
     }
 }
 

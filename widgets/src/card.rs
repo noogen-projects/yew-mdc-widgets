@@ -2,7 +2,10 @@ use std::ops::{Deref, DerefMut};
 
 use yew::{html, Html};
 
-use crate::{utils::VTagExt, MdcWidget};
+use crate::{
+    utils::{ManageChildren, VTagExt},
+    MdcWidget,
+};
 
 #[derive(Debug, Clone)]
 pub struct CardContent {
@@ -29,7 +32,7 @@ impl CardContent {
     pub fn primary_action(content: impl Into<Html>) -> Self {
         Self {
             html: html! {
-                <div class = Self::PRIMARY_ACTION_CLASS tabindex = "0">{ content }</div>
+                <div class = { Self::PRIMARY_ACTION_CLASS } tabindex = "0">{ content }</div>
             },
         }
     }
@@ -38,7 +41,7 @@ impl CardContent {
     pub fn media() -> Self {
         Self {
             html: html! {
-                <div class = Self::MEDIA_CLASS></div>
+                <div class = { Self::MEDIA_CLASS }></div>
             },
         }
     }
@@ -59,7 +62,7 @@ impl CardContent {
     pub fn media_content(mut self, content: impl Into<Html>) -> Self {
         let root = self.root_tag_mut();
         if root.is_contains_class(Self::MEDIA_CLASS) {
-            root.add_child(html! { <div class = Self::MEDIA_CONTENT_CLASS>{ content }</div> });
+            root.add_child(html! { <div class = { Self::MEDIA_CONTENT_CLASS }>{ content }</div> });
         }
         self
     }
@@ -68,7 +71,7 @@ impl CardContent {
     pub fn actions() -> Self {
         Self {
             html: html! {
-                <div class = Self::ACTIONS_CLASS></div>
+                <div class = { Self::ACTIONS_CLASS }></div>
             },
         }
     }
@@ -90,13 +93,13 @@ impl CardContent {
     /// A group of action buttons, displayed on the left side of the card (in LTR),
     /// adjacent to `mdc-card__action-icons`.
     pub fn action_buttons(self, content: impl Into<Html>) -> Self {
-        self.actions_content(html! { <div class = Self::ACTION_BUTTONS_CLASS>{ content }</div>})
+        self.actions_content(html! { <div class = { Self::ACTION_BUTTONS_CLASS }>{ content }</div>})
     }
 
     /// A group of supplemental action icons, displayed on the right side of the card (in LTR),
     /// adjacent to `mdc-card__action-buttons`.
     pub fn action_icons(self, content: impl Into<Html>) -> Self {
-        self.actions_content(html! { <div class = Self::ACTION_ICONS_CLASS>{ content }</div>})
+        self.actions_content(html! { <div class = { Self::ACTION_ICONS_CLASS }>{ content }</div>})
     }
 }
 
@@ -142,7 +145,7 @@ impl Card {
         let id = id.into();
         let card = Self {
             html: html! {
-                <div id = id class = "mdc-card">
+                <div id = { id } class = "mdc-card">
                 </div>
             },
         };
@@ -153,18 +156,23 @@ impl Card {
         let root = self.root_tag_mut();
         if enabled {
             if !root.is_last_child("script") {
-                if let Some(id) = root
+                let maybe_script = root
                     .attributes
                     .iter()
                     .find_map(|(key, val)| if key == "id" { Some(val) } else { None })
-                {
-                    root.children.push(html! {
-                        <script>{
-                            format!(r"{{const ripples = [].map.call(
+                    .map(|id| {
+                        format!(
+                            r"{{const ripples = [].map.call(
                                 document.querySelectorAll('#{} .{}'),
                                 function(el) {{ return new mdc.ripple.MDCRipple(el); }}
-                            );}}", id, CardContent::PRIMARY_ACTION_CLASS)
-                        }</script>
+                            );}}",
+                            id,
+                            CardContent::PRIMARY_ACTION_CLASS
+                        )
+                    });
+                if let Some(script) = maybe_script {
+                    root.children_mut().unwrap(/* root tag of card always has children */).push(html! {
+                        <script>{ script }</script>
                     });
                 }
             }
@@ -181,8 +189,10 @@ impl Card {
 
     pub fn content(mut self, content: impl Into<Html>) -> Self {
         let root = self.root_tag_mut();
-        let idx = root.find_child_tag_idx("script").unwrap_or_else(|| root.children.len());
-        root.children.insert(idx, content.into());
+        let idx = root
+            .find_child_tag_idx("script")
+            .unwrap_or_else(|| root.children().len());
+        root.children_mut().unwrap(/* root tag of card always has children */).insert(idx, content.into());
         self
     }
 }

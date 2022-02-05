@@ -1,8 +1,11 @@
 use std::ops::{Deref, DerefMut};
 
-use yew::{html, Html};
+use yew::{html, virtual_dom::AttrValue, Html};
 
-use crate::{utils::VTagExt, MdcWidget, AUTO_INIT_ATTR};
+use crate::{
+    utils::{ManageChildren, VTagExt},
+    MdcWidget, AUTO_INIT_ATTR,
+};
 
 pub mod mdc {
     pub const TYPE_NAME: &str = "MDCDrawer";
@@ -39,11 +42,8 @@ impl Drawer {
         drawer
     }
 
-    pub fn root_id(&self) -> &str {
-        self.root_tag()
-            .attr("id")
-            .expect("The Drawer widget must have ID")
-            .as_ref()
+    pub fn root_id(&self) -> AttrValue {
+        self.root_tag().attr("id").expect("The Drawer widget must have ID")
     }
 
     pub fn add_script_statement(mut self, statement: String) -> Self {
@@ -103,7 +103,7 @@ impl Drawer {
         let root = self.root_tag_mut();
         root.remove_child_contains_class(Self::HEADER_CLASS);
         root.insert_child(0, html! {
-            <div class = Self::HEADER_CLASS>{ header }</div>
+            <div class = { Self::HEADER_CLASS }>{ header }</div>
         });
         self
     }
@@ -152,7 +152,7 @@ impl Drawer {
         let root = self.root_tag_mut();
         root.remove_child_contains_class(Self::CONTENT_CLASS);
         root.add_child(html! {
-            <div class = Self::CONTENT_CLASS>{ content }</div>
+            <div class = { Self::CONTENT_CLASS }>{ content }</div>
         });
         self
     }

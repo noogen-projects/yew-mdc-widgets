@@ -4,9 +4,12 @@ use std::{
 };
 
 use const_format::concatcp;
-use yew::{classes, html, html::onclick, Callback, Html, MouseEvent};
+use yew::{classes, html, html::onclick, virtual_dom::AttrValue, Callback, Html, MouseEvent};
 
-use crate::{utils::VTagExt, CustomEvent, MdcWidget, AUTO_INIT_ATTR};
+use crate::{
+    utils::{ManageChildren, VTagExt},
+    CustomEvent, MdcWidget, AUTO_INIT_ATTR,
+};
 
 pub mod mdc {
     pub const TYPE_NAME: &str = "MDCChip";
@@ -72,8 +75,8 @@ impl Chip {
     pub fn simple() -> Self {
         Self {
             html: html! {
-                <div class = Self::CLASS role = "row">
-                    <div class = Self::RIPPLE_CLASS></div>
+                <div class = { Self::CLASS } role = "row">
+                    <div class = { Self::RIPPLE_CLASS }></div>
                 </div>
             },
             tab_index: -1,
@@ -123,18 +126,18 @@ impl Chip {
 
     pub fn icon(mut self, name: impl Into<String>) -> Self {
         let root = self.root_tag_mut();
-        if root.children.len() < 2 {
+        if root.children().len() < 2 {
             root.add_child(html! {
-                <i class = classes!("material-icons", Self::ICON_CLASS, Self::ICON_LEADING_CLASS)>{ name.into() }</i>
+                <i class = { classes!("material-icons", Self::ICON_CLASS, Self::ICON_LEADING_CLASS) }>{ name.into() }</i>
             });
         } else {
             root.add_child(html! {
                 <span role = "gridcell">
-                    <i class = classes!(
+                    <i class = { classes!(
                             "material-icons",
                             Self::ICON_CLASS,
                             Self::ICON_TRAILING_CLASS
-                ) tabindex = "-1" role = "button">{ name.into() }</i>
+                ) } tabindex = "-1" role = "button">{ name.into() }</i>
                 </span>
             });
         }
@@ -145,8 +148,8 @@ impl Chip {
         let tab_index = self.tab_index.to_string();
         self.root_tag_mut().add_child(html! {
             <span role = "gridcell">
-                <span tabindex = tab_index class = Self::PRIMARY_ACTION_CLASS>
-                    <span class = Self::TEXT_CLASS>{ text }</span>
+                <span tabindex = { tab_index } class = { Self::PRIMARY_ACTION_CLASS }>
+                    <span class = { Self::TEXT_CLASS }>{ text }</span>
                 </span>
             </span>
         });
@@ -173,7 +176,7 @@ impl Chip {
 
         let root = self.root_tag_mut();
         root.add_child(html! {
-            <span class = Self::CHECKMARK_CLASS>{ svg }</span>
+            <span class = { Self::CHECKMARK_CLASS }>{ svg }</span>
         });
 
         if root.is_contains_class(Self::SELECTED_CLASS) {
@@ -209,8 +212,10 @@ fn mark_svg_path(parent: &mut Html) {
             if parent.tag() == "path" {
                 parent.add_class_if_needed(Chip::CHECKMARK_SVG_PATH_CLASS);
             }
-            for child in parent.children.iter_mut() {
-                mark_svg_path(child);
+            if let Some(children) = parent.children_mut() {
+                for child in children.iter_mut() {
+                    mark_svg_path(child);
+                }
             }
         },
         Html::VList(list) => {
@@ -313,7 +318,7 @@ impl ChipSet {
     pub fn chip(mut self, chip: impl Into<Html>) -> Self {
         let mut chip = chip.into();
         let root = self.root_tag_mut();
-        let chip_number = root.children.len();
+        let chip_number = root.children().len();
 
         if chip.attr("id").is_none() && chip.is_some_child_contains_class(Chip::RIPPLE_CLASS) {
             if let (Some(id), Some(chip)) = (root.attr("id"), chip.root_tag_mut()) {
@@ -332,11 +337,8 @@ impl ChipSet {
     }
 
     #[track_caller]
-    pub fn root_id(&self) -> &str {
-        self.root_tag()
-            .attr("id")
-            .expect("The ChipSet widget must have ID")
-            .as_ref()
+    pub fn root_id(&self) -> AttrValue {
+        self.root_tag().attr("id").expect("The ChipSet widget must have ID")
     }
 
     /// Indicates the chip was interacted with (via click/tap or Enter key).

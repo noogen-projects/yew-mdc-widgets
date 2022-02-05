@@ -90,16 +90,16 @@ impl LinearProgress {
     pub fn new() -> Self {
         let mut linear_progress = Self {
             html: html! {
-                <div role = "progressbar" class = Self::CLASS>
-                    <div class = Self::BUFFER_CLASS>
-                        <div class = Self::BUFFER_BAR_CLASS></div>
-                        <div class = Self::BUFFER_DOTS_CLASS></div>
+                <div role = "progressbar" class = { Self::CLASS }>
+                    <div class = { Self::BUFFER_CLASS }>
+                        <div class = { Self::BUFFER_BAR_CLASS }></div>
+                        <div class = { Self::BUFFER_DOTS_CLASS }></div>
                     </div>
-                    <div class = classes!(Self::BAR_CLASS, Self::PRIMARY_BAR_CLASS)>
-                        <span class = Self::INNER_BAR_CLASS></span>
+                    <div class = { classes!(Self::BAR_CLASS, Self::PRIMARY_BAR_CLASS) }>
+                        <span class = { Self::INNER_BAR_CLASS }></span>
                     </div>
-                    <div class = classes!(Self::BAR_CLASS, Self::SECONDARY_BAR_CLASS)>
-                        <span class = Self::INNER_BAR_CLASS></span>
+                    <div class = { classes!(Self::BAR_CLASS, Self::SECONDARY_BAR_CLASS) }>
+                        <span class = { Self::INNER_BAR_CLASS }></span>
                     </div>
                 </div>
             },

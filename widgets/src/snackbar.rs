@@ -4,10 +4,8 @@ use const_format::concatcp;
 use yew::{html, Callback, Html, MouseEvent};
 
 use crate::{
-    utils::{
-        dom::{self, JsCast, JsObjectAccess},
-        VTagExt,
-    },
+    dom::{self, existing::JsObjectAccess, JsCast},
+    utils::{ManageChildren, VTagExt},
     Element, MdcWidget, AUTO_INIT_ATTR,
 };
 
@@ -120,15 +118,9 @@ impl Snackbar {
     pub fn new() -> Self {
         let mut snackbar = Self {
             html: html! {
-                <aside class = Self::CLASS>
-                    <div class = Self::SURFACE_CLASS role = "status" aria-relevant = "additions">
-                        //<div class=Self::LABEL_CLASS aria-atomic="false">
-                        //</div>
-                        <div class = Self::ACTIONS_CLASS aria-atomic = "true">
-                        //<button type="button" class="mdc-button mdc-snackbar__action">
-                        //  <div class="mdc-button__ripple"></div>
-                        //  <span class="mdc-button__label">Retry</span>
-                        //</button>
+                <aside class = { Self::CLASS }>
+                    <div class = { Self::SURFACE_CLASS } role = "status">
+                        <div class = { Self::ACTIONS_CLASS }>
                         </div>
                     </div>
                 </aside>
@@ -147,7 +139,7 @@ impl Snackbar {
     }
 
     pub fn mdc_object(id: impl AsRef<str>) -> mdc::Snackbar {
-        dom::get_exist_element_by_id::<Element>(id.as_ref())
+        dom::existing::get_element_by_id::<Element>(id.as_ref())
             .get(mdc::TYPE_NAME)
             .unchecked_into::<mdc::Snackbar>()
     }
@@ -157,7 +149,7 @@ impl Snackbar {
             .find_child_contains_class_mut(Self::SURFACE_CLASS)
             .unwrap()
             .insert_child(0, html! {
-                <div class=Self::LABEL_CLASS aria-atomic="false">{ label }</div>
+                <div class = { Self::LABEL_CLASS }>{ label }</div>
             });
         self
     }
@@ -166,8 +158,8 @@ impl Snackbar {
         let mut action = action.into();
         action.add_class(Self::ACTION_CLASS);
 
-        self.root_tag_mut().children.children[0]
-            .find_child_contains_class_mut(Self::ACTIONS_CLASS)
+        self.root_tag_mut()
+            .find_child_contains_class_recursively_mut(Self::ACTIONS_CLASS)
             .unwrap()
             .add_child(action);
         self
@@ -177,8 +169,8 @@ impl Snackbar {
         let mut action = action.into();
         action.add_class(Self::DISMISS_CLASS);
 
-        self.root_tag_mut().children.children[0]
-            .find_child_contains_class_mut(Self::ACTIONS_CLASS)
+        self.root_tag_mut()
+            .find_child_contains_class_recursively_mut(Self::ACTIONS_CLASS)
             .unwrap()
             .add_child(action);
         self
@@ -213,14 +205,14 @@ impl Snackbar {
     }
 
     pub fn open_existing(id: impl AsRef<str>) {
-        let snackbar = dom::get_exist_element_by_id::<Element>(id.as_ref())
+        let snackbar = dom::existing::get_element_by_id::<Element>(id.as_ref())
             .get(mdc::TYPE_NAME)
             .unchecked_into::<mdc::Snackbar>();
         snackbar.open();
     }
 
     pub fn close_existing(id: impl AsRef<str>) {
-        let snackbar = dom::get_exist_element_by_id::<Element>(id.as_ref())
+        let snackbar = dom::existing::get_element_by_id::<Element>(id.as_ref())
             .get(mdc::TYPE_NAME)
             .unchecked_into::<mdc::Snackbar>();
         snackbar.close();

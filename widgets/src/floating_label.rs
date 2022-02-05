@@ -1,6 +1,6 @@
 use std::ops::{Deref, DerefMut};
 
-use yew::{html, Html};
+use yew::{html, virtual_dom::AttrValue, Html};
 
 use crate::{utils::VTagExt, MdcWidget};
 
@@ -22,13 +22,13 @@ impl FloatingLabel {
     pub fn new(label: impl Into<Html>) -> Self {
         Self {
             html: html! {
-                <span class = Self::CLASS>{ label }</span>
+                <span class = { Self::CLASS }>{ label }</span>
             },
         }
     }
 
     pub fn get_id(&self) -> Option<String> {
-        self.root_tag().attr("id").map(ToString::to_string)
+        self.root_tag().attr("id").map(AttrValue::into_string)
     }
 }
 

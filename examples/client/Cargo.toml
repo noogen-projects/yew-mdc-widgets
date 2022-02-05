@@ -5,12 +5,13 @@ authors = [
     "Alexander Mescheryakov <freecoder.xx@gmail.com>",
     "Noogen Team <info.noogen@gmail.com>",
 ]
-edition = "2018"
+edition = "2021"
 license = "MIT"
 repository = "https://github.com/noogen-projects/yew-mdc-widgets"
 description = "Yew MDC widgets example WASM client"
 
 [dependencies]
-yew = { version = "0.18", features = ["web_sys"] }
+yew = { git = "https://github.com/yewstack/yew.git" }
 yew-mdc-widgets = { path = "../../widgets" }
 js-sys = "0.3"
+gloo-console = "0.2"

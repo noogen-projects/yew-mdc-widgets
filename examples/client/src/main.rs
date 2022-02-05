@@ -2,11 +2,11 @@
 
 use std::iter::FromIterator;
 
-use yew::{classes, html, initialize, run_loop, utils, App, Component, ComponentLink, Html};
+use yew::{classes, html, Component, Context, Html};
 use yew_mdc_widgets::{
-    auto_init, drawer,
-    utils::dom::{get_exist_element_by_id, JsObjectAccess},
-    Button, ButtonStyle, Card, CardContent, Checkbox, Chip, ChipSet, DataTable, Dialog, Drawer, Element, Fab,
+    auto_init,
+    dom::{self, existing::JsObjectAccess},
+    drawer, Button, ButtonStyle, Card, CardContent, Checkbox, Chip, ChipSet, DataTable, Dialog, Drawer, Element, Fab,
     HelperText, IconButton, LinearProgress, List, ListItem, MdcWidget, Menu, Radio, Snackbar, Switch, Tab, TabBar,
     TableCell, TextField, TopAppBar,
 };
@@ -17,19 +17,11 @@ impl Component for Root {
     type Message = ();
     type Properties = ();
 
-    fn create(_props: Self::Properties, _link: ComponentLink<Self>) -> Self {
+    fn create(_ctx: &Context<Self>) -> Self {
         Self
     }
 
-    fn update(&mut self, _msg: Self::Message) -> bool {
-        false
-    }
-
-    fn change(&mut self, _props: Self::Properties) -> bool {
-        false
-    }
-
-    fn view(&self) -> Html {
+    fn view(&self, _ctx: &Context<Self>) -> Html {
         let contents = vec![
             ListItem::link("#buttons").text("Buttons").tab_index(0),
             ListItem::link("#icon_buttons").text("Icon buttons"),
@@ -57,7 +49,8 @@ impl Component for Root {
                 List::nav()
                     .items(contents.clone().into_iter().map(|item| {
                         item.on_click(|_| {
-                            let drawer = get_exist_element_by_id::<Element>("app-drawer").get(drawer::mdc::TYPE_NAME);
+                            let drawer =
+                                dom::existing::get_element_by_id::<Element>("app-drawer").get(drawer::mdc::TYPE_NAME);
                             drawer.set("open", false);
                         })
                     }))
@@ -70,7 +63,7 @@ impl Component for Root {
             .navigation_item(IconButton::new().icon("menu"))
             .enable_shadow_when_scroll_window()
             .on_navigation(|_| {
-                let drawer = get_exist_element_by_id::<Element>("app-drawer").get(drawer::mdc::TYPE_NAME);
+                let drawer = dom::existing::get_element_by_id::<Element>("app-drawer").get(drawer::mdc::TYPE_NAME);
                 let opened = drawer.get("open").as_bool().unwrap_or(false);
                 drawer.set("open", !opened);
             });
@@ -78,12 +71,12 @@ impl Component for Root {
         html! {
             <>
                 { drawer }
-                <div class="mdc-drawer-scrim"></div>
+                <div class = "mdc-drawer-scrim"></div>
 
-                <div class = classes!("app-content", Drawer::APP_CONTENT_CLASS)>
+                <div class = { classes!("app-content", Drawer::APP_CONTENT_CLASS) }>
                     { top_app_bar }
 
-                    <div class = "mdc-top-app-bar--fixed-adjust">
+                    <div class = { TopAppBar::FIXED_ADJUST_CLASS }>
                         <div class = "demo-content">
                             <h1 class = "demo-title mdc-typography--headline5">{ "Material design components" }</h1>
                             { List::nav().items(contents) }
@@ -142,7 +135,7 @@ impl Component for Root {
         }
     }
 
-    fn rendered(&mut self, _first_render: bool) {
+    fn rendered(&mut self, _ctx: &Context<Self>, _first_render: bool) {
         auto_init();
     }
 }
@@ -329,7 +322,7 @@ impl Root {
                     </span>
                     <span class = "demo-item">
                         { Fab::new().id("exited_fab").icon("add").on_click(|_| {
-                            get_exist_element_by_id::<Element>("exited_fab").class_list().add_1(Fab::EXITED_CLASS).ok();
+                            dom::existing::get_element_by_id::<Element>("exited_fab").class_list().add_1(Fab::EXITED_CLASS).ok();
                         }) }
                     </span>
                 </div>
@@ -343,7 +336,7 @@ impl Root {
                     </span>
                     <span class = "demo-item">
                         { Fab::new().mini().id("exited_fab_mini").icon("add").on_click(|_| {
-                            get_exist_element_by_id::<Element>("exited_fab_mini").class_list().add_1(Fab::EXITED_CLASS).ok();
+                            dom::existing::get_element_by_id::<Element>("exited_fab_mini").class_list().add_1(Fab::EXITED_CLASS).ok();
                         }) }
                     </span>
                 </div>
@@ -363,7 +356,7 @@ impl Root {
                     </span>
                     <span class = "demo-item">
                         { Fab::new().id("exited_fab_extended").icon("favorite_border").label("favorite").on_click(|_| {
-                            get_exist_element_by_id::<Element>("exited_fab_extended").class_list().add_1(Fab::EXITED_CLASS).ok();
+                            dom::existing::get_element_by_id::<Element>("exited_fab_extended").class_list().add_1(Fab::EXITED_CLASS).ok();
                         }) }
                     </span>
                 </div>
@@ -561,6 +554,29 @@ impl Root {
                     <span class = "demo-item">
                         <div class = "mdc-form-field">
                             { Switch::new().id("switch-label-disabled-2").disabled().on().label("Disabled 2") }
+                        </div>
+                    </span>
+                </div>
+                <div>
+                    <h3 class = "mdc-typography--subtitle1">{ "Icons" }</h3>
+                    <span class = "demo-item">
+                        <div class = "mdc-form-field">
+                            { Switch::new().id("switch-icons-label-1").label("Switch 1").icon_on_default().icon_off_default() }
+                        </div>
+                    </span>
+                    <span class = "demo-item">
+                        <div class = "mdc-form-field">
+                            { Switch::new().id("switch-icons-label-2").on().label("Switch 2").icon_on_default().icon_off_default() }
+                        </div>
+                    </span>
+                    <span class = "demo-item">
+                        <div class = "mdc-form-field">
+                            { Switch::new().id("switch-icons-label-disabled-1").disabled().label("Disabled 1").icon_on_default().icon_off_default() }
+                        </div>
+                    </span>
+                    <span class = "demo-item">
+                        <div class = "mdc-form-field">
+                            { Switch::new().id("switch-icons-label-disabled-2").disabled().on().label("Disabled 2").icon_on_default().icon_off_default() }
                         </div>
                     </span>
                 </div>
@@ -1057,7 +1073,7 @@ impl Root {
                 <div>
                     <h3 class = "mdc-typography--subtitle1">{ "Simple" }</h3>
                     <span class = "demo-item demo-list">
-                        <div id = "demo-menu" class = Menu::ANCHOR_CLASS>
+                        <div id = "demo-menu" class = { Menu::ANCHOR_CLASS }>
                             {
                                 Button::new()
                                     .label("Open Menu")
@@ -1151,7 +1167,7 @@ impl Root {
                 <div>
                     <h3 class = "mdc-typography--subtitle1">{ "Alert" }</h3>
                     <span class = "demo-item demo-list">
-                        <div id = "demo-menu" class = Menu::ANCHOR_CLASS>
+                        <div id = "demo-menu" class = { Menu::ANCHOR_CLASS }>
                             {
                                  Button::new()
                                     .label("Open Alert Dialog")
@@ -1180,7 +1196,7 @@ impl Root {
                 <div>
                     <h3 class = "mdc-typography--subtitle1">{ "Simple" }</h3>
                     <span class = "demo-item demo-list">
-                        <div id = "demo-menu" class = Menu::ANCHOR_CLASS>
+                        <div id = "demo-menu" class = { Menu::ANCHOR_CLASS }>
                             {
                                  Button::new()
                                     .label("Open Simple Dialog")
@@ -1211,7 +1227,7 @@ impl Root {
                 <div>
                     <h3 class = "mdc-typography--subtitle1">{ "Confirmation" }</h3>
                     <span class = "demo-item demo-list">
-                        <div id = "demo-menu" class = Menu::ANCHOR_CLASS>
+                        <div id = "demo-menu" class = { Menu::ANCHOR_CLASS }>
                             {
                                  Button::new()
                                     .label("Open Confirmation Dialog")
@@ -1447,11 +1463,6 @@ impl Root {
 }
 
 fn main() {
-    initialize();
-    let root = utils::document()
-        .query_selector("#root")
-        .expect("Can't get root node for rendering")
-        .expect("Can't unwrap root node");
-    App::<Root>::new().mount_with_props(root, ());
-    run_loop();
+    let root = dom::existing::get_element_by_id::<Element>("root");
+    yew::start_app_in_element::<Root>(root);
 }

@@ -7,11 +7,9 @@ use const_format::concatcp;
 use yew::{html, html::onclick, Callback, Html, MouseEvent};
 
 use crate::{
+    dom::{self, existing::JsObjectAccess, JsCast},
     ripple,
-    utils::{
-        dom::{self, JsCast, JsObjectAccess},
-        VTagExt,
-    },
+    utils::VTagExt,
     CustomEvent, Element, MdcWidget, AUTO_INIT_ATTR, MATERIAL_ICONS_CLASS,
 };
 
@@ -46,30 +44,36 @@ impl Default for IconButton {
 }
 
 impl IconButton {
-    ///Defaults to an icon button
+    /// Defaults to an icon button
     pub const CLASS: &'static str = "mdc-icon-button";
-    ///This class is applied to the root element and is used to indicate if the icon button toggle is in the "on"
-    /// state.
+
+    /// Indicates the element which shows the ripple styling.
+    pub const RIPPLE_CLASS: &'static str = "mdc-icon-button__ripple";
+
+    /// This class is applied to the root element and is used to indicate if the icon button toggle
+    /// is in the "on" state.
     pub const ON_CLASS: &'static str = "mdc-icon-button--on";
-    ///This class is applied to each icon element for the icon button toggle.
+
+    /// This class is applied to each icon element for the icon button toggle.
     pub const ICON_CLASS: &'static str = "mdc-icon-button__icon";
-    ///This class is applied to a icon element and is used to indicate the toggle button icon that is represents the
-    /// "on" icon.
+
+    /// This class is applied to a icon element and is used to indicate the toggle button icon that
+    /// is represents the "on" icon.
     pub const ICON_ON_CLASS: &'static str = "mdc-icon-button__icon--on";
 
     pub fn simple() -> Self {
         Self {
-            html: html! { <button class = Self::CLASS data-mdc-ripple-is-unbounded = ""></button> },
+            html: html! {
+                <button class = { Self::CLASS } data-mdc-ripple-is-unbounded = "">
+                    <div class = { Self::RIPPLE_CLASS }></div>
+                </button>
+            },
             is_toggle: false,
         }
     }
 
     pub fn new() -> Self {
-        let mut icon_button = Self::simple();
-        icon_button
-            .root_tag_mut()
-            .set_attr(AUTO_INIT_ATTR, ripple::mdc::TYPE_NAME);
-        icon_button
+        Self::simple().attr(AUTO_INIT_ATTR, ripple::mdc::TYPE_NAME)
     }
 
     pub fn icon(mut self, name: impl Into<String>) -> Self {
@@ -84,8 +88,8 @@ impl IconButton {
     }
 
     pub fn toggle(self, icon_on: impl Into<String>, icon_off: impl Into<String>) -> Self {
-        self.toggle_on(html! { <i class = MATERIAL_ICONS_CLASS>{ icon_on.into() }</i> })
-            .toggle_off(html! { <i class = MATERIAL_ICONS_CLASS>{ icon_off.into() }</i> })
+        self.toggle_on(html! { <i class = { MATERIAL_ICONS_CLASS }>{ icon_on.into() }</i> })
+            .toggle_off(html! { <i class = { MATERIAL_ICONS_CLASS }>{ icon_off.into() }</i> })
     }
 
     pub fn toggle_on(mut self, item: impl Into<Html>) -> Self {
@@ -124,7 +128,7 @@ impl IconButton {
     }
 
     pub fn set_on_by_id(id: impl AsRef<str>, is_on: bool) {
-        let toggle_button = dom::get_exist_element_by_id::<Element>(id.as_ref())
+        let toggle_button = dom::existing::get_element_by_id::<Element>(id.as_ref())
             .get(mdc::TYPE_NAME)
             .unchecked_into::<mdc::IconButtonToggle>();
         toggle_button.set_on(is_on);
