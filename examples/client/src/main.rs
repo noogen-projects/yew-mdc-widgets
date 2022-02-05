@@ -7,8 +7,8 @@ use yew_mdc_widgets::{
     auto_init, drawer,
     utils::dom::{get_exist_element_by_id, JsObjectAccess},
     Button, ButtonStyle, Card, CardContent, Checkbox, Chip, ChipSet, DataTable, Dialog, Drawer, Element, Fab,
-    HelperText, IconButton, List, ListItem, MdcWidget, Menu, Radio, Snackbar, Switch, Tab, TabBar, TableCell, TextField,
-    TopAppBar,
+    HelperText, IconButton, LinearProgress, List, ListItem, MdcWidget, Menu, Radio, Snackbar, Switch, Tab, TabBar,
+    TableCell, TextField, TopAppBar,
 };
 
 struct Root;
@@ -39,6 +39,7 @@ impl Component for Root {
             ListItem::link("#switch").text("Switch"),
             ListItem::link("#chips").text("Chips"),
             ListItem::link("#snackbars").text("Snackbars"),
+            ListItem::link("#linear_progress").text("LinearProgress"),
             ListItem::link("#text_fields").text("Text fields"),
             ListItem::link("#lists").text("Lists"),
             ListItem::link("#menu").text("Menu"),
@@ -110,6 +111,9 @@ impl Component for Root {
 
                             <h2 class = "demo-title mdc-typography--headline6"><a name = "snackbars"></a>{ "Snackbars" }</h2>
                             { self.view_snackbars() }
+
+                            <h2 class = "demo-title mdc-typography--headline6"><a name = "linear_progress"></a>{ "LinearProgress" }</h2>
+                            { self.view_linear_progress() }
 
                             <h2 class = "demo-title mdc-typography--headline6"><a name = "text_fields"></a>{ "Text fields" }</h2>
                             { self.view_text_fields() }
@@ -704,6 +708,27 @@ impl Root {
                     <span class = "demo-item">
                         { open_stacked_button }
                         { stacked }
+                    </span>
+                </div>
+            </div>
+        }
+    }
+
+    fn view_linear_progress(&self) -> Html {
+        let determinate_linear_progress = LinearProgress::new().id("linear-progress-determinate-bar");
+
+        let indeterminate_linear_progress = LinearProgress::new()
+            .id("linear-progress-indeterminate-bar")
+            .indeterminate();
+
+        html! {
+            <div>
+                <div>
+                    <span class = "demo-item">
+                        { determinate_linear_progress }
+                    </span>
+                    <span class = "demo-item">
+                        { indeterminate_linear_progress }
                     </span>
                 </div>
             </div>

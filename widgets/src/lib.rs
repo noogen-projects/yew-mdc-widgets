@@ -8,8 +8,8 @@ pub use yew;
 
 pub use self::{
     button::*, card::*, checkbox::*, chip::*, data_table::*, dialog::*, drawer::*, fab::*, floating_label::*,
-    icon_button::*, list::*, listeners::*, mdc::auto_init, menu::*, radio::*, snackbar::*, switch::*, tab::*, text_field::*,
-    top_app_bar::*, widget::MdcWidget,
+    icon_button::*, linear_progress::*, list::*, listeners::*, mdc::auto_init, menu::*, radio::*, snackbar::*,
+    switch::*, tab::*, text_field::*, top_app_bar::*, widget::MdcWidget,
 };
 
 pub mod button;
@@ -23,6 +23,7 @@ pub mod fab;
 pub mod floating_label;
 pub mod icon_button;
 pub mod line_ripple;
+pub mod linear_progress;
 pub mod list;
 pub mod listeners;
 pub mod menu;
