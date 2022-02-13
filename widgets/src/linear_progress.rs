@@ -2,7 +2,10 @@ use std::ops::{Deref, DerefMut};
 
 use yew::{classes, html, Html};
 
-use crate::{utils::VTagExt, MdcWidget, AUTO_INIT_ATTR};
+use crate::{
+    utils::{ManageChildren, VTagExt},
+    MdcWidget, AUTO_INIT_ATTR,
+};
 
 pub mod mdc {
     use crate::Element;
@@ -90,7 +93,8 @@ impl LinearProgress {
     pub fn new() -> Self {
         let mut linear_progress = Self {
             html: html! {
-                <div role = "progressbar" class = { Self::CLASS }>
+                <div role = "progressbar" class = { Self::CLASS }
+                        aria-valuemin = "0" aria-valuemax = "1" aria-valuenow = "0">
                     <div class = { Self::BUFFER_CLASS }>
                         <div class = { Self::BUFFER_BAR_CLASS }></div>
                         <div class = { Self::BUFFER_DOTS_CLASS }></div>
@@ -110,6 +114,25 @@ impl LinearProgress {
 
     pub fn indeterminate(mut self) -> Self {
         self.root_tag_mut().add_class(Self::INDETERMINATE_CLASS);
+        self
+    }
+
+    pub fn progress(mut self, value: f32) -> Self {
+        let root = self.root_tag_mut();
+        root.set_attr("aria-valuenow", value.to_string());
+        if let Some(primary_bar) = root.find_child_contains_class_mut(Self::PRIMARY_BAR_CLASS) {
+            primary_bar.set_attr("style", format!("transform: scaleX({});", value));
+        }
+        self
+    }
+
+    pub fn buffer(mut self, value: f32) -> Self {
+        if let Some(primary_bar) = self
+            .root_tag_mut()
+            .find_child_contains_class_recursively_mut(Self::BUFFER_BAR_CLASS)
+        {
+            primary_bar.set_attr("style", format!("flex-basis: {}%;", value * 100.0));
+        }
         self
     }
 }

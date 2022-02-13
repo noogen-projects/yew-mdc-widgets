@@ -731,7 +731,10 @@ impl Root {
     }
 
     fn view_linear_progress(&self) -> Html {
-        let determinate_linear_progress = LinearProgress::new().id("linear-progress-determinate-bar");
+        let determinate_linear_progress = LinearProgress::new()
+            .id("linear-progress-determinate-bar")
+            .progress(0.3)
+            .buffer(0.6);
 
         let indeterminate_linear_progress = LinearProgress::new()
             .id("linear-progress-indeterminate-bar")
@@ -740,10 +743,10 @@ impl Root {
         html! {
             <div>
                 <div>
-                    <span class = "demo-item">
+                    <span class = "demo-item" style = "width: 100%">
                         { determinate_linear_progress }
                     </span>
-                    <span class = "demo-item">
+                    <span class = "demo-item" style = "width: 100%">
                         { indeterminate_linear_progress }
                     </span>
                 </div>
