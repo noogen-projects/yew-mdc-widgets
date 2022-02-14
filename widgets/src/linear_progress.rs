@@ -117,6 +117,11 @@ impl LinearProgress {
         self
     }
 
+    pub fn closed(mut self) -> Self {
+        self.root_tag_mut().add_class(Self::CLOSED_CLASS);
+        self
+    }
+
     pub fn progress(mut self, value: f32) -> Self {
         let root = self.root_tag_mut();
         root.set_attr("aria-valuenow", value.to_string());
