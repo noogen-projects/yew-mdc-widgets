@@ -11,12 +11,11 @@ use yew::{
 };
 
 use crate::{
-    dom,
     floating_label::FloatingLabel,
     line_ripple,
     notched_outline::NotchedOutline,
     utils::{IntoWidgetWithVList, ManageChildren, VTagExt},
-    Element, MdcWidget, AUTO_INIT_ATTR,
+    MdcObject, MdcWidget, AUTO_INIT_ATTR,
 };
 
 pub mod mdc {
@@ -126,33 +125,29 @@ impl TextField {
         text_field.class(TextFieldStyle::Outlined.class())
     }
 
-    pub fn mdc_object(id: impl AsRef<str>) -> mdc::TextField {
-        mdc::TextField::new(dom::existing::get_element_by_id::<Element>(id.as_ref()))
-    }
-
     /// Returns the input's value.
     pub fn get_value(id: impl AsRef<str>) -> String {
-        Self::mdc_object(id).value()
+        Self::get_mdc_object(id).value()
     }
 
     /// Sets the input's value.
     pub fn set_value(id: impl AsRef<str>, value: impl AsRef<str>) {
-        Self::mdc_object(id).set_value(value.as_ref());
+        Self::get_mdc_object(id).set_value(value.as_ref());
     }
 
     /// Returns whether or not the input is disabled.
     pub fn is_disabled(id: impl AsRef<str>) -> bool {
-        Self::mdc_object(id).disabled()
+        Self::get_mdc_object(id).disabled()
     }
 
     /// Updates the input's disabled state.
     pub fn set_disabled(id: impl AsRef<str>, disabled: bool) {
-        Self::mdc_object(id).set_disabled(disabled);
+        Self::get_mdc_object(id).set_disabled(disabled);
     }
 
     /// Focuses the `input` or `textarea` element.
     pub fn focus(id: impl AsRef<str>) {
-        Self::mdc_object(id).focus();
+        Self::get_mdc_object(id).focus();
     }
 
     pub fn ripple(mut self, enabled: bool) -> Self {
@@ -349,6 +344,11 @@ impl MdcWidget for TextField {
     fn html_mut(&mut self) -> &mut Html {
         &mut self.html
     }
+}
+
+impl MdcObject for TextField {
+    const MDC_TYPE_NAME: &'static str = mdc::TYPE_NAME;
+    type MdcType = mdc::TextField;
 }
 
 impl IntoWidgetWithVList for TextField {

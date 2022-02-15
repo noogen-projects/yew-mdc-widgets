@@ -1,12 +1,15 @@
 use std::rc::Rc;
 
-use wasm_bindgen::JsValue;
 use yew::{
     virtual_dom::{Listener, VTag},
     Callback, Html,
 };
 
-use crate::{utils::VTagExt, EventListener};
+use crate::{
+    dom::{self, existing::JsObjectAccess, JsCast, JsValue},
+    utils::VTagExt,
+    Element, EventListener,
+};
 
 pub trait MdcWidget {
     const NAME: &'static str;
@@ -75,5 +78,16 @@ pub trait MdcWidget {
     {
         self.root_tag_mut().add_child(child.into());
         self
+    }
+}
+
+pub trait MdcObject {
+    const MDC_TYPE_NAME: &'static str;
+    type MdcType: JsCast;
+
+    fn get_mdc_object(id: impl AsRef<str>) -> Self::MdcType {
+        dom::existing::get_element_by_id::<Element>(id.as_ref())
+            .get(Self::MDC_TYPE_NAME)
+            .unchecked_into()
     }
 }

@@ -6,7 +6,7 @@ use yew::{html, Callback, Html, MouseEvent};
 use crate::{
     dom::{self, existing::JsObjectAccess, JsCast},
     utils::{ManageChildren, VTagExt},
-    Element, MdcWidget, AUTO_INIT_ATTR,
+    Element, MdcObject, MdcWidget, AUTO_INIT_ATTR,
 };
 
 pub mod mdc {
@@ -182,40 +182,34 @@ impl Snackbar {
 
     /// Returns whether the snackbar is currently open.
     pub fn is_open(id: impl AsRef<str>) -> bool {
-        Self::mdc_object(id).is_open()
+        Self::get_mdc_object(id).is_open()
     }
 
     /// Sets whether the snackbar is currently open.
     pub fn set_is_open(id: impl AsRef<str>, is_open: bool) {
-        Self::mdc_object(id).set_is_open(is_open);
+        Self::get_mdc_object(id).set_is_open(is_open);
     }
 
     /// Returns the automatic dismiss timeout in milliseconds.
     /// Value must be between 4000 and 10000 (or -1 to disable the timeout completely) or an error will be thrown.
     /// Defaults to 5000 (5 seconds).
     pub fn timeout_ms(id: impl AsRef<str>) -> i32 {
-        Self::mdc_object(id).timeout_ms()
+        Self::get_mdc_object(id).timeout_ms()
     }
 
     /// Sets the automatic dismiss timeout in milliseconds.
     /// Value must be between 4000 and 10000 (or -1 to disable the timeout completely) or an error will be thrown.
     /// Defaults to 5000 (5 seconds).
     pub fn set_timeout_ms(id: impl AsRef<str>, timeout_ms: i32) {
-        Self::mdc_object(id).set_timeout_ms(timeout_ms);
+        Self::get_mdc_object(id).set_timeout_ms(timeout_ms);
     }
 
     pub fn open_existing(id: impl AsRef<str>) {
-        let snackbar = dom::existing::get_element_by_id::<Element>(id.as_ref())
-            .get(mdc::TYPE_NAME)
-            .unchecked_into::<mdc::Snackbar>();
-        snackbar.open();
+        Self::get_mdc_object(id).open();
     }
 
     pub fn close_existing(id: impl AsRef<str>) {
-        let snackbar = dom::existing::get_element_by_id::<Element>(id.as_ref())
-            .get(mdc::TYPE_NAME)
-            .unchecked_into::<mdc::Snackbar>();
-        snackbar.close();
+        Self::get_mdc_object(id).close();
     }
 
     /// Indicates when the snackbar begins its opening animation.
@@ -255,6 +249,11 @@ impl MdcWidget for Snackbar {
     fn html_mut(&mut self) -> &mut Html {
         &mut self.html
     }
+}
+
+impl MdcObject for Snackbar {
+    const MDC_TYPE_NAME: &'static str = mdc::TYPE_NAME;
+    type MdcType = mdc::Snackbar;
 }
 
 impl Deref for Snackbar {

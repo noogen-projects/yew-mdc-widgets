@@ -4,7 +4,7 @@ use yew::{classes, html, Html};
 
 use crate::{
     utils::{ManageChildren, VTagExt},
-    MdcWidget, AUTO_INIT_ATTR,
+    MdcObject, MdcWidget, AUTO_INIT_ATTR,
 };
 
 pub mod mdc {
@@ -112,6 +112,14 @@ impl LinearProgress {
         linear_progress
     }
 
+    pub fn open_existing(id: impl AsRef<str>) {
+        Self::get_mdc_object(id).open();
+    }
+
+    pub fn close_existing(id: impl AsRef<str>) {
+        Self::get_mdc_object(id).close();
+    }
+
     pub fn indeterminate(mut self) -> Self {
         self.root_tag_mut().add_class(Self::INDETERMINATE_CLASS);
         self
@@ -152,6 +160,11 @@ impl MdcWidget for LinearProgress {
     fn html_mut(&mut self) -> &mut Html {
         &mut self.html
     }
+}
+
+impl MdcObject for LinearProgress {
+    const MDC_TYPE_NAME: &'static str = mdc::TYPE_NAME;
+    type MdcType = mdc::LinearProgress;
 }
 
 impl Deref for LinearProgress {
