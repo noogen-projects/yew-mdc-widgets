@@ -1467,5 +1467,5 @@ impl Root {
 
 fn main() {
     let root = dom::existing::get_element_by_id::<Element>("root");
-    yew::start_app_in_element::<Root>(root);
+    yew::Renderer::<Root>::with_root(root).render();
 }

@@ -43,7 +43,7 @@ pub trait VTagExt: ManageChildren {
     fn remove_class(&mut self, class: &str);
     fn remove_any_class(&mut self, classes: &[&str]);
     fn attr(&self, attr: impl AsRef<str>) -> Option<AttrValue>;
-    fn set_attr(&mut self, attr: &'static str, value: impl Into<AttrValue>);
+    fn set_attr(&mut self, attr: impl Into<AttrValue>, value: impl Into<AttrValue>);
     fn remove_attr(&mut self, attr: impl AsRef<str>) -> Option<AttrValue>;
     fn is_contains_class(&self, class: &str) -> bool;
     fn is_contains_any_class(&self, classes: &[&str]) -> bool;
@@ -257,8 +257,8 @@ impl VTagExt for VTag {
         }
     }
 
-    fn set_attr(&mut self, attr: &'static str, value: impl Into<AttrValue>) {
-        self.attributes.get_mut_index_map().insert(attr, value.into());
+    fn set_attr(&mut self, attr: impl Into<AttrValue>, value: impl Into<AttrValue>) {
+        self.attributes.get_mut_index_map().insert(attr.into(), value.into());
     }
 
     fn remove_attr(&mut self, attr: impl AsRef<str>) -> Option<AttrValue> {
@@ -695,7 +695,7 @@ impl VTagExt for Html {
         }
     }
 
-    fn set_attr(&mut self, attr: &'static str, value: impl Into<AttrValue>) {
+    fn set_attr(&mut self, attr: impl Into<AttrValue>, value: impl Into<AttrValue>) {
         if let Html::VTag(tag) = self {
             tag.set_attr(attr, value);
         }

@@ -1,6 +1,6 @@
 # yew-mdc-widgets
 
-The web MDC widgets for Yew.
+The widgets for the [Yew](https://github.com/yewstack/yew) of the [Material Design Components](https://material.io/develop/web).
 
 
 ## Run example
