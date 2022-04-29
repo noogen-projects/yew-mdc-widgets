@@ -1,7 +1,7 @@
-# yew-mdc-widgets
+# Yew MDC widgets
 
-The widgets for the [Yew](https://github.com/yewstack/yew) of the [Material Design Components](https://material.io/develop/web).
-
+The [Material Design Components](https://material.io/develop/web) widgets for the [Yew](https://github.com/yewstack/yew).
+[Live demo](https://noogen-projects.github.io/yew-mdc-widgets/)
 
 ## Run example
 
