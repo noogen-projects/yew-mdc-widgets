@@ -48,16 +48,16 @@ impl Default for Button {
 }
 
 impl Button {
-    ///Defaults to a text button that is flush with the surface.
+    /// Defaults to a text button that is flush with the surface.
     pub const CLASS: &'static str = "mdc-button";
 
-    ///Indicates the element which shows the ripple styling.
+    /// Indicates the element which shows the ripple styling.
     pub const RIPPLE_CLASS: &'static str = "mdc-button__ripple";
 
-    ///Indicates the element containing the button's text label.
+    /// Indicates the element containing the button's text label.
     pub const LABEL_CLASS: &'static str = "mdc-button__label";
 
-    ///Indicates the element containing the button's icon.
+    /// Indicates the element containing the button's icon.
     pub const ICON_CLASS: &'static str = "mdc-button__icon";
 
     pub fn simple() -> Self {

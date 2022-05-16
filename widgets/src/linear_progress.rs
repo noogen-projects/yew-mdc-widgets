@@ -8,8 +8,9 @@ use crate::{
 };
 
 pub mod mdc {
-    use crate::Element;
     use wasm_bindgen::prelude::*;
+
+    use crate::Element;
 
     pub const TYPE_NAME: &str = "MDCLinearProgress";
 
