@@ -152,24 +152,24 @@ impl TextField {
 
     pub fn ripple(mut self, enabled: bool) -> Self {
         if self.style != TextFieldStyle::Outlined {
-            if let Some(children) = self.root_tag_mut().children_mut() {
+            if let Some(list) = self.root_tag_mut().children_mut() {
                 if enabled {
-                    if !children.is_some_child_contains_class(Self::RIPPLE_CLASS) {
-                        children.insert(0, html! {
+                    if !list.is_some_child_contains_class(Self::RIPPLE_CLASS) {
+                        list.insert(0, html! {
                             <span class = { Self::RIPPLE_CLASS }></span>
                         });
                     }
-                    if !children.is_some_child_contains_class(line_ripple::mdc::CLASS) {
-                        children.push(html! {
+                    if !list.is_some_child_contains_class(line_ripple::mdc::CLASS) {
+                        list.push(html! {
                             <span class = { line_ripple::mdc::CLASS }></span>
                         });
                     }
                 } else {
-                    if let Some(idx) = children.find_child_contains_class_idx(Self::RIPPLE_CLASS) {
-                        children.remove(idx);
+                    if let Some(idx) = list.find_child_contains_class_idx(Self::RIPPLE_CLASS) {
+                        list.remove(idx);
                     }
-                    if let Some(idx) = children.find_child_contains_class_idx(line_ripple::mdc::CLASS) {
-                        children.remove(idx);
+                    if let Some(idx) = list.find_child_contains_class_idx(line_ripple::mdc::CLASS) {
+                        list.remove(idx);
                     }
                 }
             }

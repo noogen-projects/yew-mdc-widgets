@@ -146,12 +146,12 @@ impl ListItem {
         let root = self.root_tag_mut();
 
         if let Some(idx) = root.find_child_contains_class_idx(Self::TEXT_ITEM_CLASS) {
-            if let Some(children) = root.children_mut() {
-                let mut primary = children.remove(idx);
+            if let Some(list) = root.children_mut() {
+                let mut primary = list.remove(idx);
                 primary.remove_class(Self::TEXT_ITEM_CLASS);
                 primary.add_class(Self::PRIMARY_TEXT_ITEM_CLASS);
 
-                children.insert(idx, html! {
+                list.insert(idx, html! {
                     <span class = { Self::TEXT_ITEM_CLASS }>
                         { primary }
                         <span class = { Self::SECONDARY_TEXT_ITEM_CLASS }>
@@ -210,9 +210,9 @@ impl ListItem {
             .or_else(|| root_tag.find_child_contains_class_idx(Self::FIRST_TILE_CLASS))
             .expect("The widget must have tile!");
 
-        if let Some(children) = root_tag.children_mut() {
-            children[tile_idx].add_class("material-icons");
-            children[tile_idx].set_attr("aria-hidden", "true");
+        if let Some(list) = root_tag.children_mut() {
+            list[tile_idx].add_class("material-icons");
+            list[tile_idx].set_attr("aria-hidden", "true");
         }
         self
     }

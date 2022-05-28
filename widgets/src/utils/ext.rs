@@ -9,6 +9,7 @@ pub trait ManageChildren {
     fn is_first_child_contains_class(&self, class: &str) -> bool;
     fn is_some_child_contains_class(&self, class: &str) -> bool;
     fn find_child_contains_class_idx(&self, class: &str) -> Option<usize>;
+    fn find_child_contains_class(&self, class: &str) -> Option<&VTag>;
     fn find_child_contains_class_mut(&mut self, class: &str) -> Option<&mut VTag>;
     fn find_child_contains_class_recursively_mut(&mut self, class: &str) -> Option<&mut VTag>;
     fn remove_child_contains_class(&mut self, class: &str) -> Option<Html>;
@@ -64,6 +65,10 @@ impl ManageChildren for VTag {
 
     fn find_child_contains_class_idx(&self, class: &str) -> Option<usize> {
         find_child_contains_class_idx(self.children().iter(), class)
+    }
+
+    fn find_child_contains_class(&self, class: &str) -> Option<&VTag> {
+        find_child_contains_class(self.children().iter(), class)
     }
 
     fn find_child_contains_class_mut(&mut self, class: &str) -> Option<&mut VTag> {
@@ -299,6 +304,10 @@ impl ManageChildren for VList {
         find_child_contains_class_idx(self.iter(), class)
     }
 
+    fn find_child_contains_class(&self, class: &str) -> Option<&VTag> {
+        find_child_contains_class(self.iter(), class)
+    }
+
     fn find_child_contains_class_mut(&mut self, class: &str) -> Option<&mut VTag> {
         find_child_contains_class_mut(self.iter_mut(), class)
     }
@@ -439,6 +448,14 @@ impl ManageChildren for Html {
         match self {
             Html::VTag(tag) => tag.find_child_contains_class_idx(class),
             Html::VList(list) => find_child_contains_class_idx(list.iter(), class),
+            _ => None,
+        }
+    }
+
+    fn find_child_contains_class(&self, class: &str) -> Option<&VTag> {
+        match self {
+            Html::VTag(tag) => tag.find_child_contains_class(class),
+            Html::VList(list) => find_child_contains_class(list.iter(), class),
             _ => None,
         }
     }
@@ -738,6 +755,13 @@ fn is_some_child_contains_class<'a>(children: impl IntoIterator<Item = &'a Html>
 fn find_child_contains_class_idx<'a>(children: impl IntoIterator<Item = &'a Html>, class: &str) -> Option<usize> {
     children.into_iter().enumerate().find_map(|(idx, child)| match child {
         Html::VTag(child) if child.is_contains_class(class) => Some(idx),
+        _ => None,
+    })
+}
+
+fn find_child_contains_class<'a>(children: impl IntoIterator<Item = &'a Html>, class: &str) -> Option<&'a VTag> {
+    children.into_iter().find_map(|child| match child {
+        Html::VTag(child) if child.is_contains_class(class) => Some(child.deref()),
         _ => None,
     })
 }

@@ -85,9 +85,13 @@ impl Button {
     }
 
     pub fn label(mut self, label: impl Into<Html>) -> Self {
-        self.root_tag_mut().children_mut().unwrap(/* root tag of button always has children */).push(html! {
-            <span class = { Self::LABEL_CLASS }>{ label }</span>
-        });
+        self
+            .root_tag_mut()
+            .children_mut()
+            .unwrap(/* root tag of button always has children */)
+            .push(html! {
+                <span class = { Self::LABEL_CLASS }>{ label }</span>
+            });
         self
     }
 
@@ -133,7 +137,10 @@ impl Button {
                     root.children().len()
                 }
             });
-        root.children_mut().unwrap(/* root tag of button always has children */).insert(idx, item.into());
+        root
+            .children_mut()
+            .unwrap(/* root tag of button always has children */)
+            .insert(idx, item.into());
         self
     }
 
@@ -149,7 +156,10 @@ impl Button {
                     root.children().len()
                 }
             });
-        root.children_mut().unwrap(/* root tag of button always has children */).insert(idx, item.into());
+        root
+            .children_mut()
+            .unwrap(/* root tag of button always has children */)
+            .insert(idx, item.into());
         self
     }
 

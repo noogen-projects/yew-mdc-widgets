@@ -171,9 +171,12 @@ impl Card {
                         )
                     });
                 if let Some(script) = maybe_script {
-                    root.children_mut().unwrap(/* root tag of card always has children */).push(html! {
-                        <script>{ script }</script>
-                    });
+                    root
+                        .children_mut()
+                        .unwrap(/* root tag of card always has children */)
+                        .push(html! {
+                            <script>{ script }</script>
+                        });
                 }
             }
         } else {
@@ -192,7 +195,10 @@ impl Card {
         let idx = root
             .find_child_tag_idx("script")
             .unwrap_or_else(|| root.children().len());
-        root.children_mut().unwrap(/* root tag of card always has children */).insert(idx, content.into());
+        root
+            .children_mut()
+            .unwrap(/* root tag of card always has children */)
+            .insert(idx, content.into());
         self
     }
 }
