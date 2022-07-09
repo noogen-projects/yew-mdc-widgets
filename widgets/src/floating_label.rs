@@ -1,6 +1,6 @@
 use std::ops::{Deref, DerefMut};
 
-use yew::{html, virtual_dom::AttrValue, Html};
+use yew::{html, Html};
 
 use crate::{utils::VTagExt, MdcWidget};
 
@@ -28,7 +28,7 @@ impl FloatingLabel {
     }
 
     pub fn get_id(&self) -> Option<String> {
-        self.root_tag().attr("id").map(AttrValue::into_string)
+        self.root_tag().attr("id").map(|value| value.to_string())
     }
 }
 
