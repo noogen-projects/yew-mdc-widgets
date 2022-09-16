@@ -108,7 +108,7 @@ impl IconButton {
             if enabled {
                 root.set_attr(AUTO_INIT_ATTR, ripple::mdc::TYPE_NAME);
             } else {
-                root.remove_attr(AUTO_INIT_ATTR);
+                root.remove_attr_or_prop(AUTO_INIT_ATTR);
             }
         }
         self
@@ -122,7 +122,7 @@ impl IconButton {
         if disabled {
             self.root_tag_mut().set_attr("disabled", "");
         } else {
-            self.root_tag_mut().remove_attr("disabled");
+            self.root_tag_mut().remove_attr_or_prop("disabled");
         }
         self
     }

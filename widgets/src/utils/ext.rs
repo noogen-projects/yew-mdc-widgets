@@ -1,7 +1,7 @@
 use std::ops::{Deref, DerefMut};
 
 use yew::{
-    virtual_dom::{AttrValue, Attributes, VList, VNode, VTag},
+    virtual_dom::{ApplyAttributeAs, AttrValue, Attributes, VList, VNode, VTag},
     Html,
 };
 
@@ -45,7 +45,8 @@ pub trait VTagExt: ManageChildren {
     fn remove_any_class(&mut self, classes: &[&str]);
     fn attr(&self, attr: impl AsRef<str>) -> Option<AttrValue>;
     fn set_attr(&mut self, attr: impl Into<AttrValue>, value: impl Into<AttrValue>);
-    fn remove_attr(&mut self, attr: impl AsRef<str>) -> Option<AttrValue>;
+    fn set_prop(&mut self, prop: impl Into<AttrValue>, value: impl Into<AttrValue>);
+    fn remove_attr_or_prop(&mut self, key: impl AsRef<str>) -> Option<(AttrValue, ApplyAttributeAs)>;
     fn is_contains_class(&self, class: &str) -> bool;
     fn is_contains_any_class(&self, classes: &[&str]) -> bool;
 }
@@ -246,28 +247,38 @@ impl VTagExt for VTag {
 
     fn attr(&self, attr: impl AsRef<str>) -> Option<AttrValue> {
         match &self.attributes {
-            Attributes::Static(attrs) => attrs.iter().find_map(|[key, value]| {
+            Attributes::Static(attrs) => attrs.iter().find_map(|(key, value, _)| {
                 if *key == attr.as_ref() {
                     Some((*value).into())
                 } else {
                     None
                 }
             }),
-            Attributes::Dynamic { keys, values } => {
-                keys.iter()
-                    .zip(values.iter())
-                    .find_map(|(key, value)| if *key == attr.as_ref() { value.clone() } else { None })
-            },
-            Attributes::IndexMap(attrs) => attrs.get(attr.as_ref()).cloned(),
+            Attributes::Dynamic { keys, values } => keys.iter().zip(values.iter()).find_map(|(key, value)| {
+                if *key == attr.as_ref() {
+                    value.as_ref().map(|(value, _)| value.clone())
+                } else {
+                    None
+                }
+            }),
+            Attributes::IndexMap(attrs) => attrs.get(attr.as_ref()).map(|(value, _)| value.clone()),
         }
     }
 
     fn set_attr(&mut self, attr: impl Into<AttrValue>, value: impl Into<AttrValue>) {
-        self.attributes.get_mut_index_map().insert(attr.into(), value.into());
+        self.attributes
+            .get_mut_index_map()
+            .insert(attr.into(), (value.into(), ApplyAttributeAs::Attribute));
     }
 
-    fn remove_attr(&mut self, attr: impl AsRef<str>) -> Option<AttrValue> {
-        self.attributes.get_mut_index_map().remove(attr.as_ref())
+    fn set_prop(&mut self, prop: impl Into<AttrValue>, value: impl Into<AttrValue>) {
+        self.attributes
+            .get_mut_index_map()
+            .insert(prop.into(), (value.into(), ApplyAttributeAs::Property));
+    }
+
+    fn remove_attr_or_prop(&mut self, key: impl AsRef<str>) -> Option<(AttrValue, ApplyAttributeAs)> {
+        self.attributes.get_mut_index_map().remove(key.as_ref())
     }
 
     fn is_contains_class(&self, class: &str) -> bool {
@@ -718,9 +729,15 @@ impl VTagExt for Html {
         }
     }
 
-    fn remove_attr(&mut self, attr: impl AsRef<str>) -> Option<AttrValue> {
+    fn set_prop(&mut self, prop: impl Into<AttrValue>, value: impl Into<AttrValue>) {
         if let Html::VTag(tag) = self {
-            tag.remove_attr(attr)
+            tag.set_prop(prop, value);
+        }
+    }
+
+    fn remove_attr_or_prop(&mut self, key: impl AsRef<str>) -> Option<(AttrValue, ApplyAttributeAs)> {
+        if let Html::VTag(tag) = self {
+            tag.remove_attr_or_prop(key)
         } else {
             None
         }

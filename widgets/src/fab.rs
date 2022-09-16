@@ -62,7 +62,7 @@ impl Fab {
         if enabled {
             self.root_tag_mut().set_attr(AUTO_INIT_ATTR, ripple::mdc::TYPE_NAME);
         } else {
-            self.root_tag_mut().remove_attr(AUTO_INIT_ATTR);
+            self.root_tag_mut().remove_attr_or_prop(AUTO_INIT_ATTR);
         }
         self
     }

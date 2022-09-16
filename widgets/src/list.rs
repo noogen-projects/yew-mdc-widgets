@@ -133,7 +133,7 @@ impl ListItem {
         if enabled {
             root.set_attr(AUTO_INIT_ATTR, ripple::mdc::TYPE_NAME);
         } else {
-            root.remove_attr(AUTO_INIT_ATTR);
+            root.remove_attr_or_prop(AUTO_INIT_ATTR);
         }
         self
     }

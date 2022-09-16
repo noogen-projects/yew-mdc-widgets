@@ -82,7 +82,7 @@ impl Checkbox {
             if indeterminate {
                 input.set_attr("data-indeterminate", "true");
             } else {
-                input.remove_attr("data-indeterminate");
+                input.remove_attr_or_prop("data-indeterminate");
             }
         }
         self

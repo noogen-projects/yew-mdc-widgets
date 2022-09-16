@@ -81,52 +81,52 @@ impl Component for Root {
                             <h1 class = "demo-title mdc-typography--headline5">{ "Material design components" }</h1>
                             { List::nav().items(contents) }
 
-                            <h2 class = "demo-title mdc-typography--headline6"><a name = "buttons"></a>{ "Buttons" }</h2>
+                            <h2 class = "demo-title mdc-typography--headline6"><a href = "#" name = "buttons"></a>{ "Buttons" }</h2>
                             { self.view_buttons() }
 
-                            <h2 class = "demo-title mdc-typography--headline6"><a name = "icon_buttons"></a>{ "Icon buttons" }</h2>
+                            <h2 class = "demo-title mdc-typography--headline6"><a href = "#" name = "icon_buttons"></a>{ "Icon buttons" }</h2>
                             { self.view_icon_buttons() }
 
-                            <h2 class = "demo-title mdc-typography--headline6"><a name = "fabs"></a>{ "Floating Action Buttons" }</h2>
+                            <h2 class = "demo-title mdc-typography--headline6"><a href = "#" name = "fabs"></a>{ "Floating Action Buttons" }</h2>
                             { self.view_fabs() }
 
-                            <h2 class = "demo-title mdc-typography--headline6"><a name = "checkboxes"></a>{ "Checkboxes" }</h2>
+                            <h2 class = "demo-title mdc-typography--headline6"><a href = "#" name = "checkboxes"></a>{ "Checkboxes" }</h2>
                             { self.view_checkboxes() }
 
-                            <h2 class = "demo-title mdc-typography--headline6"><a name = "radio_buttons"></a>{ "Radio buttons" }</h2>
+                            <h2 class = "demo-title mdc-typography--headline6"><a href = "#" name = "radio_buttons"></a>{ "Radio buttons" }</h2>
                             { self.view_radio_buttons() }
 
-                            <h2 class = "demo-title mdc-typography--headline6"><a name = "switch"></a>{ "Switch" }</h2>
+                            <h2 class = "demo-title mdc-typography--headline6"><a href = "#" name = "switch"></a>{ "Switch" }</h2>
                             { self.view_switch() }
 
-                            <h2 class = "demo-title mdc-typography--headline6"><a name = "chips"></a>{ "Chips" }</h2>
+                            <h2 class = "demo-title mdc-typography--headline6"><a href = "#" name = "chips"></a>{ "Chips" }</h2>
                             { self.view_chips() }
 
-                            <h2 class = "demo-title mdc-typography--headline6"><a name = "snackbars"></a>{ "Snackbars" }</h2>
+                            <h2 class = "demo-title mdc-typography--headline6"><a href = "#" name = "snackbars"></a>{ "Snackbars" }</h2>
                             { self.view_snackbars() }
 
-                            <h2 class = "demo-title mdc-typography--headline6"><a name = "linear_progress"></a>{ "LinearProgress" }</h2>
+                            <h2 class = "demo-title mdc-typography--headline6"><a href = "#" name = "linear_progress"></a>{ "LinearProgress" }</h2>
                             { self.view_linear_progress() }
 
-                            <h2 class = "demo-title mdc-typography--headline6"><a name = "text_fields"></a>{ "Text fields" }</h2>
+                            <h2 class = "demo-title mdc-typography--headline6"><a href = "#" name = "text_fields"></a>{ "Text fields" }</h2>
                             { self.view_text_fields() }
 
-                            <h2 class = "demo-title mdc-typography--headline6"><a name = "lists"></a>{ "Lists" }</h2>
+                            <h2 class = "demo-title mdc-typography--headline6"><a href = "#" name = "lists"></a>{ "Lists" }</h2>
                             { self.view_lists() }
 
-                            <h2 class = "demo-title mdc-typography--headline6"><a name = "menu"></a>{ "Menu" }</h2>
+                            <h2 class = "demo-title mdc-typography--headline6"><a href = "#" name = "menu"></a>{ "Menu" }</h2>
                             { self.view_menu() }
 
-                            <h2 class = "demo-title mdc-typography--headline6"><a name = "data_tables"></a>{ "Data tables" }</h2>
+                            <h2 class = "demo-title mdc-typography--headline6"><a href = "#" name = "data_tables"></a>{ "Data tables" }</h2>
                             { self.view_data_tables() }
 
-                            <h2 class = "demo-title mdc-typography--headline6"><a name = "dialog"></a>{ "Dialog" }</h2>
+                            <h2 class = "demo-title mdc-typography--headline6"><a href = "#" name = "dialog"></a>{ "Dialog" }</h2>
                             { self.view_dialog() }
 
-                            <h2 class = "demo-title mdc-typography--headline6"><a name = "tabs"></a>{ "Tabs" }</h2>
+                            <h2 class = "demo-title mdc-typography--headline6"><a href = "#" name = "tabs"></a>{ "Tabs" }</h2>
                             { self.view_tabs() }
 
-                            <h2 class = "demo-title mdc-typography--headline6"><a name = "cards"></a>{ "Cards" }</h2>
+                            <h2 class = "demo-title mdc-typography--headline6"><a href = "#" name = "cards"></a>{ "Cards" }</h2>
                             { self.view_cards() }
                         </div>
                     </div>

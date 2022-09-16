@@ -73,7 +73,7 @@ pub(crate) fn root_and_input_child_disabled(
         if disabled {
             input.set_attr("disabled", "disabled");
         } else {
-            input.remove_attr("disabled");
+            input.remove_attr_or_prop("disabled");
         }
     }
 }

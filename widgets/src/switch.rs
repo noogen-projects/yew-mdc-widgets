@@ -92,7 +92,7 @@ impl Switch {
         if disable {
             self.root_tag_mut().set_attr("disabled", "true");
         } else {
-            self.root_tag_mut().remove_attr("disabled");
+            self.root_tag_mut().remove_attr_or_prop("disabled");
         }
         self
     }
