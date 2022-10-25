@@ -7,10 +7,10 @@ RUSTFLAGS = "-Copt-level=s"
 MODE = "release"
 ADDITIONAL = "--release"
 
-[tasks.set_vars.env.debug]
-RUSTFLAGS = ""
-MODE = "debug"
-ADDITIONAL = "--color=auto" # it's a stub
+    [tasks.set_vars.env.debug]
+    RUSTFLAGS = ""
+    MODE = "debug"
+    ADDITIONAL = "--color=auto" # it's a stub
 
 [tasks.build_example_client]
 command = "cargo"
