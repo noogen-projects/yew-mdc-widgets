@@ -1,5 +1,7 @@
+use std::iter;
 use std::ops::{Deref, DerefMut};
 
+use itertools::Either;
 use yew::{
     virtual_dom::{ApplyAttributeAs, AttrValue, Attributes, VList, VNode, VTag},
     Html,
@@ -15,6 +17,9 @@ pub trait ManageChildren {
     fn remove_child_contains_class(&mut self, class: &str) -> Option<Html>;
     fn is_first_child(&self, child_tag_name: &str) -> bool;
     fn is_last_child(&self, child_tag_name: &str) -> bool;
+    fn children_count(&self) -> usize;
+    fn get_child(&self, idx: usize) -> Option<&Html>;
+    fn get_child_mut(&mut self, idx: usize) -> Option<&mut Html>;
     fn first_child(&self) -> Option<&Html>;
     fn first_child_mut(&mut self) -> Option<&mut Html>;
     fn first_child_tag(&self) -> Option<&VTag>;
@@ -31,7 +36,7 @@ pub trait ManageChildren {
     fn remove_child_tag(&mut self, child_tag_name: &str) -> Option<Html>;
     fn add_child(&mut self, child: impl Into<Html>);
     fn add_child_script_statement(&mut self, statement: impl AsRef<str>);
-    fn insert_child(&mut self, idx: usize, child: impl Into<Html>);
+    fn insert_child(&mut self, idx: usize, child: impl Into<Html>) -> bool;
     fn remove_child(&mut self, idx: usize) -> Option<Html>;
     fn clear_children(&mut self);
 }
@@ -51,6 +56,26 @@ pub trait VTagExt: ManageChildren {
     fn is_contains_any_class(&self, classes: &[&str]) -> bool;
 }
 
+fn children_iter(tag: &VTag) -> impl Iterator<Item = &Html> {
+    if let Some(children) = tag.children() {
+        if let Html::VList(list) = children {
+            Either::Left(list.iter())
+        } else {
+            Either::Right(Some(children).into_iter())
+        }
+    } else {
+        Either::Right(None.into_iter())
+    }
+}
+
+fn iter_mut(node: &mut Html) -> impl Iterator<Item = &mut Html> {
+    if let Html::VList(list) = node {
+        Either::Left(list.iter_mut())
+    } else {
+        Either::Right(iter::once(node))
+    }
+}
+
 impl ManageChildren for VTag {
     fn is_first_child_contains_class(&self, class: &str) -> bool {
         if let Some(child) = self.first_child_tag() {
@@ -61,25 +86,25 @@ impl ManageChildren for VTag {
     }
 
     fn is_some_child_contains_class(&self, class: &str) -> bool {
-        is_some_child_contains_class(self.children().iter(), class)
+        is_some_child_contains_class(children_iter(self), class)
     }
 
     fn find_child_contains_class_idx(&self, class: &str) -> Option<usize> {
-        find_child_contains_class_idx(self.children().iter(), class)
+        find_child_contains_class_idx(children_iter(self), class)
     }
 
     fn find_child_contains_class(&self, class: &str) -> Option<&VTag> {
-        find_child_contains_class(self.children().iter(), class)
+        find_child_contains_class(children_iter(self), class)
     }
 
     fn find_child_contains_class_mut(&mut self, class: &str) -> Option<&mut VTag> {
         self.children_mut()
-            .and_then(|children| find_child_contains_class_mut(children.iter_mut(), class))
+            .and_then(|children| find_child_contains_class_mut(iter_mut(children), class))
     }
 
     fn find_child_contains_class_recursively_mut(&mut self, class: &str) -> Option<&mut VTag> {
         self.children_mut()
-            .and_then(|children| find_child_contains_class_recursively_mut(children.iter_mut(), class))
+            .and_then(|children| find_child_contains_class_recursively_mut(iter_mut(children), class))
     }
 
     fn remove_child_contains_class(&mut self, class: &str) -> Option<Html> {
@@ -95,12 +120,52 @@ impl ManageChildren for VTag {
         get_tag(self.last_child(), child_tag_name).is_some()
     }
 
+    fn children_count(&self) -> usize {
+        self.children().map(|children| if let Html::VList(list) = children {
+            list.len()
+        } else {
+            1
+        }).unwrap_or(0)
+    }
+
+    fn get_child(&self, idx: usize) -> Option<&Html> {
+        let children = self.children()?;
+        if let Html::VList(list) = children {
+            list.get(idx)
+        } else if idx == 0 {
+            Some(children)
+        } else {
+            None
+        }
+    }
+
+    fn get_child_mut(&mut self, idx: usize) -> Option<&mut Html> {
+        let children = self.children_mut()?;
+        if let Html::VList(list) = children {
+            list.get_mut(idx)
+        } else if idx == 0 {
+            Some(children)
+        } else {
+            None
+        }
+    }
+
     fn first_child(&self) -> Option<&Html> {
-        self.children().first()
+        let children = self.children()?;
+        if let Html::VList(list) = children {
+            list.first()
+        } else {
+            Some(children)
+        }
     }
 
     fn first_child_mut(&mut self) -> Option<&mut Html> {
-        self.children_mut().and_then(|children| children.first_mut())
+        let children = self.children_mut()?;
+        if let Html::VList(list) = children {
+            list.first_mut()
+        } else {
+            Some(children)
+        }
     }
 
     fn first_child_tag(&self) -> Option<&VTag> {
@@ -120,11 +185,21 @@ impl ManageChildren for VTag {
     }
 
     fn last_child(&self) -> Option<&Html> {
-        self.children().last()
+        let children = self.children()?;
+        if let Html::VList(list) = children {
+            list.last()
+        } else {
+            Some(children)
+        }
     }
 
     fn last_child_mut(&mut self) -> Option<&mut Html> {
-        self.children_mut().and_then(|children| children.last_mut())
+        let children = self.children_mut()?;
+        if let Html::VList(list) = children {
+            list.last_mut()
+        } else {
+            Some(children)
+        }
     }
 
     fn last_child_tag(&self) -> Option<&VTag> {
@@ -144,25 +219,25 @@ impl ManageChildren for VTag {
     }
 
     fn find_child_tag(&self, child_tag_name: &str) -> Option<&VTag> {
-        find_child_tag(self.children().iter(), child_tag_name)
+        find_child_tag(children_iter(self), child_tag_name)
     }
 
     fn find_child_tag_mut(&mut self, child_tag_name: &str) -> Option<&mut VTag> {
         self.children_mut()
-            .and_then(|children| find_child_tag_mut(children.iter_mut(), child_tag_name))
+            .and_then(|children| find_child_tag_mut(iter_mut(children), child_tag_name))
     }
 
     fn find_child_tag_idx(&self, child_tag_name: &str) -> Option<usize> {
-        find_child_tag_idx(self.children().iter(), child_tag_name)
+        find_child_tag_idx(children_iter(self), child_tag_name)
     }
 
     fn find_child_tag_recursively(&self, child_tag_name: &str) -> Option<&VTag> {
-        find_child_tag_recursively(self.children().iter(), child_tag_name)
+        find_child_tag_recursively(children_iter(self), child_tag_name)
     }
 
     fn find_child_tag_recursively_mut(&mut self, child_tag_name: &str) -> Option<&mut VTag> {
         self.children_mut()
-            .and_then(|children| find_child_tag_recursively_mut(children.iter_mut(), child_tag_name))
+            .and_then(|children| find_child_tag_recursively_mut(iter_mut(children), child_tag_name))
     }
 
     fn remove_child_tag(&mut self, child_tag_name: &str) -> Option<Html> {
@@ -171,28 +246,34 @@ impl ManageChildren for VTag {
     }
 
     fn add_child(&mut self, child: impl Into<Html>) {
-        if let Some(children) = self.children_mut() {
-            children.push(child.into());
-        }
+        self.add_child(child.into());
     }
 
     fn add_child_script_statement(&mut self, statement: impl AsRef<str>) {
         add_child_script_statement(self.find_child_tag_mut("script"), statement)
     }
 
-    fn insert_child(&mut self, idx: usize, child: impl Into<Html>) {
-        if let Some(children) = self.children_mut() {
-            children.insert(idx, child.into());
+    fn insert_child(&mut self, idx: usize, child: impl Into<Html>) -> bool {
+        if idx == self.children_count() {
+            self.add_child(child.into());
+            true
+        } else {
+            if let Some(children) = self.children_mut() {
+                children.to_vlist_mut().insert(idx, child.into());
+                true
+            } else {
+                false
+            }
         }
     }
 
     fn remove_child(&mut self, idx: usize) -> Option<Html> {
-        self.children_mut().map(|children| children.remove(idx))
+        self.children_mut().map(|children| children.to_vlist_mut().remove(idx))
     }
 
     fn clear_children(&mut self) {
         if let Some(children) = self.children_mut() {
-            children.clear();
+            children.to_vlist_mut().clear();
         }
     }
 }
@@ -339,6 +420,18 @@ impl ManageChildren for VList {
         get_tag(self.last(), child_tag_name).is_some()
     }
 
+    fn children_count(&self) -> usize {
+        self.len()
+    }
+
+    fn get_child(&self, idx: usize) -> Option<&Html> {
+        self.get(idx)
+    }
+
+    fn get_child_mut(&mut self, idx: usize) -> Option<&mut Html> {
+        self.get_mut(idx)
+    }
+
     fn first_child(&self) -> Option<&Html> {
         self.first()
     }
@@ -419,8 +512,9 @@ impl ManageChildren for VList {
         add_child_script_statement(find_child_tag_mut(self.iter_mut(), "script"), statement)
     }
 
-    fn insert_child(&mut self, idx: usize, child: impl Into<Html>) {
-        self.insert(idx, child.into())
+    fn insert_child(&mut self, idx: usize, child: impl Into<Html>) -> bool {
+        self.insert(idx, child.into());
+        true
     }
 
     fn remove_child(&mut self, idx: usize) -> Option<Html> {
@@ -508,6 +602,30 @@ impl ManageChildren for Html {
             Html::VTag(tag) => tag.is_last_child(child_tag_name),
             Html::VList(list) => get_tag(list.last(), child_tag_name).is_some(),
             _ => false,
+        }
+    }
+
+    fn children_count(&self) -> usize {
+        match self {
+            Html::VTag(tag) => tag.children_count(),
+            Html::VList(list) => list.children_count(),
+            _ => 0,
+        }
+    }
+
+    fn get_child(&self, idx: usize) -> Option<&Html> {
+        match self {
+            Html::VTag(tag) => tag.get_child(idx),
+            Html::VList(list) => list.get_child(idx),
+            _ => None,
+        }
+    }
+
+    fn get_child_mut(&mut self, idx: usize) -> Option<&mut Html> {
+        match self {
+            Html::VTag(tag) => tag.get_child_mut(idx),
+            Html::VList(list) => list.get_child_mut(idx),
+            _ => None,
         }
     }
 
@@ -639,11 +757,14 @@ impl ManageChildren for Html {
         }
     }
 
-    fn insert_child(&mut self, idx: usize, child: impl Into<Html>) {
+    fn insert_child(&mut self, idx: usize, child: impl Into<Html>) -> bool {
         match self {
             Html::VTag(tag) => tag.insert_child(idx, child),
-            Html::VList(list) => list.insert(idx, child.into()),
-            _ => (),
+            Html::VList(list) => {
+                list.insert(idx, child.into());
+                true
+            },
+            _ => false,
         }
     }
 
@@ -805,7 +926,7 @@ fn find_child_contains_class_recursively_mut<'a>(
                 } else {
                     child
                         .children_mut()
-                        .and_then(|children| find_child_contains_class_recursively_mut(children.iter_mut(), class))
+                        .and_then(|children| find_child_contains_class_recursively_mut(iter_mut(children), class))
                 }
             },
             Html::VList(list) => find_child_contains_class_recursively_mut(list.iter_mut(), class),
@@ -857,7 +978,7 @@ fn find_child_tag_recursively<'a>(
     for child in children {
         let tag = match child {
             Html::VTag(child) if child.tag() == child_tag_name => Some(child.deref()),
-            Html::VTag(child) => find_child_tag_recursively(child.children().iter(), child_tag_name),
+            Html::VTag(child) => find_child_tag_recursively(children_iter(child), child_tag_name),
             Html::VList(list) => find_child_tag_recursively(list.iter(), child_tag_name),
             _ => None,
         };
@@ -880,7 +1001,7 @@ fn find_child_tag_recursively_mut<'a>(
                 } else {
                     child
                         .children_mut()
-                        .and_then(|children| find_child_tag_recursively_mut(children.iter_mut(), child_tag_name))
+                        .and_then(|children| find_child_tag_recursively_mut(iter_mut(children), child_tag_name))
                 }
             },
             Html::VList(list) => find_child_tag_recursively_mut(list.iter_mut(), child_tag_name),

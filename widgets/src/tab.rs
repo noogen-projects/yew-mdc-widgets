@@ -4,7 +4,7 @@ use std::{
 };
 
 use const_format::concatcp;
-use yew::{classes, html, html::onclick, virtual_dom::AttrValue, Callback, Html, MouseEvent};
+use yew::{classes, html, html::onclick, virtual_dom::AttrValue, Callback, Html, MouseEvent, ToHtml};
 
 use crate::{
     dom,
@@ -162,7 +162,7 @@ impl Tab {
         let root = self.root_tag_mut();
         if let Some(content) = root.find_child_contains_class_mut(Self::CONTENT_CLASS) {
             content.add_child(html! {
-                <span class = { Self::LABEL_CLASS }>{ label }</span>
+                <span class = { Self::LABEL_CLASS }>{ label.into() }</span>
             });
         }
         self
@@ -209,6 +209,16 @@ impl DerefMut for Tab {
 impl From<Tab> for Html {
     fn from(widget: Tab) -> Self {
         widget.html
+    }
+}
+
+impl ToHtml for Tab {
+    fn to_html(&self) -> Html {
+        self.clone().into()
+    }
+
+    fn into_html(self) -> Html {
+        self.into()
     }
 }
 
@@ -321,5 +331,15 @@ impl DerefMut for TabBar {
 impl From<TabBar> for Html {
     fn from(widget: TabBar) -> Self {
         widget.html
+    }
+}
+
+impl ToHtml for TabBar {
+    fn to_html(&self) -> Html {
+        self.clone().into()
+    }
+
+    fn into_html(self) -> Html {
+        self.into()
     }
 }

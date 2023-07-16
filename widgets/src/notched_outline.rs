@@ -1,6 +1,6 @@
 use std::ops::{Deref, DerefMut};
 
-use yew::{html, Html};
+use yew::{html, Html, ToHtml};
 
 use crate::MdcWidget;
 
@@ -67,5 +67,15 @@ impl DerefMut for NotchedOutline {
 impl From<NotchedOutline> for Html {
     fn from(widget: NotchedOutline) -> Self {
         widget.html
+    }
+}
+
+impl ToHtml for NotchedOutline {
+    fn to_html(&self) -> Html {
+        self.clone().into()
+    }
+
+    fn into_html(self) -> Html {
+        self.into()
     }
 }

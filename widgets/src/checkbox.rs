@@ -1,6 +1,6 @@
 use std::ops::{Deref, DerefMut};
 
-use yew::{html, virtual_dom::AttrValue, Callback, Html, MouseEvent};
+use yew::{html, virtual_dom::AttrValue, Callback, Html, MouseEvent, ToHtml};
 
 use crate::{
     console,
@@ -151,5 +151,15 @@ impl DerefMut for Checkbox {
 impl From<Checkbox> for Html {
     fn from(widget: Checkbox) -> Self {
         widget.html
+    }
+}
+
+impl ToHtml for Checkbox {
+    fn to_html(&self) -> Html {
+        self.clone().into()
+    }
+
+    fn into_html(self) -> Html {
+        self.into()
     }
 }

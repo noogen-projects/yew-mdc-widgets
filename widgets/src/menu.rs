@@ -1,6 +1,6 @@
 use std::ops::{Deref, DerefMut};
 
-use yew::{html, virtual_dom::AttrValue, Html};
+use yew::{html, virtual_dom::AttrValue, Html, ToHtml};
 
 use crate::{
     dom::{self, existing::JsObjectAccess},
@@ -161,5 +161,15 @@ impl From<Menu> for Html {
             tag.insert_child(0, Html::from(list));
         }
         html
+    }
+}
+
+impl ToHtml for Menu {
+    fn to_html(&self) -> Html {
+        self.clone().into()
+    }
+
+    fn into_html(self) -> Html {
+        self.into()
     }
 }

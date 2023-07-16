@@ -4,7 +4,7 @@ use std::{
 };
 
 use const_format::concatcp;
-use yew::{html, html::onclick, Callback, Html, MouseEvent};
+use yew::{html, html::onclick, Callback, Html, MouseEvent, ToHtml};
 
 use crate::{
     dom::{self, existing::JsObjectAccess, JsCast},
@@ -190,5 +190,15 @@ impl DerefMut for IconButton {
 impl From<IconButton> for Html {
     fn from(widget: IconButton) -> Self {
         widget.html
+    }
+}
+
+impl ToHtml for IconButton {
+    fn to_html(&self) -> Html {
+        self.clone().into()
+    }
+
+    fn into_html(self) -> Html {
+        self.into()
     }
 }

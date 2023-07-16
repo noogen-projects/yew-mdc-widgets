@@ -1,6 +1,6 @@
 use std::ops::{Deref, DerefMut};
 
-use yew::{html, Html};
+use yew::{html, Html, ToHtml};
 
 use crate::{
     utils::{ManageChildren, VTagExt},
@@ -32,7 +32,7 @@ impl CardContent {
     pub fn primary_action(content: impl Into<Html>) -> Self {
         Self {
             html: html! {
-                <div class = { Self::PRIMARY_ACTION_CLASS } tabindex = "0">{ content }</div>
+                <div class = { Self::PRIMARY_ACTION_CLASS } tabindex = "0">{ content.into() }</div>
             },
         }
     }
@@ -62,7 +62,7 @@ impl CardContent {
     pub fn media_content(mut self, content: impl Into<Html>) -> Self {
         let root = self.root_tag_mut();
         if root.is_contains_class(Self::MEDIA_CLASS) {
-            root.add_child(html! { <div class = { Self::MEDIA_CONTENT_CLASS }>{ content }</div> });
+            root.add_child(html! { <div class = { Self::MEDIA_CONTENT_CLASS }>{ content.into() }</div> });
         }
         self
     }
@@ -93,13 +93,13 @@ impl CardContent {
     /// A group of action buttons, displayed on the left side of the card (in LTR),
     /// adjacent to `mdc-card__action-icons`.
     pub fn action_buttons(self, content: impl Into<Html>) -> Self {
-        self.actions_content(html! { <div class = { Self::ACTION_BUTTONS_CLASS }>{ content }</div>})
+        self.actions_content(html! { <div class = { Self::ACTION_BUTTONS_CLASS }>{ content.into() }</div>})
     }
 
     /// A group of supplemental action icons, displayed on the right side of the card (in LTR),
     /// adjacent to `mdc-card__action-buttons`.
     pub fn action_icons(self, content: impl Into<Html>) -> Self {
-        self.actions_content(html! { <div class = { Self::ACTION_ICONS_CLASS }>{ content }</div>})
+        self.actions_content(html! { <div class = { Self::ACTION_ICONS_CLASS }>{ content.into() }</div>})
     }
 }
 
@@ -132,6 +132,16 @@ impl DerefMut for CardContent {
 impl From<CardContent> for Html {
     fn from(widget: CardContent) -> Self {
         widget.html
+    }
+}
+
+impl ToHtml for CardContent {
+    fn to_html(&self) -> Html {
+        self.clone().into()
+    }
+
+    fn into_html(self) -> Html {
+        self.into()
     }
 }
 
@@ -174,7 +184,7 @@ impl Card {
                     root
                         .children_mut()
                         .unwrap(/* root tag of card always has children */)
-                        .push(html! {
+                        .add_child(html! {
                             <script>{ script }</script>
                         });
                 }
@@ -194,10 +204,11 @@ impl Card {
         let root = self.root_tag_mut();
         let idx = root
             .find_child_tag_idx("script")
-            .unwrap_or_else(|| root.children().len());
+            .unwrap_or_else(|| root.children_count());
         root
             .children_mut()
             .unwrap(/* root tag of card always has children */)
+            .to_vlist_mut()
             .insert(idx, content.into());
         self
     }
@@ -232,5 +243,15 @@ impl DerefMut for Card {
 impl From<Card> for Html {
     fn from(widget: Card) -> Self {
         widget.html
+    }
+}
+
+impl ToHtml for Card {
+    fn to_html(&self) -> Html {
+        self.clone().into()
+    }
+
+    fn into_html(self) -> Html {
+        self.into()
     }
 }

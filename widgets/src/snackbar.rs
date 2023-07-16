@@ -1,7 +1,7 @@
 use std::ops::{Deref, DerefMut};
 
 use const_format::concatcp;
-use yew::{html, Callback, Html, MouseEvent};
+use yew::{html, Callback, Html, MouseEvent, ToHtml};
 
 use crate::{
     dom::{self, existing::JsObjectAccess, JsCast},
@@ -149,7 +149,7 @@ impl Snackbar {
             .find_child_contains_class_mut(Self::SURFACE_CLASS)
             .unwrap()
             .insert_child(0, html! {
-                <div class = { Self::LABEL_CLASS }>{ label }</div>
+                <div class = { Self::LABEL_CLASS }>{ label.into() }</div>
             });
         self
     }
@@ -273,5 +273,15 @@ impl DerefMut for Snackbar {
 impl From<Snackbar> for Html {
     fn from(widget: Snackbar) -> Self {
         widget.html
+    }
+}
+
+impl ToHtml for Snackbar {
+    fn to_html(&self) -> Html {
+        self.clone().into()
+    }
+
+    fn into_html(self) -> Html {
+        self.into()
     }
 }

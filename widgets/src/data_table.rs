@@ -3,12 +3,7 @@ use std::{
     rc::Rc,
 };
 
-use yew::{
-    html,
-    html::onclick,
-    virtual_dom::{AttrValue, VTag},
-    Callback, Html, MouseEvent,
-};
+use yew::{html, html::onclick, virtual_dom::{AttrValue, VTag}, Callback, Html, MouseEvent, ToHtml};
 
 use crate::{
     utils::{ManageChildren, VTagExt},
@@ -100,17 +95,17 @@ impl DataTable {
     pub fn head(mut self, head: impl IntoIterator<Item = TableCell>) -> Self {
         let head_cells: Vec<Html> = head.into_iter().map(|cell| cell.build_head_cell()).collect();
 
-        if let Some(header_cols) = self.table_header_row_tag_mut().children_mut() {
-            for idx in 0..header_cols.len() {
-                if !header_cols[idx].is_contains_class("mdc-data-table__header-cell--checkbox") {
-                    header_cols.remove(idx);
-                }
-            }
-
-            for cell in head_cells {
-                header_cols.push(cell);
+        let header_row = self.table_header_row_tag_mut();
+        for idx in 0..header_row.children_count() {
+            if header_row.get_child(idx).map(|child| !child.is_contains_class("mdc-data-table__header-cell--checkbox")).unwrap_or(false) {
+                header_row.remove_child(idx);
             }
         }
+
+        for cell in head_cells {
+            header_row.add_child(cell);
+        }
+
         self
     }
 
@@ -135,9 +130,7 @@ impl DataTable {
 
         if let Some(row_checkbox) = row_checkbox {
             if let Html::VTag(row) = &mut row {
-                if let Some(cells) = row.children_mut() {
-                    cells.insert(0, row_checkbox);
-                }
+                row.insert_child(0, row_checkbox);
             }
         }
 
@@ -145,9 +138,7 @@ impl DataTable {
             Self::add_on_click_to_row(&mut row, on_row_click);
         }
 
-        if let Some(rows) = self.table_body_tag_mut().children_mut() {
-            rows.push(row);
-        }
+        self.table_body_tag_mut().add_child(row);
         self
     }
 
@@ -155,7 +146,7 @@ impl DataTable {
         self.on_row_click = Some(on_row_click);
 
         let body = self.table_body_tag_mut();
-        if let Some(children) = body.children_mut() {
+        if let Some(children) = body.children_mut().map(|children| children.to_vlist_mut()) {
             for row in children.iter_mut() {
                 Self::add_on_click_to_row(row, on_row_click);
             }
@@ -176,7 +167,7 @@ impl DataTable {
             head_row.insert_child(0, head_checkbox);
 
             let body = self.table_body_tag_mut();
-            if let Some(children) = body.children_mut() {
+            if let Some(children) = body.children_mut().map(|children| children.to_vlist_mut()) {
                 for row in children.iter_mut() {
                     if let Html::VTag(row) = row {
                         let row_id = row.attr("id").expect("A row ID expected").clone();
@@ -193,7 +184,7 @@ impl DataTable {
             }
 
             let body = self.table_body_tag_mut();
-            if let Some(children) = body.children_mut() {
+            if let Some(children) = body.children_mut().map(|children| children.to_vlist_mut()) {
                 for row in children.iter_mut() {
                     if row.is_first_child_contains_class("mdc-data-table__cell--checkbox") {
                         if let Html::VTag(ref mut row) = row {
@@ -207,7 +198,7 @@ impl DataTable {
     }
 
     pub fn row_count(&self) -> usize {
-        self.table_body_tag().children().len()
+        self.table_body_tag().children_count()
     }
 
     pub fn root_id(&self) -> AttrValue {
@@ -220,7 +211,7 @@ impl DataTable {
 
     pub fn table_tag(&self) -> &VTag {
         if let Html::VTag(tag) = &self.html {
-            if let Some(Html::VTag(tag)) = tag.children().first() {
+            if let Some(Html::VTag(tag)) = tag.first_child() {
                 if let Some(table) = tag.find_child_tag("table") {
                     return table;
                 }
@@ -250,7 +241,7 @@ impl DataTable {
     }
 
     pub fn table_body_tag(&self) -> &VTag {
-        match self.table_tag().children().get(1) {
+        match self.table_tag().get_child(1) {
             Some(Html::VTag(tag)) if tag.tag() == "tbody" => tag,
             _ => panic!("The DataTable widget must be contains the table body tag!"),
         }
@@ -259,8 +250,7 @@ impl DataTable {
     fn table_body_tag_mut(&mut self) -> &mut VTag {
         match self
             .table_tag_mut()
-            .children_mut()
-            .and_then(|children| children.get_mut(1))
+            .get_child_mut(1)
         {
             Some(Html::VTag(tag)) if tag.tag() == "tbody" => tag,
             _ => panic!("The DataTable widget must be contains the table body tag!"),
@@ -331,5 +321,15 @@ impl DerefMut for DataTable {
 impl From<DataTable> for Html {
     fn from(widget: DataTable) -> Self {
         widget.html
+    }
+}
+
+impl ToHtml for DataTable {
+    fn to_html(&self) -> Html {
+        self.clone().into()
+    }
+
+    fn into_html(self) -> Html {
+        self.into()
     }
 }

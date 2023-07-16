@@ -3,12 +3,7 @@ use std::{
     rc::Rc,
 };
 
-use yew::{
-    classes, html,
-    html::{onclick, oninput},
-    virtual_dom::{AttrValue, VTag},
-    Callback, Html, InputEvent, MouseEvent,
-};
+use yew::{classes, html, html::{onclick, oninput}, virtual_dom::{AttrValue, VTag}, Callback, Html, InputEvent, MouseEvent, ToHtml};
 
 use crate::{
     floating_label::FloatingLabel,
@@ -96,6 +91,7 @@ impl TextField {
     pub const ICON_CLASS: &'static str = "mdc-text-field__icon";
     pub const LEADING_ICON_CLASS: &'static str = "mdc-text-field__icon--leading";
     pub const TRAILING_ICON_CLASS: &'static str = "mdc-text-field__icon--trailing";
+    pub const NO_LABEL_CLASS: &'static str = "mdc-text-field--no-label";
     pub const WITH_LABEL_FLOATING_CLASS: &'static str = "mdc-text-field--label-floating";
 
     fn simple() -> Html {
@@ -152,7 +148,7 @@ impl TextField {
 
     pub fn ripple(mut self, enabled: bool) -> Self {
         if self.style != TextFieldStyle::Outlined {
-            if let Some(list) = self.root_tag_mut().children_mut() {
+            if let Some(list) = self.root_tag_mut().children_mut().map(|children| children.to_vlist_mut()) {
                 if enabled {
                     if !list.is_some_child_contains_class(Self::RIPPLE_CLASS) {
                         list.insert(0, html! {
@@ -380,6 +376,16 @@ impl From<TextField> for Html {
     }
 }
 
+impl ToHtml for TextField {
+    fn to_html(&self) -> Html {
+        self.clone().into()
+    }
+
+    fn into_html(self) -> Html {
+        self.into()
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct HelperText {
     html: Html,
@@ -393,7 +399,7 @@ impl HelperText {
     pub fn new(text: impl Into<Html>) -> Self {
         Self {
             html: html! {
-                <div class = { Self::CLASS }>{ text }</div>
+                <div class = { Self::CLASS }>{ text.into() }</div>
             },
         }
     }
@@ -438,5 +444,15 @@ impl DerefMut for HelperText {
 impl From<HelperText> for Html {
     fn from(widget: HelperText) -> Self {
         widget.html
+    }
+}
+
+impl ToHtml for HelperText {
+    fn to_html(&self) -> Html {
+        self.clone().into()
+    }
+
+    fn into_html(self) -> Html {
+        self.into()
     }
 }

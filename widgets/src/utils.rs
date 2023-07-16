@@ -30,7 +30,7 @@ pub(crate) fn add_input_label<W: IntoWidgetWithVList>(mut widget: W, label: impl
         .and_then(|input| input.attr("id"))
     {
         let label = html! {
-            <label for = { input_id }>{ label }</label>
+            <label for = { input_id }>{ label.into() }</label>
         };
         widget = widget.into_widget_with_v_list();
         if let Html::VList(list) = widget.html_mut() {
@@ -47,7 +47,7 @@ pub(crate) fn ripple_element(widget: &mut impl MdcWidget, ripple_class: impl Int
     let root = widget.root_tag_mut();
     if enabled {
         if !root.is_some_child_contains_class(&ripple_class.to_string()) {
-            let idx = root.children().len().saturating_sub(1);
+            let idx = root.children_count().saturating_sub(1);
             root.insert_child(idx, html! {
                 <div class = { ripple_class }></div>
             });

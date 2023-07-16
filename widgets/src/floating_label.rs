@@ -1,6 +1,6 @@
 use std::ops::{Deref, DerefMut};
 
-use yew::{html, Html};
+use yew::{html, Html, ToHtml};
 
 use crate::{utils::VTagExt, MdcWidget};
 
@@ -22,7 +22,7 @@ impl FloatingLabel {
     pub fn new(label: impl Into<Html>) -> Self {
         Self {
             html: html! {
-                <span class = { Self::CLASS }>{ label }</span>
+                <span class = { Self::CLASS }>{ label.into() }</span>
             },
         }
     }
@@ -61,5 +61,15 @@ impl DerefMut for FloatingLabel {
 impl From<FloatingLabel> for Html {
     fn from(widget: FloatingLabel) -> Self {
         widget.html
+    }
+}
+
+impl ToHtml for FloatingLabel {
+    fn to_html(&self) -> Html {
+        self.clone().into()
+    }
+
+    fn into_html(self) -> Html {
+        self.into()
     }
 }

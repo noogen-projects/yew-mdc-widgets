@@ -3,7 +3,7 @@ use std::{
     rc::Rc,
 };
 
-use yew::{classes, html, html::onclick, virtual_dom::AttrValue, Callback, Html, MouseEvent};
+use yew::{classes, html, html::onclick, virtual_dom::AttrValue, Callback, Html, MouseEvent, ToHtml};
 
 use crate::{
     ripple,
@@ -146,7 +146,7 @@ impl ListItem {
         let root = self.root_tag_mut();
 
         if let Some(idx) = root.find_child_contains_class_idx(Self::TEXT_ITEM_CLASS) {
-            if let Some(list) = root.children_mut() {
+            if let Some(list) = root.children_mut().map(|children| children.to_vlist_mut()) {
                 let mut primary = list.remove(idx);
                 primary.remove_class(Self::TEXT_ITEM_CLASS);
                 primary.add_class(Self::PRIMARY_TEXT_ITEM_CLASS);
@@ -155,7 +155,7 @@ impl ListItem {
                     <span class = { Self::TEXT_ITEM_CLASS }>
                         { primary }
                         <span class = { Self::SECONDARY_TEXT_ITEM_CLASS }>
-                            { text }
+                            { text.into() }
                         </span>
                     </span>
                 });
@@ -163,9 +163,9 @@ impl ListItem {
         } else {
             let idx = root
                 .find_child_contains_class_idx(Self::LAST_TILE_CLASS)
-                .unwrap_or_else(|| root.children().len());
+                .unwrap_or_else(|| root.children_count());
             root.insert_child(idx, html! {
-                <span class = { Self::TEXT_ITEM_CLASS }>{ text }</span>
+                <span class = { Self::TEXT_ITEM_CLASS }>{ text.into() }</span>
             });
         }
         self
@@ -187,7 +187,7 @@ impl ListItem {
         let (idx, class) = if root.is_some_child_contains_class(Self::FIRST_TILE_CLASS)
             || root.is_some_child_contains_class(Self::TEXT_ITEM_CLASS)
         {
-            (root.children().len(), Self::LAST_TILE_CLASS)
+            (root.children_count(), Self::LAST_TILE_CLASS)
         } else {
             let idx = root
                 .find_child_contains_class_idx(Self::RIPPLE_CLASS)
@@ -196,7 +196,7 @@ impl ListItem {
             (idx, Self::FIRST_TILE_CLASS)
         };
         root.insert_child(idx, html! {
-            <span class = { class }>{ tile }</span>
+            <span class = { class }>{ tile.into() }</span>
         });
         self
     }
@@ -210,16 +210,16 @@ impl ListItem {
             .or_else(|| root_tag.find_child_contains_class_idx(Self::FIRST_TILE_CLASS))
             .expect("The widget must have tile!");
 
-        if let Some(list) = root_tag.children_mut() {
-            list[tile_idx].add_class("material-icons");
-            list[tile_idx].set_attr("aria-hidden", "true");
+        if let Some(tile) = root_tag.get_child_mut(tile_idx) {
+            tile.add_class("material-icons");
+            tile.set_attr("aria-hidden", "true");
         }
         self
     }
 
     pub fn label(mut self, label: impl Into<Html>) -> Self {
         let mut label = html! {
-            <label class = { Self::TEXT_ITEM_CLASS }>{ label }</label>
+            <label class = { Self::TEXT_ITEM_CLASS }>{ label.into() }</label>
         };
         let root = self.root_tag_mut();
 
@@ -232,7 +232,7 @@ impl ListItem {
 
         let idx = root
             .find_child_contains_class_idx(Self::LAST_TILE_CLASS)
-            .unwrap_or_else(|| root.children().len());
+            .unwrap_or_else(|| root.children_count());
 
         root.insert_child(idx, label);
         self
@@ -258,6 +258,16 @@ impl MdcWidget for ListItem {
 impl From<ListItem> for Html {
     fn from(widget: ListItem) -> Self {
         widget.html
+    }
+}
+
+impl ToHtml for ListItem {
+    fn to_html(&self) -> Html {
+        self.clone().into()
+    }
+
+    fn into_html(self) -> Html {
+        self.into()
     }
 }
 
@@ -393,7 +403,7 @@ impl List {
     pub fn item(mut self, item: impl Into<Html>) -> Self {
         let mut item = item.into();
         let root = self.root_tag_mut();
-        let item_number = root.children().len();
+        let item_number = root.children_count();
 
         if item.attr("id").is_none() && item.is_some_child_contains_class(ListItem::RIPPLE_CLASS) {
             if let Some(id) = root.attr("id") {
@@ -491,5 +501,15 @@ impl DerefMut for List {
 impl From<List> for Html {
     fn from(widget: List) -> Self {
         widget.html
+    }
+}
+
+impl ToHtml for List {
+    fn to_html(&self) -> Html {
+        self.clone().into()
+    }
+
+    fn into_html(self) -> Html {
+        self.into()
     }
 }

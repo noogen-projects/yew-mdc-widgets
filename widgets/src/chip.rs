@@ -4,7 +4,7 @@ use std::{
 };
 
 use const_format::concatcp;
-use yew::{classes, html, html::onclick, virtual_dom::AttrValue, Callback, Html, MouseEvent};
+use yew::{classes, html, html::onclick, virtual_dom::AttrValue, Callback, Html, MouseEvent, ToHtml};
 
 use crate::{
     utils::{ManageChildren, VTagExt},
@@ -126,7 +126,7 @@ impl Chip {
 
     pub fn icon(mut self, name: impl Into<String>) -> Self {
         let root = self.root_tag_mut();
-        if root.children().len() < 2 {
+        if root.children_count() < 2 {
             root.add_child(html! {
                 <i class = { classes!("material-icons", Self::ICON_CLASS, Self::ICON_LEADING_CLASS) }>{ name.into() }</i>
             });
@@ -149,7 +149,7 @@ impl Chip {
         self.root_tag_mut().add_child(html! {
             <span role = "gridcell">
                 <span tabindex = { tab_index } class = { Self::PRIMARY_ACTION_CLASS }>
-                    <span class = { Self::TEXT_CLASS }>{ text }</span>
+                    <span class = { Self::TEXT_CLASS }>{ text.into() }</span>
                 </span>
             </span>
         });
@@ -213,9 +213,7 @@ fn mark_svg_path(parent: &mut Html) {
                 parent.add_class_if_needed(Chip::CHECKMARK_SVG_PATH_CLASS);
             }
             if let Some(children) = parent.children_mut() {
-                for child in children.iter_mut() {
-                    mark_svg_path(child);
-                }
+                mark_svg_path(children);
             }
         },
         Html::VList(list) => {
@@ -256,6 +254,16 @@ impl DerefMut for Chip {
 impl From<Chip> for Html {
     fn from(widget: Chip) -> Self {
         widget.html
+    }
+}
+
+impl ToHtml for Chip {
+    fn to_html(&self) -> Html {
+        self.clone().into()
+    }
+
+    fn into_html(self) -> Html {
+        self.into()
     }
 }
 
@@ -318,7 +326,7 @@ impl ChipSet {
     pub fn chip(mut self, chip: impl Into<Html>) -> Self {
         let mut chip = chip.into();
         let root = self.root_tag_mut();
-        let chip_number = root.children().len();
+        let chip_number = root.children_count();
 
         if chip.attr("id").is_none() && chip.is_some_child_contains_class(Chip::RIPPLE_CLASS) {
             if let (Some(id), Some(chip)) = (root.attr("id"), chip.root_tag_mut()) {
@@ -401,5 +409,15 @@ impl DerefMut for ChipSet {
 impl From<ChipSet> for Html {
     fn from(widget: ChipSet) -> Self {
         widget.html
+    }
+}
+
+impl ToHtml for ChipSet {
+    fn to_html(&self) -> Html {
+        self.clone().into()
+    }
+
+    fn into_html(self) -> Html {
+        self.into()
     }
 }

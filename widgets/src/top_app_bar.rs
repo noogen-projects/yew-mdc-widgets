@@ -1,7 +1,7 @@
 use std::ops::{Deref, DerefMut};
 
 use const_format::concatcp;
-use yew::{html, virtual_dom::AttrValue, Callback, Event, Html};
+use yew::{html, virtual_dom::AttrValue, Callback, Event, Html, ToHtml};
 
 use crate::{
     utils::{ManageChildren, VTagExt},
@@ -78,7 +78,7 @@ impl TopAppBar {
 
         if let Some(row) = self.root_tag_mut().first_child_tag_mut() {
             if let Some(start_section) = row.first_child_tag_mut() {
-                let idx = start_section.children().len() - 1;
+                let idx = start_section.children_count() - 1;
                 start_section.insert_child(idx, item);
             }
         }
@@ -96,10 +96,10 @@ impl TopAppBar {
 
     pub fn middle_section(mut self, content: impl Into<Html>) -> Self {
         if let Some(row) = self.root_tag_mut().first_child_tag_mut() {
-            let idx = row.children().len() - 1;
+            let idx = row.children_count() - 1;
             row.insert_child(
                 idx,
-                html! { <section class = "mdc-top-app-bar__section">{ content }</section> },
+                html! { <section class = "mdc-top-app-bar__section">{ content.into() }</section> },
             );
         }
         self
@@ -225,5 +225,15 @@ impl DerefMut for TopAppBar {
 impl From<TopAppBar> for Html {
     fn from(widget: TopAppBar) -> Self {
         widget.html
+    }
+}
+
+impl ToHtml for TopAppBar {
+    fn to_html(&self) -> Html {
+        self.clone().into()
+    }
+
+    fn into_html(self) -> Html {
+        self.into()
     }
 }

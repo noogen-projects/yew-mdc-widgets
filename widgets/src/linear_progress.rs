@@ -1,6 +1,6 @@
 use std::ops::{Deref, DerefMut};
 
-use yew::{classes, html, Html};
+use yew::{classes, html, Html, ToHtml};
 
 use crate::{
     utils::{ManageChildren, VTagExt},
@@ -185,5 +185,15 @@ impl DerefMut for LinearProgress {
 impl From<LinearProgress> for Html {
     fn from(widget: LinearProgress) -> Self {
         widget.html
+    }
+}
+
+impl ToHtml for LinearProgress {
+    fn to_html(&self) -> Html {
+        self.clone().into()
+    }
+
+    fn into_html(self) -> Html {
+        self.into()
     }
 }

@@ -3,7 +3,7 @@ use std::{
     rc::Rc,
 };
 
-use yew::{classes, html, html::onclick, Callback, Html, MouseEvent};
+use yew::{classes, html, html::onclick, Callback, Html, MouseEvent, ToHtml};
 
 use crate::{ripple, utils::VTagExt, MdcWidget, AUTO_INIT_ATTR};
 
@@ -115,5 +115,15 @@ impl DerefMut for Fab {
 impl From<Fab> for Html {
     fn from(widget: Fab) -> Self {
         widget.html
+    }
+}
+
+impl ToHtml for Fab {
+    fn to_html(&self) -> Html {
+        self.clone().into()
+    }
+
+    fn into_html(self) -> Html {
+        self.into()
     }
 }

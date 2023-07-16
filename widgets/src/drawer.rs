@@ -1,6 +1,6 @@
 use std::ops::{Deref, DerefMut};
 
-use yew::{html, virtual_dom::AttrValue, Html};
+use yew::{html, virtual_dom::AttrValue, Html, ToHtml};
 
 use crate::{
     utils::{ManageChildren, VTagExt},
@@ -103,7 +103,7 @@ impl Drawer {
         let root = self.root_tag_mut();
         root.remove_child_contains_class(Self::HEADER_CLASS);
         root.insert_child(0, html! {
-            <div class = { Self::HEADER_CLASS }>{ header }</div>
+            <div class = { Self::HEADER_CLASS }>{ header.into() }</div>
         });
         self
     }
@@ -152,7 +152,7 @@ impl Drawer {
         let root = self.root_tag_mut();
         root.remove_child_contains_class(Self::CONTENT_CLASS);
         root.add_child(html! {
-            <div class = { Self::CONTENT_CLASS }>{ content }</div>
+            <div class = { Self::CONTENT_CLASS }>{ content.into() }</div>
         });
         self
     }
@@ -187,5 +187,15 @@ impl DerefMut for Drawer {
 impl From<Drawer> for Html {
     fn from(widget: Drawer) -> Self {
         widget.html
+    }
+}
+
+impl ToHtml for Drawer {
+    fn to_html(&self) -> Html {
+        self.clone().into()
+    }
+
+    fn into_html(self) -> Html {
+        self.into()
     }
 }

@@ -1,6 +1,6 @@
 use std::ops::{Deref, DerefMut};
 
-use yew::{classes, html, virtual_dom::VTag, Callback, Html, MouseEvent};
+use yew::{classes, html, virtual_dom::VTag, Callback, Html, MouseEvent, ToHtml};
 
 use crate::{
     utils::{labeled_on_click, IntoWidgetWithVList, ManageChildren, VTagExt},
@@ -79,7 +79,7 @@ impl Switch {
         let id = self.root_tag().attr("id").expect("Cannot find root tag id");
         self = self.into_widget_with_v_list();
         self.html_mut().add_child(html! {
-            <label for = { id }>{ label }</label>
+            <label for = { id }>{ label.into() }</label>
         });
         self
     }
@@ -210,5 +210,15 @@ impl DerefMut for Switch {
 impl From<Switch> for Html {
     fn from(widget: Switch) -> Self {
         widget.html
+    }
+}
+
+impl ToHtml for Switch {
+    fn to_html(&self) -> Html {
+        self.clone().into()
+    }
+
+    fn into_html(self) -> Html {
+        self.into()
     }
 }

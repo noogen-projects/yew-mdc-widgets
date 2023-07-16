@@ -4,7 +4,7 @@ use std::{
 };
 
 use const_format::concatcp;
-use yew::{html, html::onclick, virtual_dom::VTag, Callback, Html, MouseEvent};
+use yew::{html, html::onclick, virtual_dom::VTag, Callback, Html, MouseEvent, ToHtml};
 
 use crate::{
     dom::{self, existing::JsObjectAccess, JsCast},
@@ -127,7 +127,7 @@ impl Dialog {
                 .find_child_contains_class_idx(Self::CONTENT_CLASS)
                 .unwrap(/* content already exists */)
         };
-        self.surface_mut().children_mut().unwrap(/* surface always has children */)[content_idx].add_child(item.into());
+        self.surface_mut().get_child_mut(content_idx).expect("surface should always has children").add_child(item.into());
         self
     }
 
@@ -147,14 +147,14 @@ impl Dialog {
             .find_child_contains_class_idx(Self::ACTIONS_CLASS)
             .unwrap_or_else(|| {
                 surface.add_child(html! { <div class = { Self::ACTIONS_CLASS }></div> });
-                surface.children().len() - 1
+                surface.children_count() - 1
             });
-        surface.children_mut().unwrap(/* surface always has children */)[actions_idx].add_child(action.into());
+        surface.get_child_mut(actions_idx).expect("surface should always has children").add_child(action.into());
         self
     }
 
     fn surface_mut(&mut self) -> &mut VTag {
-        self.root_tag_mut().children_mut().unwrap(/* dialog always has children */)[0]
+        self.root_tag_mut().first_child_mut().expect("dialog should always has children")
             .find_child_contains_class_mut(Self::SURFACE_CLASS)
             .expect("Can't get dialog surface")
     }
@@ -231,5 +231,15 @@ impl DerefMut for Dialog {
 impl From<Dialog> for Html {
     fn from(widget: Dialog) -> Self {
         widget.html
+    }
+}
+
+impl ToHtml for Dialog {
+    fn to_html(&self) -> Html {
+        self.clone().into()
+    }
+
+    fn into_html(self) -> Html {
+        self.into()
     }
 }

@@ -3,7 +3,7 @@ use std::{
     rc::Rc,
 };
 
-use yew::{classes, html, html::onclick, Callback, Html, MouseEvent};
+use yew::{classes, html, html::onclick, Callback, Html, MouseEvent, ToHtml};
 
 use crate::{
     ripple,
@@ -87,10 +87,8 @@ impl Button {
     pub fn label(mut self, label: impl Into<Html>) -> Self {
         self
             .root_tag_mut()
-            .children_mut()
-            .unwrap(/* root tag of button always has children */)
-            .push(html! {
-                <span class = { Self::LABEL_CLASS }>{ label }</span>
+            .add_child(html! {
+                <span class = { Self::LABEL_CLASS }>{ label.into() }</span>
             });
         self
     }
@@ -132,14 +130,15 @@ impl Button {
             .find_child_contains_class_idx(Self::LABEL_CLASS)
             .unwrap_or_else(|| {
                 if root.is_last_child("script") {
-                    root.children().len() - 1
+                    root.children_count() - 1
                 } else {
-                    root.children().len()
+                    root.children_count()
                 }
             });
         root
             .children_mut()
             .unwrap(/* root tag of button always has children */)
+            .to_vlist_mut()
             .insert(idx, item.into());
         self
     }
@@ -151,14 +150,15 @@ impl Button {
             .map(|idx| idx + 1)
             .unwrap_or_else(|| {
                 if root.is_last_child("script") {
-                    root.children().len() - 1
+                    root.children_count() - 1
                 } else {
-                    root.children().len()
+                    root.children_count()
                 }
             });
         root
             .children_mut()
             .unwrap(/* root tag of button always has children */)
+            .to_vlist_mut()
             .insert(idx, item.into());
         self
     }
@@ -203,5 +203,15 @@ impl DerefMut for Button {
 impl From<Button> for Html {
     fn from(widget: Button) -> Self {
         widget.html
+    }
+}
+
+impl ToHtml for Button {
+    fn to_html(&self) -> Html {
+        self.clone().into()
+    }
+
+    fn into_html(self) -> Html {
+        self.into()
     }
 }
