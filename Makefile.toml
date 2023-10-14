@@ -40,3 +40,18 @@ command = "cargo"
 toolchain = "stable"
 args = ["run", "-p", "example_server", "${ADDITIONAL}"]
 dependencies = ["example_client"]
+
+[tasks.checkfmt]
+command = "cargo"
+toolchain = "nightly"
+args = ["fmt", "--", "--check"]
+
+[tasks.fmt]
+command = "cargo"
+toolchain = "nightly"
+args = ["fmt"]
+
+[tasks.clippy]
+command = "cargo"
+toolchain = "stable"
+args = ["clippy", "--all-targets", "--all-features"]
