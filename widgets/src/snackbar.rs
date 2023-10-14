@@ -3,15 +3,15 @@ use std::ops::{Deref, DerefMut};
 use const_format::concatcp;
 use yew::{html, Callback, Html, MouseEvent, ToHtml};
 
-use crate::{
-    dom::{self, existing::JsObjectAccess, JsCast},
-    utils::{ManageChildren, VTagExt},
-    Element, MdcObject, MdcWidget, AUTO_INIT_ATTR,
-};
+use crate::dom::existing::JsObjectAccess;
+use crate::dom::{self, JsCast};
+use crate::utils::{ManageChildren, VTagExt};
+use crate::{Element, MdcObject, MdcWidget, AUTO_INIT_ATTR};
 
 pub mod mdc {
-    use crate::Element;
     use wasm_bindgen::prelude::*;
+
+    use crate::Element;
 
     pub const TYPE_NAME: &str = "MDCSnackbar";
 

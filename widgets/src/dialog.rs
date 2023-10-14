@@ -1,16 +1,15 @@
-use std::{
-    ops::{Deref, DerefMut},
-    rc::Rc,
-};
+use std::ops::{Deref, DerefMut};
+use std::rc::Rc;
 
 use const_format::concatcp;
-use yew::{html, html::onclick, virtual_dom::VTag, Callback, Html, MouseEvent, ToHtml};
+use yew::html::onclick;
+use yew::virtual_dom::VTag;
+use yew::{html, Callback, Html, MouseEvent, ToHtml};
 
-use crate::{
-    dom::{self, existing::JsObjectAccess, JsCast},
-    utils::{ManageChildren, VTagExt},
-    Element, MdcWidget, AUTO_INIT_ATTR,
-};
+use crate::dom::existing::JsObjectAccess;
+use crate::dom::{self, JsCast};
+use crate::utils::{ManageChildren, VTagExt};
+use crate::{Element, MdcWidget, AUTO_INIT_ATTR};
 
 pub mod mdc {
     use wasm_bindgen::prelude::*;
@@ -127,7 +126,10 @@ impl Dialog {
                 .find_child_contains_class_idx(Self::CONTENT_CLASS)
                 .unwrap(/* content already exists */)
         };
-        self.surface_mut().get_child_mut(content_idx).expect("surface should always has children").add_child(item.into());
+        self.surface_mut()
+            .get_child_mut(content_idx)
+            .expect("surface should always has children")
+            .add_child(item.into());
         self
     }
 
@@ -149,12 +151,17 @@ impl Dialog {
                 surface.add_child(html! { <div class = { Self::ACTIONS_CLASS }></div> });
                 surface.children_count() - 1
             });
-        surface.get_child_mut(actions_idx).expect("surface should always has children").add_child(action.into());
+        surface
+            .get_child_mut(actions_idx)
+            .expect("surface should always has children")
+            .add_child(action.into());
         self
     }
 
     fn surface_mut(&mut self) -> &mut VTag {
-        self.root_tag_mut().first_child_mut().expect("dialog should always has children")
+        self.root_tag_mut()
+            .first_child_mut()
+            .expect("dialog should always has children")
             .find_child_contains_class_mut(Self::SURFACE_CLASS)
             .expect("Can't get dialog surface")
     }

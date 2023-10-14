@@ -1,11 +1,9 @@
 #![recursion_limit = "4096"]
 
 use yew::{classes, html, Component, Context, Html};
-use yew_mdc_widgets::{
-    auto_init,
-    dom::{self, existing::JsObjectAccess},
-    drawer, Drawer, Element, IconButton, List, ListItem, MdcWidget, TopAppBar,
-};
+use yew_mdc_widgets::dom::existing::JsObjectAccess;
+use yew_mdc_widgets::dom::{self};
+use yew_mdc_widgets::{auto_init, drawer, Drawer, Element, IconButton, List, ListItem, MdcWidget, TopAppBar};
 
 mod buttons;
 mod cards;

@@ -1,15 +1,13 @@
 use std::ops::{Deref, DerefMut};
 
-use yew::{html, virtual_dom::AttrValue, Callback, Html, MouseEvent, ToHtml};
+use yew::virtual_dom::AttrValue;
+use yew::{html, Callback, Html, MouseEvent, ToHtml};
 
-use crate::{
-    console,
-    utils::{
-        add_input_label, labeled_on_click, ripple_element, root_and_input_child_disabled, IntoWidgetWithVList,
-        ManageChildren, VTagExt,
-    },
-    MdcWidget, AUTO_INIT_ATTR,
+use crate::utils::{
+    add_input_label, labeled_on_click, ripple_element, root_and_input_child_disabled, IntoWidgetWithVList,
+    ManageChildren, VTagExt,
 };
+use crate::{console, MdcWidget, AUTO_INIT_ATTR};
 
 pub mod mdc {
     pub const TYPE_NAME: &str = "MDCRadio";

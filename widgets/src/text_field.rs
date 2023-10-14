@@ -1,17 +1,14 @@
-use std::{
-    ops::{Deref, DerefMut},
-    rc::Rc,
-};
+use std::ops::{Deref, DerefMut};
+use std::rc::Rc;
 
-use yew::{classes, html, html::{onclick, oninput}, virtual_dom::{AttrValue, VTag}, Callback, Html, InputEvent, MouseEvent, ToHtml};
+use yew::html::{onclick, oninput};
+use yew::virtual_dom::{AttrValue, VTag};
+use yew::{classes, html, Callback, Html, InputEvent, MouseEvent, ToHtml};
 
-use crate::{
-    floating_label::FloatingLabel,
-    line_ripple,
-    notched_outline::NotchedOutline,
-    utils::{IntoWidgetWithVList, ManageChildren, VTagExt},
-    MdcObject, MdcWidget, AUTO_INIT_ATTR,
-};
+use crate::floating_label::FloatingLabel;
+use crate::notched_outline::NotchedOutline;
+use crate::utils::{IntoWidgetWithVList, ManageChildren, VTagExt};
+use crate::{line_ripple, MdcObject, MdcWidget, AUTO_INIT_ATTR};
 
 pub mod mdc {
     use wasm_bindgen::prelude::*;
@@ -148,7 +145,11 @@ impl TextField {
 
     pub fn ripple(mut self, enabled: bool) -> Self {
         if self.style != TextFieldStyle::Outlined {
-            if let Some(list) = self.root_tag_mut().children_mut().map(|children| children.to_vlist_mut()) {
+            if let Some(list) = self
+                .root_tag_mut()
+                .children_mut()
+                .map(|children| children.to_vlist_mut())
+            {
                 if enabled {
                     if !list.is_some_child_contains_class(Self::RIPPLE_CLASS) {
                         list.insert(0, html! {
@@ -162,10 +163,10 @@ impl TextField {
                     }
                 } else {
                     if let Some(idx) = list.find_child_contains_class_idx(Self::RIPPLE_CLASS) {
-                        list.remove(idx);
+                        let _ = list.remove(idx);
                     }
                     if let Some(idx) = list.find_child_contains_class_idx(line_ripple::mdc::CLASS) {
-                        list.remove(idx);
+                        let _ = list.remove(idx);
                     }
                 }
             }

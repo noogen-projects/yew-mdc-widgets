@@ -11,7 +11,7 @@ repository = "https://github.com/noogen-projects/yew-mdc-widgets"
 description = "Yew MDC widgets example WASM client"
 
 [dependencies]
-gloo-console = "0.2"
+gloo-console = "0.3"
 js-sys = "0.3"
-yew = { git = "https://github.com/yewstack/yew.git", features = ["csr"] }
+yew = { version = "0.21", features = ["csr"] }
 yew-mdc-widgets = { path = "../../widgets" }

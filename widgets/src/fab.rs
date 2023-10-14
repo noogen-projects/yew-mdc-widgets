@@ -1,11 +1,11 @@
-use std::{
-    ops::{Deref, DerefMut},
-    rc::Rc,
-};
+use std::ops::{Deref, DerefMut};
+use std::rc::Rc;
 
-use yew::{classes, html, html::onclick, Callback, Html, MouseEvent, ToHtml};
+use yew::html::onclick;
+use yew::{classes, html, Callback, Html, MouseEvent, ToHtml};
 
-use crate::{ripple, utils::VTagExt, MdcWidget, AUTO_INIT_ATTR};
+use crate::utils::VTagExt;
+use crate::{ripple, MdcWidget, AUTO_INIT_ATTR};
 
 #[derive(Debug, Clone)]
 pub struct Fab {

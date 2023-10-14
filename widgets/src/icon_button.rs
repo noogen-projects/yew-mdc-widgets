@@ -1,17 +1,14 @@
-use std::{
-    ops::{Deref, DerefMut},
-    rc::Rc,
-};
+use std::ops::{Deref, DerefMut};
+use std::rc::Rc;
 
 use const_format::concatcp;
-use yew::{html, html::onclick, Callback, Html, MouseEvent, ToHtml};
+use yew::html::onclick;
+use yew::{html, Callback, Html, MouseEvent, ToHtml};
 
-use crate::{
-    dom::{self, existing::JsObjectAccess, JsCast},
-    ripple,
-    utils::VTagExt,
-    CustomEvent, Element, MdcWidget, AUTO_INIT_ATTR, MATERIAL_ICONS_CLASS,
-};
+use crate::dom::existing::JsObjectAccess;
+use crate::dom::{self, JsCast};
+use crate::utils::VTagExt;
+use crate::{ripple, CustomEvent, Element, MdcWidget, AUTO_INIT_ATTR, MATERIAL_ICONS_CLASS};
 
 pub mod mdc {
     use wasm_bindgen::prelude::*;

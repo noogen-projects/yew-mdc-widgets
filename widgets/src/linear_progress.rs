@@ -2,10 +2,8 @@ use std::ops::{Deref, DerefMut};
 
 use yew::{classes, html, Html, ToHtml};
 
-use crate::{
-    utils::{ManageChildren, VTagExt},
-    MdcObject, MdcWidget, AUTO_INIT_ATTR,
-};
+use crate::utils::{ManageChildren, VTagExt};
+use crate::{MdcObject, MdcWidget, AUTO_INIT_ATTR};
 
 pub mod mdc {
     use wasm_bindgen::prelude::*;

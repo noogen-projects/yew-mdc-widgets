@@ -1,11 +1,11 @@
-pub use self::ext::*;
-
 use std::rc::Rc;
 
 use wasm_dom::UnwrapThrowExt;
 use web_sys::Node;
-use yew::{html, html::onclick, Callback, Classes, Html, MouseEvent};
+use yew::html::onclick;
+use yew::{html, Callback, Classes, Html, MouseEvent};
 
+pub use self::ext::*;
 use crate::MdcWidget;
 
 pub mod ext;

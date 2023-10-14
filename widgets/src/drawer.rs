@@ -1,11 +1,10 @@
 use std::ops::{Deref, DerefMut};
 
-use yew::{html, virtual_dom::AttrValue, Html, ToHtml};
+use yew::virtual_dom::AttrValue;
+use yew::{html, Html, ToHtml};
 
-use crate::{
-    utils::{ManageChildren, VTagExt},
-    MdcWidget, AUTO_INIT_ATTR,
-};
+use crate::utils::{ManageChildren, VTagExt};
+use crate::{MdcWidget, AUTO_INIT_ATTR};
 
 pub mod mdc {
     pub const TYPE_NAME: &str = "MDCDrawer";

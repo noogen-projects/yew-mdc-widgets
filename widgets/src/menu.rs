@@ -1,12 +1,12 @@
 use std::ops::{Deref, DerefMut};
 
-use yew::{html, virtual_dom::AttrValue, Html, ToHtml};
+use yew::virtual_dom::AttrValue;
+use yew::{html, Html, ToHtml};
 
-use crate::{
-    dom::{self, existing::JsObjectAccess},
-    utils::{ManageChildren, VTagExt},
-    Element, List, MdcWidget, AUTO_INIT_ATTR,
-};
+use crate::dom::existing::JsObjectAccess;
+use crate::dom::{self};
+use crate::utils::{ManageChildren, VTagExt};
+use crate::{Element, List, MdcWidget, AUTO_INIT_ATTR};
 
 pub mod mdc {
     pub const TYPE_NAME: &str = "MDCMenu";

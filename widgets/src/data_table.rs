@@ -1,14 +1,12 @@
-use std::{
-    ops::{Deref, DerefMut},
-    rc::Rc,
-};
+use std::ops::{Deref, DerefMut};
+use std::rc::Rc;
 
-use yew::{html, html::onclick, virtual_dom::{AttrValue, VTag}, Callback, Html, MouseEvent, ToHtml};
+use yew::html::onclick;
+use yew::virtual_dom::{AttrValue, VTag};
+use yew::{html, Callback, Html, MouseEvent, ToHtml};
 
-use crate::{
-    utils::{ManageChildren, VTagExt},
-    Checkbox, MdcWidget, AUTO_INIT_ATTR,
-};
+use crate::utils::{ManageChildren, VTagExt};
+use crate::{Checkbox, MdcWidget, AUTO_INIT_ATTR};
 
 pub mod mdc {
     pub const TYPE_NAME: &str = "MDCDataTable";
@@ -97,7 +95,11 @@ impl DataTable {
 
         let header_row = self.table_header_row_tag_mut();
         for idx in 0..header_row.children_count() {
-            if header_row.get_child(idx).map(|child| !child.is_contains_class("mdc-data-table__header-cell--checkbox")).unwrap_or(false) {
+            if header_row
+                .get_child(idx)
+                .map(|child| !child.is_contains_class("mdc-data-table__header-cell--checkbox"))
+                .unwrap_or(false)
+            {
                 header_row.remove_child(idx);
             }
         }
@@ -248,10 +250,7 @@ impl DataTable {
     }
 
     fn table_body_tag_mut(&mut self) -> &mut VTag {
-        match self
-            .table_tag_mut()
-            .get_child_mut(1)
-        {
+        match self.table_tag_mut().get_child_mut(1) {
             Some(Html::VTag(tag)) if tag.tag() == "tbody" => tag,
             _ => panic!("The DataTable widget must be contains the table body tag!"),
         }

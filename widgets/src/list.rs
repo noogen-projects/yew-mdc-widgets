@@ -1,15 +1,12 @@
-use std::{
-    ops::{Deref, DerefMut},
-    rc::Rc,
-};
+use std::ops::{Deref, DerefMut};
+use std::rc::Rc;
 
-use yew::{classes, html, html::onclick, virtual_dom::AttrValue, Callback, Html, MouseEvent, ToHtml};
+use yew::html::onclick;
+use yew::virtual_dom::AttrValue;
+use yew::{classes, html, Callback, Html, MouseEvent, ToHtml};
 
-use crate::{
-    ripple,
-    utils::{ManageChildren, VTagExt},
-    MdcWidget, AUTO_INIT_ATTR,
-};
+use crate::utils::{ManageChildren, VTagExt};
+use crate::{ripple, MdcWidget, AUTO_INIT_ATTR};
 
 pub mod mdc {
     use wasm_bindgen::prelude::*;

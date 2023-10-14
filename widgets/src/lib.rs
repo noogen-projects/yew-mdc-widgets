@@ -1,37 +1,29 @@
 #![recursion_limit = "256"]
 
-pub use gloo;
-pub use gloo_console as console;
-pub use js_sys;
-pub use wasm_bindgen;
-pub use wasm_dom as dom;
-pub use web_sys;
-pub use yew;
+pub use {gloo, gloo_console as console, js_sys, wasm_bindgen, wasm_dom as dom, web_sys, yew};
 
-pub use self::{
-    button::*,
-    card::*,
-    checkbox::*,
-    chip::*,
-    data_table::*,
-    dialog::*,
-    drawer::*,
-    fab::*,
-    floating_label::*,
-    icon_button::*,
-    linear_progress::*,
-    list::*,
-    listeners::*,
-    mdc::auto_init,
-    menu::*,
-    radio::*,
-    snackbar::*,
-    switch::*,
-    tab::*,
-    text_field::*,
-    top_app_bar::*,
-    widget::{MdcObject, MdcWidget},
-};
+pub use self::button::*;
+pub use self::card::*;
+pub use self::checkbox::*;
+pub use self::chip::*;
+pub use self::data_table::*;
+pub use self::dialog::*;
+pub use self::drawer::*;
+pub use self::fab::*;
+pub use self::floating_label::*;
+pub use self::icon_button::*;
+pub use self::linear_progress::*;
+pub use self::list::*;
+pub use self::listeners::*;
+pub use self::mdc::auto_init;
+pub use self::menu::*;
+pub use self::radio::*;
+pub use self::snackbar::*;
+pub use self::switch::*;
+pub use self::tab::*;
+pub use self::text_field::*;
+pub use self::top_app_bar::*;
+pub use self::widget::{MdcObject, MdcWidget};
 
 pub mod button;
 pub mod card;

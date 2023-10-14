@@ -2,10 +2,8 @@ use std::iter;
 use std::ops::{Deref, DerefMut};
 
 use itertools::Either;
-use yew::{
-    virtual_dom::{ApplyAttributeAs, AttrValue, Attributes, VList, VNode, VTag},
-    Html,
-};
+use yew::virtual_dom::{ApplyAttributeAs, AttrValue, Attributes, VList, VNode, VTag};
+use yew::Html;
 
 pub trait ManageChildren {
     fn is_first_child_contains_class(&self, class: &str) -> bool;
@@ -121,11 +119,15 @@ impl ManageChildren for VTag {
     }
 
     fn children_count(&self) -> usize {
-        self.children().map(|children| if let Html::VList(list) = children {
-            list.len()
-        } else {
-            1
-        }).unwrap_or(0)
+        self.children()
+            .map(|children| {
+                if let Html::VList(list) = children {
+                    list.len()
+                } else {
+                    1
+                }
+            })
+            .unwrap_or(0)
     }
 
     fn get_child(&self, idx: usize) -> Option<&Html> {
@@ -257,13 +259,11 @@ impl ManageChildren for VTag {
         if idx == self.children_count() {
             self.add_child(child.into());
             true
+        } else if let Some(children) = self.children_mut() {
+            children.to_vlist_mut().insert(idx, child.into());
+            true
         } else {
-            if let Some(children) = self.children_mut() {
-                children.to_vlist_mut().insert(idx, child.into());
-                true
-            } else {
-                false
-            }
+            false
         }
     }
 

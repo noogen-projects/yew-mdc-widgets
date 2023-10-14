@@ -2,7 +2,8 @@ use std::ops::{Deref, DerefMut};
 
 use yew::{html, Html, ToHtml};
 
-use crate::{utils::VTagExt, MdcWidget};
+use crate::utils::VTagExt;
+use crate::MdcWidget;
 
 pub mod mdc {
     pub const TYPE_NAME: &str = "MDCFloatingLabel";

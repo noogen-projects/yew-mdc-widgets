@@ -1,11 +1,10 @@
 use std::ops::{Deref, DerefMut};
 
-use yew::{classes, html, virtual_dom::VTag, Callback, Html, MouseEvent, ToHtml};
+use yew::virtual_dom::VTag;
+use yew::{classes, html, Callback, Html, MouseEvent, ToHtml};
 
-use crate::{
-    utils::{labeled_on_click, IntoWidgetWithVList, ManageChildren, VTagExt},
-    MdcWidget, AUTO_INIT_ATTR,
-};
+use crate::utils::{labeled_on_click, IntoWidgetWithVList, ManageChildren, VTagExt};
+use crate::{MdcWidget, AUTO_INIT_ATTR};
 
 pub mod mdc {
     pub const TYPE_NAME: &str = "MDCSwitch";

@@ -1,15 +1,12 @@
 use std::rc::Rc;
 
-use yew::{
-    virtual_dom::{Listener, VTag},
-    Callback, Html,
-};
+use yew::virtual_dom::{Listener, VTag};
+use yew::{Callback, Html};
 
-use crate::{
-    dom::{self, existing::JsObjectAccess, JsCast, JsValue},
-    utils::VTagExt,
-    Element, EventListener,
-};
+use crate::dom::existing::JsObjectAccess;
+use crate::dom::{self, JsCast, JsValue};
+use crate::utils::VTagExt;
+use crate::{Element, EventListener};
 
 pub trait MdcWidget {
     const NAME: &'static str;

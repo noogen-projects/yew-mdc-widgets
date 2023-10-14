@@ -1,15 +1,11 @@
-use std::{
-    ops::{Deref, DerefMut},
-    rc::Rc,
-};
+use std::ops::{Deref, DerefMut};
+use std::rc::Rc;
 
-use yew::{classes, html, html::onclick, Callback, Html, MouseEvent, ToHtml};
+use yew::html::onclick;
+use yew::{classes, html, Callback, Html, MouseEvent, ToHtml};
 
-use crate::{
-    ripple,
-    utils::{ManageChildren, VTagExt},
-    MdcWidget, AUTO_INIT_ATTR, MATERIAL_ICONS_CLASS,
-};
+use crate::utils::{ManageChildren, VTagExt};
+use crate::{ripple, MdcWidget, AUTO_INIT_ATTR, MATERIAL_ICONS_CLASS};
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum ButtonStyle {
@@ -85,11 +81,9 @@ impl Button {
     }
 
     pub fn label(mut self, label: impl Into<Html>) -> Self {
-        self
-            .root_tag_mut()
-            .add_child(html! {
-                <span class = { Self::LABEL_CLASS }>{ label.into() }</span>
-            });
+        self.root_tag_mut().add_child(html! {
+            <span class = { Self::LABEL_CLASS }>{ label.into() }</span>
+        });
         self
     }
 

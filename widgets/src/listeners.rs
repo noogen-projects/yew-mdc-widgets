@@ -1,13 +1,10 @@
-pub use gloo::events::{EventListener as GlooEventListener, EventListenerOptions};
-pub use web_sys::{CustomEvent, Element, Event, EventTarget};
-pub use yew::{
-    virtual_dom::{Listener, ListenerKind},
-    Callback,
-};
-
 use std::borrow::Cow;
 
+pub use gloo::events::{EventListener as GlooEventListener, EventListenerOptions};
 use wasm_bindgen::JsValue;
+pub use web_sys::{CustomEvent, Element, Event, EventTarget};
+pub use yew::virtual_dom::{Listener, ListenerKind};
+pub use yew::Callback;
 
 #[derive(Clone, Debug)]
 pub struct EventListener<E> {
