@@ -50,6 +50,12 @@ impl Switch {
 
     pub const ICON_OFF_CLASS: &'static str = "mdc-switch__icon--off";
 
+    // The element with this class ensures that a focus indicator is displayed in
+    // high contrast mode around the active/focused switch.
+    pub const FOCUS_RING: &'static str = "mdc-switch__focus-ring";
+
+    pub const FOCUS_RING_WRAPPER: &'static str = "mdc-switch__focus-ring-wrapper";
+
     pub fn simple() -> Self {
         Self {
             html: html! {
@@ -63,6 +69,9 @@ impl Switch {
                             <div class = { Self::RIPPLE_CLASS }></div>
                         </div>
                     </div>
+                    <span class = { Self::FOCUS_RING_WRAPPER }>
+                        <div class = { Self::FOCUS_RING }></div>
+                    </span>
                 </button>
             },
         }
