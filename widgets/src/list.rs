@@ -29,33 +29,33 @@ pub mod mdc {
         pub fn set_vertical(this: &List, value: bool);
 
         /// Returns all list item elements including disabled list items.
-        #[wasm_bindgen(method, getter)]
+        #[wasm_bindgen(method, getter = listElements)]
         pub fn list_elements(this: &List) -> Vec<Element>;
 
         /// Sets the list to allow the up arrow on the first element to focus the last element of
         /// the list and vice versa.
-        #[wasm_bindgen(method, setter)]
+        #[wasm_bindgen(method, setter = wrapFocus)]
         pub fn set_wrap_focus(this: &List, value: bool);
 
         /// Returns whether typeahead is currently matching a user-specified prefix.
-        #[wasm_bindgen(method, getter)]
+        #[wasm_bindgen(method, getter = typeaheadInProgress)]
         pub fn typeahead_in_progress(this: &List) -> bool;
 
         /// Sets whether typeahead is enabled on the list.
-        #[wasm_bindgen(method, setter)]
+        #[wasm_bindgen(method, setter = hasTypeahead)]
         pub fn set_has_typeahead(this: &List, value: bool);
 
         /// Sets the list to be a selection list. Enables the `enter` and `space` keys for
         /// selecting/deselecting a list item.
-        #[wasm_bindgen(method, setter)]
+        #[wasm_bindgen(method, setter = singleSelection)]
         pub fn set_single_selection(this: &List, value: bool);
 
         /// Gets the current selection state by returning selected index or list of indexes for checkbox based list.
-        #[wasm_bindgen(method, getter)]
+        #[wasm_bindgen(method, getter = selectedIndex)]
         pub fn selected_index(this: &List) -> ListIndex;
 
         /// Sets the selection state to given index or list of indexes if it is checkbox based list.
-        #[wasm_bindgen(method, setter)]
+        #[wasm_bindgen(method, setter = selectedIndex)]
         pub fn set_selected_index(this: &List, value: &ListIndex);
 
         /// Recalculates layout and orientation.

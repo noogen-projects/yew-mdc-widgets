@@ -24,43 +24,43 @@ pub mod mdc {
         pub fn new(element: Element) -> Snackbar;
 
         /// Returns whether the snackbar is currently open.
-        #[wasm_bindgen(method, getter)]
+        #[wasm_bindgen(method, getter = isOpen)]
         pub fn is_open(this: &Snackbar) -> bool;
 
         /// Sets whether the snackbar is currently open.
-        #[wasm_bindgen(method, setter)]
+        #[wasm_bindgen(method, setter = isOpen)]
         pub fn set_is_open(this: &Snackbar, is_open: bool);
 
         /// Returns the automatic dismiss timeout in milliseconds
-        #[wasm_bindgen(method, getter)]
+        #[wasm_bindgen(method, getter = timeoutMs)]
         pub fn timeout_ms(this: &Snackbar) -> i32;
 
         /// Sets the automatic dismiss timeout in milliseconds
-        #[wasm_bindgen(method, setter)]
+        #[wasm_bindgen(method, setter = timeoutMs)]
         pub fn set_timeout_ms(this: &Snackbar, timeout_ms: i32);
 
         /// Returns whether the snackbar closes when it is focused and the user presses the ESC key.
-        #[wasm_bindgen(method, getter)]
+        #[wasm_bindgen(method, getter = closeOnEscape)]
         pub fn close_on_escape(this: &Snackbar) -> bool;
 
         /// Sets whether the snackbar closes when it is focused and the user presses the ESC key.
-        #[wasm_bindgen(method, setter)]
+        #[wasm_bindgen(method, setter = closeOnEscape)]
         pub fn set_close_on_escape(this: &Snackbar, close_on_escape: bool);
 
         /// Returns the textContent of the label element.
-        #[wasm_bindgen(method, getter)]
+        #[wasm_bindgen(method, getter = labelText)]
         pub fn label_text(this: &Snackbar) -> String;
 
         /// Sets the textContent of the label element.
-        #[wasm_bindgen(method, setter)]
+        #[wasm_bindgen(method, setter = labelText)]
         pub fn set_label_text(this: &Snackbar, label_text: &str);
 
         /// Returns the textContent of the action button element.
-        #[wasm_bindgen(method, getter)]
+        #[wasm_bindgen(method, getter = actionButtonText)]
         pub fn action_button_text(this: &Snackbar) -> String;
 
         /// Sets the textContent of the action button element.
-        #[wasm_bindgen(method, setter)]
+        #[wasm_bindgen(method, setter = actionButtonText)]
         pub fn set_action_button_text(this: &Snackbar, action_button_text: &str);
 
         #[wasm_bindgen(method)]
